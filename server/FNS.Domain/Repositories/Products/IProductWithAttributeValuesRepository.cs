@@ -2,7 +2,7 @@
 
 namespace FNS.Domain.Repositories.Products
 {
-    public interface IProductWithAttributeValuesRepository : IRepositoryBase<ProductWithAttributeValue>
+    public interface IProductWithAttributeValuesRepository : IRepositoryBase<ProductAttributeValue>
     {
     }
 }

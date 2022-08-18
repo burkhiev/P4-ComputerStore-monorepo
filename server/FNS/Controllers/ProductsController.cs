@@ -1,11 +1,11 @@
 ﻿using FNS.Services.Abstractions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FNS.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public sealed class ProductsController : ControllerBase
     {
         private readonly IRootService _rootService;
@@ -18,6 +18,7 @@ namespace FNS.Presentation.Controllers
         private IRootService RootService => _rootService;
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllProducts()
         {
             var result = RootService.ProductsService.GetProductsDtos();

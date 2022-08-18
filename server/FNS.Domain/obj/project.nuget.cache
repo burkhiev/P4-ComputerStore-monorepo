@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UnqlZTVahHRW6N1RJRkK7E5lyggxhGaMwcLJfMFWOLnXn93QBXsCF3CRmYtO4YSq8Bb+HdPPqDnSeFGRAt+fSw==",
+  "dgSpecHash": "yrO+NTQ3RfQz89EHTOgXNF2jcp364wDJLPZ15tTfKLuwtM4OMhU9fc50LOTYT35Y8XW8Z0CQ5xgCktSAsoth/w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Programming Training\\ASP.NET Core\\FNS\\FNS.Domain\\FNS.Domain.csproj",
+  "projectFilePath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Projects\\P4-ComputerStore-monorepo\\server\\FNS.Domain\\FNS.Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\burhi\\.nuget\\packages\\nodatime\\3.1.2\\nodatime.3.1.2.nupkg.sha512",
     "C:\\Users\\burhi\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.7.1\\system.runtime.compilerservices.unsafe.4.7.1.nupkg.sha512"

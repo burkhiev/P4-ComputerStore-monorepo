@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PGF6lmkJBCWo7fOwfUq6FDhRFJZUtulzTrw7r2hUbueb8JsAbU6EtFzS7u5FcgmCOC+jTJUjR04gdPn/Kpl5Tg==",
+  "dgSpecHash": "PQU8wgFKBHdbAwOd10Gu8z47bw8UjpcapaxXmFsFAzUNRJjnsD6Vnigj+QSvQ0SOMGmSU0AkIFfTpHQMgLRF1A==",
   "success": true,
-  "projectFilePath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Programming Training\\ASP.NET Core\\FNS\\FNS.Services\\FNS.Services.csproj",
+  "projectFilePath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Projects\\P4-ComputerStore-monorepo\\server\\FNS.Services\\FNS.Services.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\burhi\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
     "C:\\Users\\burhi\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",

@@ -11,12 +11,14 @@ namespace FNS.Infrastructure.Initializers.Products
         {
             lock(_locker)
             {
-                _entities = new List<SubCategory>
+                var entities = new List<SubCategory>
                 {
                     new SubCategory { Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "Процессоры" },
                     new SubCategory { Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Name = "Материские платы" },
                     new SubCategory { Id = Guid.Parse("00000000-0000-0000-0000-000000000003"), Name = "Видеокарты" },
                 };
+
+                _entities = entities.AsReadOnly();
             }
         }
 

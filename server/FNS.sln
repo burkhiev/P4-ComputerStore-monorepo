@@ -4,12 +4,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNS.Presentation", "FNS\FNS.Presentation.csproj", "{ADEBDF62-A13B-41E9-9D05-1D850FD75333}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E4C5DB6-7183-43BB-BDA3-D37FE1BFC0FF} = {4E4C5DB6-7183-43BB-BDA3-D37FE1BFC0FF}
+		{E3C1A8CF-0210-4A83-8F6A-F1E4492E3EA8} = {E3C1A8CF-0210-4A83-8F6A-F1E4492E3EA8}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNS.Domain", "FNS.Domain\FNS.Domain.csproj", "{4E4C5DB6-7183-43BB-BDA3-D37FE1BFC0FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FNS.Services", "FNS.Services\FNS.Services.csproj", "{97C8D422-3185-4D7E-BFD5-9C28DEC668AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNS.Services", "FNS.Services\FNS.Services.csproj", "{97C8D422-3185-4D7E-BFD5-9C28DEC668AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FNS.Infrastructure", "FNS.Infrastructure\FNS.Infrastructure.csproj", "{E3C1A8CF-0210-4A83-8F6A-F1E4492E3EA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNS.Infrastructure", "FNS.Infrastructure\FNS.Infrastructure.csproj", "{E3C1A8CF-0210-4A83-8F6A-F1E4492E3EA8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{97C8D422-3185-4D7E-BFD5-9C28DEC668AA} = {97C8D422-3185-4D7E-BFD5-9C28DEC668AA}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

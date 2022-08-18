@@ -86,11 +86,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Programming Training\\ASP.NET Core\\FNS\\FNS.Domain\\FNS.Domain.csproj",
+      "projectUniqueName": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Projects\\P4-ComputerStore-monorepo\\server\\FNS.Domain\\FNS.Domain.csproj",
       "projectName": "FNS.Domain",
-      "projectPath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Programming Training\\ASP.NET Core\\FNS\\FNS.Domain\\FNS.Domain.csproj",
+      "projectPath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Projects\\P4-ComputerStore-monorepo\\server\\FNS.Domain\\FNS.Domain.csproj",
       "packagesPath": "C:\\Users\\burhi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Programming Training\\ASP.NET Core\\FNS\\FNS.Domain\\obj\\",
+      "outputPath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Projects\\P4-ComputerStore-monorepo\\server\\FNS.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

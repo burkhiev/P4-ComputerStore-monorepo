@@ -1,0 +1,17 @@
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\bin\Debug\net6.0\FNS.Infrastructure.deps.json
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\bin\Debug\net6.0\FNS.Infrastructure.runtimeconfig.json
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\bin\Debug\net6.0\FNS.Infrastructure.dll
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\bin\Debug\net6.0\FNS.Infrastructure.pdb
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\bin\Debug\net6.0\FNS.Domain.dll
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\bin\Debug\net6.0\FNS.Domain.pdb
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.AssemblyInfo.cs
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.csproj.CopyComplete
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.dll
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\refint\FNS.Infrastructure.dll
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.pdb
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\FNS.Infrastructure.genruntimeconfig.cache
+C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\server\FNS.Infrastructure\obj\Debug\net6.0\ref\FNS.Infrastructure.dll

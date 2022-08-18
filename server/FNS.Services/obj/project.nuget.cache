@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "PGF6lmkJBCWo7fOwfUq6FDhRFJZUtulzTrw7r2hUbueb8JsAbU6EtFzS7u5FcgmCOC+jTJUjR04gdPn/Kpl5Tg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Programming Training\\ASP.NET Core\\FNS\\FNS.Services\\FNS.Services.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\burhi\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
+    "C:\\Users\\burhi\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\burhi\\.nuget\\packages\\nodatime\\3.1.2\\nodatime.3.1.2.nupkg.sha512",
+    "C:\\Users\\burhi\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.7.1\\system.runtime.compilerservices.unsafe.4.7.1.nupkg.sha512"
+  ],
+  "logs": []
+}

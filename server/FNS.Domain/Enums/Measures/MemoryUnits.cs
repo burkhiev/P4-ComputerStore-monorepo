@@ -1,4 +1,4 @@
-﻿namespace FNS.Domain.Models.Measures
+﻿namespace FNS.Domain.Enums.Measures
 {
     public enum MemoryUnits
     {

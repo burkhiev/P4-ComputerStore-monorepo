@@ -6,7 +6,7 @@ namespace FNS.Services.Abstractions.Products
 {
     public interface IProductsService : IServiceBase<Product>
     {
-        AppOperationResult<IEnumerable<ProductDto>> GetProductsDtos();
+        AppOperationResult<IEnumerable<ProductDto>> GetAllProductsDtos();
         Task<AppOperationResult<ProductAdditionalInfoDto>> GetProductAdditionalInfoAsync(Guid id, CancellationToken ct = default);
     }
 }

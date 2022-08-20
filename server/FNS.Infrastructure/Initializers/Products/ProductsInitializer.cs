@@ -5,63 +5,72 @@ using NodaTime;
 
 namespace FNS.Infrastructure.Initializers.Products
 {
-    internal class ProductInitializer : IDataInitializer<Product>
+    internal class ProductsInitializer : IDataInitializer<Product>
     {
         private static readonly object _locker = new object();
         private static readonly IEnumerable<Product> _entities;
 
-        static ProductInitializer()
+        static ProductsInitializer()
         {
             var faker = new Faker();
 
             lock(_locker)
             {
+                if(_entities is not null)
+                {
+                    return;
+                }
+
+                string guidBasis = "00000000-0000-0000-0000-00000000000";
+                var subCategoryInit = new SubCategoriesInitializer();
+                var processorsSubCategory = subCategoryInit.Entities.FirstOrDefault(e => e.Name == "Процессоры");
+
+                if(processorsSubCategory is null)
+                {
+                    throw new InvalidDataException();
+                }
+
                 var entities = new List<Product>
                 {
                     new Product
                     {
-                        Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                        Id = Guid.Parse(guidBasis + "1"),
                         Name = "AMD Ryzen 5 3600 OEM",
-                        AddedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
+                        CreatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
                         Description = GetDescription(),
                         Price = 12_599,
-                        ProductCode = "1372637"
+                        ProductCode = "1372637",
+                        SubCategoryId = processorsSubCategory.Id
                     },
                     new Product
                     {
-                        Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                        Id = Guid.Parse(guidBasis + "2"),
                         Name = "AMD Ryzen 5 3600 BOX",
-                        AddedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
+                        CreatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
                         Description = GetDescription(),
                         Price = 12_899,
-                        ProductCode = "5059834"
+                        ProductCode = "5059834",
+                        SubCategoryId = processorsSubCategory.Id
                     },
                     new Product
                     {
-                        Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                        Id = Guid.Parse(guidBasis + "3"),
                         Name = "AMD Ryzen 5 PRO 4650G OEM",
-                        AddedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
+                        CreatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
                         Description = GetDescription(),
                         Price = 12_599,
-                        ProductCode = "1689358"
+                        ProductCode = "1689358",
+                        SubCategoryId = processorsSubCategory.Id
                     },
                     new Product
                     {
-                        Id = Guid.Parse("00000000-0000-0000-0000-000000000004"),
-                        Name = "AMD Ryzen 5 5600G OEM",
-                        AddedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
-                        Description = GetDescription(),
-                        Price = 14_899,
-                        ProductCode = "4819672"
-                    },
-                    new Product
-                    {
-                        Id = Guid.Parse("00000000-0000-0000-0000-000000000005"),
+                        Id = Guid.Parse(guidBasis + "4"),
                         Name = "AMD Ryzen 5 5600X OEM",
-                        AddedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
+                        CreatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
                         Description = GetDescription(),
                         Price = 16_199,
-                        ProductCode = "4721161"
+                        ProductCode = "4721161",
+                        SubCategoryId = processorsSubCategory.Id
                     },
                 };
 

@@ -1,8 +1,9 @@
 ﻿namespace FNS.Services.Dtos.Products
 {
-    public sealed record ProductDto(
-        Guid Id,
-        string Name,
-        decimal Price
-    ) : DtoBase;
+    public sealed class ProductDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+    }
 }

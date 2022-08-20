@@ -11,63 +11,52 @@ namespace FNS.Services.Mappers.Products
 
         static ProductMapperService()
         {
-            _mapperConfig = new MapperConfiguration(config =>
+            lock(_locker)
             {
-                CreateProductMaps(config);
-            });
-        }
-
-        public static IMapper Mapper
-        {
-            get
-            {
-                IMapper mapper;
-
-                lock(_locker)
+                if(_mapperConfig is not null)
                 {
-                    mapper = _mapperConfig.CreateMapper();
+                    return;
                 }
 
-                return mapper;
+                _mapperConfig = new MapperConfiguration(config =>
+                {
+                    CreateProductMaps(config);
+                });
             }
         }
+
+        public static IMapper Mapper => _mapperConfig.CreateMapper();
 
         public static MapperConfiguration MapperConfiguration => _mapperConfig;
 
         private static void CreateProductMaps(IMapperConfigurationExpression config)
         {
+            config.CreateMap<Product, ProductDto>();
+
             config.CreateProjection<Product, ProductDto>();
 
-            //config.CreateMap<Product, ProductAdditionalInfoDto>()
-            //    .ForMember(dest => dest.SpecificAttributes, opt => opt.MapFrom((src, dest) =>
-            //    {
-            //        var result = new Dictionary<string, object?>(src.ProductWithAttributeValues.Count);
+            config.CreateMap<Product, ProductAdditionalInfoDto>()
+                .ForMember(dest => dest.Attributes, opt => opt.Ignore());
 
-            //        foreach(var attr in src.ProductWithAttributeValues)
-            //        {
-            //            string key = attr.ProductAttribute.Name;
-            //            object? value = null;
+            //config.CreateMap<ProductAttributeValue, ProductAttributeValueDto>()
+            //    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.ProductAttribute.Name))
+            //    .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Value))
+            //    .ForMember(dest => dest.Measure, opt => opt.MapFrom(src => src.ProductAttribute.Measure))
+            //    .ForMember(dest => dest.TSType, opt => opt.MapFrom((src, dest) =>
+            //     {
+            //         string clrType = src.ProductAttribute.ClrType;
 
-            //            if(attr.ProductAttribute.Type == typeof(string).Name)
-            //            {
-            //                value = attr.Value;
-            //            }
-            //            else if(attr.ProductAttribute.Type == typeof(decimal).Name)
-            //            {
-            //                if(decimal.TryParse(attr.Value, out decimal digit))
-            //                {
-            //                    value = digit;
-            //                }
-            //            }
+            //         if(IsNumberTypeName(clrType))
+            //         {
+            //             return TypescriptTypeNames.Number;
+            //         }
+            //         else if(clrType.Equals(typeof(string).Name, StringComparison.OrdinalIgnoreCase))
+            //         {
+            //             return TypescriptTypeNames.String;
+            //         }
 
-            //            if(!result.TryAdd(key, value))
-            //            {
-            //                throw new InvalidOperationException("There is collision of the attribute names in the dictionary.");
-            //            }
-            //        }
-
-            //        return result;
-            //    }));
+            //         throw new NotImplementedException();
+            //     }));
         }
     }
 }

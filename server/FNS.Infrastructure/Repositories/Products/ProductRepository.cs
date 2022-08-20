@@ -1,54 +1,32 @@
 ﻿using FNS.Domain.Models.Products;
 using FNS.Domain.Repositories.Products;
-using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace FNS.Infrastructure.Repositories.Products
 {
-    internal class ProductRepository : IProductRepository
+    internal sealed class ProductRepository : RepositoryBase<Product>, IProductRepository
     {
-        private readonly AppDbContext _db;
-
         public ProductRepository(AppDbContext db)
+            : base(db)
         {
-            _db = db;
+            
         }
 
-        private AppDbContext Db => _db;
-
-        public async Task<Product> AddAsync(Product entity)
+        public async Task<Product?> FindWithIncludesAsync(Guid id, CancellationToken ct)
         {
-            var result = await Db.Products.AddAsync(entity);
-            return result.Entity;
-        }
+            var product = await FindByIdAsync(id, ct);
 
-        public async Task<Product?> FindAsync(Guid id, CancellationToken ct = default)
-        {
-            var result = await Db.Products.FindAsync(id, ct);
-            return result;
-        }
+            if(product is null)
+            {
+                return null;
+            }
 
-        public IQueryable<Product> FindByCondition(Expression<Func<Product, bool>> condition)
-        {
-            var result = Db.Products.Where(condition);
-            return result;
-        }
+            await Db.ProductAttributeValues.Where(x => x.ProductId == product.Id)
+                .Include(x => x.Product)
+                .Include(x => x.ProductAttribute)
+                .LoadAsync();
 
-        public IQueryable<Product> GetAll()
-        {
-            var result = Db.Products.AsQueryable();
-            return result;
-        }
-
-        public Product Remove(Product entity)
-        {
-            var result = Db.Products.Remove(entity);
-            return result.Entity;
-        }
-
-        public Product Update(Product entity)
-        {
-            var result = Db.Products.Update(entity);
-            return result.Entity;
+            return product;
         }
     }
 }

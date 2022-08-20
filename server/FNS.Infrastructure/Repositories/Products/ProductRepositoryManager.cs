@@ -2,23 +2,29 @@
 
 namespace FNS.Infrastructure.Repositories.Products
 {
-    internal class ProductRepositoryManager : IProductRepositoryManager
+    internal sealed class ProductRepositoryManager : IProductRepositoryManager
     {
         private readonly IProductRepository _productRepository;
-        private readonly IPriceRepository _priceRepository;
+        private readonly ISubCategoryRepository _subCategoryRepository;
+        private readonly IProductAttributeRepository _productAttributeRepository;
+        private readonly IProductAttributeValueRepository _productAttributeValueRepository;
 
         public ProductRepositoryManager(AppDbContext _db)
         {
             _productRepository = new ProductRepository(_db);
-            _priceRepository = new PriceRepository(_db);
+            _subCategoryRepository = new SubCategoryRepository(_db);
+            _productAttributeRepository = new ProductAttributeRepository(_db);
+            _productAttributeValueRepository = new ProductAttributeValueRepository(_db);
         }
 
         public IPriceRepository PriceRepository => throw new NotImplementedException();
 
-        public IProductAttributeRepository ProductAttributeRepository => throw new NotImplementedException();
+        public IProductAttributeRepository ProductAttributeRepository => _productAttributeRepository;
 
         public IProductRepository ProductRepository => _productRepository;
 
-        public IProductWithAttributeValuesRepository ProductWithAttributeValuesRepository => throw new NotImplementedException();
+        public IProductAttributeValueRepository ProductWithAttributeValuesRepository => _productAttributeValueRepository;
+
+        public ISubCategoryRepository SubCategoryRepository => _subCategoryRepository;
     }
 }

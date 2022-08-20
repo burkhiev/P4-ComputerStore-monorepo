@@ -1,5 +1,6 @@
-﻿using FNS.Domain.Models.Measures;
+﻿using FNS.Domain.Enums.Measures;
 using FNS.Domain.Models.Products;
+using FNS.Infrastructure.Abstractions;
 using FNS.Infrastructure.Initializers.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -8,27 +9,48 @@ using System.Linq.Expressions;
 
 namespace FNS.Infrastructure.Configurations.Products
 {
-    internal class ProductAttributesConfiguration : IEntityTypeConfiguration<ProductAttribute>
+    internal class ProductAttributesConfiguration : IAppEntityTypeConfiguration<ProductAttribute>
     {
         public const int MaxNameLength = 100;
+        public const int MaxMeasureLength = 50;
 
         public void Configure(EntityTypeBuilder<ProductAttribute> builder)
         {
-            builder.UseXminAsConcurrencyToken();
+            SharedConfigureActions(builder);
 
-            builder.HasKey(x => x.Id);
             builder.Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(MaxNameLength);
-            builder.Property(p => p.Measure); // TODO: .HasConversion(LengthUnitsConverter.Converter);
+
+            builder.Property(p => p.Measure)
+                .HasMaxLength(MaxMeasureLength);
+
             builder.Property(p => p.ClrType)
                 .IsRequired();
-            //builder.Property(p => p.AddedAt)
-            //    .IsRequired()
-            //    .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            var init = new ProductAttributeInitializer();
+            var init = new ProductAttributesInitializer();
             builder.HasData(init.Entities);
+        }
+
+        public void SharedConfigureActions(EntityTypeBuilder<ProductAttribute> builder)
+        {
+            builder.UseXminAsConcurrencyToken();
+
+            builder.HasKey(p => p.Id);
+
+            builder.Property(p => p.Tumbstone)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            builder.Property(p => p.CreatedAt)
+                .IsRequired()
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            builder.Property(p => p.UpdatedAt)
+                .IsRequired()
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         }
 
         /// <summary>

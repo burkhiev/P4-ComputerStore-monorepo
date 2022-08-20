@@ -1,5 +1,7 @@
-﻿using FNS.Services.Abstractions;
+﻿using FNS.Domain.Utilities.OperationResults;
+using FNS.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 
 namespace FNS.Presentation.Controllers
 {
@@ -21,7 +23,7 @@ namespace FNS.Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllProducts()
         {
-            var result = RootService.ProductsService.GetProductsDtos();
+            var result = RootService.ProductsService.GetAllProductsDtos();
 
             if(result.IsFaulted)
             {
@@ -32,6 +34,8 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
         public async Task<IActionResult> GetAdditionalProductInfo(Guid id)
         {
             var result = await RootService.ProductsService.GetProductAdditionalInfoAsync(id);

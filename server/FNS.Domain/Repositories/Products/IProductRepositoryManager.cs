@@ -2,9 +2,10 @@
 {
     public interface IProductRepositoryManager
     {
-        IPriceRepository PriceRepository { get; }
-        IProductAttributeRepository ProductAttributeRepository { get; }
         IProductRepository ProductRepository { get; }
-        IProductWithAttributeValuesRepository ProductWithAttributeValuesRepository { get; }
+        IProductAttributeRepository ProductAttributeRepository { get; }
+        IProductAttributeValueRepository ProductWithAttributeValuesRepository { get; }
+        IPriceRepository PriceRepository { get; }
+        ISubCategoryRepository SubCategoryRepository { get; }
     }
 }

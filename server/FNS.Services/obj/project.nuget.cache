@@ -1,13 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "PQU8wgFKBHdbAwOd10Gu8z47bw8UjpcapaxXmFsFAzUNRJjnsD6Vnigj+QSvQ0SOMGmSU0AkIFfTpHQMgLRF1A==",
+  "dgSpecHash": "ev8eYT6oGQ3GLcV7KNSzwm7ggwvvGwcUTrqfWC72Jo0rySb9HlTJKZXF+1MMZ37PJG9F9s3lFTk5pim8Ywq7dw==",
   "success": true,
   "projectFilePath": "C:\\Users\\burhi\\OneDrive\\Рабочий стол\\Projects\\P4-ComputerStore-monorepo\\server\\FNS.Services\\FNS.Services.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\burhi\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
+    "C:\\Users\\burhi\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
+    "C:\\Users\\burhi\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.2.0\\microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
     "C:\\Users\\burhi\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\burhi\\.nuget\\packages\\microsoft.extensions.primitives\\2.2.0\\microsoft.extensions.primitives.2.2.0.nupkg.sha512",
     "C:\\Users\\burhi\\.nuget\\packages\\nodatime\\3.1.2\\nodatime.3.1.2.nupkg.sha512",
-    "C:\\Users\\burhi\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.7.1\\system.runtime.compilerservices.unsafe.4.7.1.nupkg.sha512"
+    "C:\\Users\\burhi\\.nuget\\packages\\system.memory\\4.5.1\\system.memory.4.5.1.nupkg.sha512",
+    "C:\\Users\\burhi\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.7.1\\system.runtime.compilerservices.unsafe.4.7.1.nupkg.sha512",
+    "C:\\Users\\burhi\\.nuget\\packages\\system.text.encodings.web\\4.5.0\\system.text.encodings.web.4.5.0.nupkg.sha512"
   ],
   "logs": []
 }

@@ -1,28 +1,46 @@
 ﻿using FNS.Domain.Models.Products;
-using FNS.Infrastructure.Initializers;
+using FNS.Infrastructure.Abstractions;
+using FNS.Infrastructure.Initializers.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FNS.Infrastructure.Configurations.Products
 {
-    internal sealed class SubCategoryConfiguration : IEntityTypeConfiguration<SubCategory>
+    internal sealed class SubCategoryConfiguration : IAppEntityTypeConfiguration<SubCategory>
     {
         public const int MaxNameLength = 100;
 
         public void Configure(EntityTypeBuilder<SubCategory> builder)
         {
-            builder.UseXminAsConcurrencyToken();
+            SharedConfigureActions(builder);
 
-            //builder.HasKey(x => x.Id);
             builder.Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(MaxNameLength);
-            //builder.Property(p => p.AddedAt)
-            //    .IsRequired()
-            //    .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            var init = new InitializedDataRepository();
-            builder.HasData(init.SubCategories);
+            var init = new SubCategoriesInitializer();
+            builder.HasData(init.Entities);
+        }
+
+        public void SharedConfigureActions(EntityTypeBuilder<SubCategory> builder)
+        {
+            builder.UseXminAsConcurrencyToken();
+
+            builder.HasKey(p => p.Id);
+
+            builder.Property(p => p.Tumbstone)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            builder.Property(p => p.CreatedAt)
+                .IsRequired()
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            builder.Property(p => p.UpdatedAt)
+                .IsRequired()
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         }
     }
 }

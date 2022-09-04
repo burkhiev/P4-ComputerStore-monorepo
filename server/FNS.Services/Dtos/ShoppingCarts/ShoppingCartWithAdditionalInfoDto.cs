@@ -2,8 +2,9 @@
 
 namespace FNS.Services.Dtos.ShoppingCarts
 {
-    public sealed class ShoppingCartWithAdditionalInfoDto : DtoBase
+    public sealed class ShoppingCartWithAdditionalInfoDto
     {
+        public string Id { get; set; }
         public uint ConcurrencyToken { get; set; }
         public string UserId { get; set; }
         public List<ShoppingCartItemDto> ShoppingCartItems { get; set; }

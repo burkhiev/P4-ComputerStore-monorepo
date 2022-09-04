@@ -19,7 +19,6 @@ namespace FNS.Services.Mappers.Balances
         {
             config.CreateMap<ProductBalance, ProductBalanceDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.GetType().Name))
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
         }

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FNS.Domain.Models.Products;
 using FNS.Services.Dtos.Products;
-using FNS.Services.Mappers.Consts;
 
 namespace FNS.Services.Mappers.Products
 {
@@ -19,19 +18,17 @@ namespace FNS.Services.Mappers.Products
         private void Configure(IMapperConfigurationExpression config)
         {
             config.CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.GetType().Name));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             config.CreateMap<Product, ProductWithAdditionalInfoDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.GetType().Name))
                 .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.ConcurrencyToken))
                 .ForMember(dest => dest.AdditionalAttributes, opt => opt.MapFrom((src, dest) =>
                 {
                     var attrs = new Dictionary<string, dynamic?>();
                     var attrValues = src.ProductAttributeValues;
 
-                    attrs.Add(AppMappersConsts.ConcurrencyTokenAttributeName, src.ConcurrencyToken);
+                    attrs.Add(nameof(src.ConcurrencyToken), src.ConcurrencyToken);
 
                     foreach(var attrValue in attrValues)
                     {

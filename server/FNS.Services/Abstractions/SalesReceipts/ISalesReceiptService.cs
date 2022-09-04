@@ -8,5 +8,6 @@ namespace FNS.Services.Abstractions.SalesReceipts
     {
         AppOpResult<IEnumerable<SalesReceiptDto>> GetAll();
         Task<AppOpResult<SalesReceiptWithAdditionalInfoDto>> GetWithAdditionalAsync(string id, CancellationToken ct = default);
+        Task<AppOpResult<SaleSuccessResultDto>> MakeSaleAsync(SaleDto saleInfo);
     }
 }

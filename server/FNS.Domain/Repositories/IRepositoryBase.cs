@@ -10,6 +10,7 @@ namespace FNS.Domain.Repositories
         IQueryable<T> FindByCondition(Expression<Func<T, bool>> condition);
         Task<T> AddAsync(T value);
         T Update(T value);
+        IEnumerable<T> UpdateMany(IEnumerable<T> values);
         T Remove(T value);
         Task LoadCollectionsAsync(T entity, CancellationToken ct = default, params Expression<Func<T, IEnumerable<object>>>[] collectionPropExp);
         Task LoadReferencesAsync(T entity, CancellationToken ct = default, params Expression<Func<T, object?>>[] collectionPropExp);

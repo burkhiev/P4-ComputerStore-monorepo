@@ -46,6 +46,12 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
             return result.Entity;
         }
 
+        public IEnumerable<T> UpdateMany(IEnumerable<T> values)
+        {
+            Db.Set<T>().UpdateRange(values);
+            return values;
+        }
+
         public T Remove(T value)
         {
             var result = Db.Set<T>().Remove(value);

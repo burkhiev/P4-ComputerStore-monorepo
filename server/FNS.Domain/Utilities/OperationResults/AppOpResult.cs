@@ -11,16 +11,16 @@ namespace FNS.Domain.Utilities.OperationResults
 
         public AppOpResult(TSucceededResult succeedResult)
         {
-            Result = succeedResult;
+            SuceedResult = succeedResult;
         }
 
-        [MemberNotNullWhen(true, nameof(ProblemDetails))]
-        public bool IsFaulted => ProblemDetails is not null;
+        [MemberNotNullWhen(true, nameof(FaultResult))]
+        public bool IsFaulted => FaultResult is not null;
 
-        public bool IsSucceeded => ProblemDetails is null;
+        public bool IsSucceeded => FaultResult is null;
 
-        public AppProblemDetails? ProblemDetails { get; set; }
+        public AppProblemDetails? FaultResult { get; set; }
 
-        public TSucceededResult? Result { get; set; }
+        public TSucceededResult? SuceedResult { get; set; }
     }
 }

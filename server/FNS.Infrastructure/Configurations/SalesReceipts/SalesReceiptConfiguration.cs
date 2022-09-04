@@ -29,8 +29,7 @@ namespace FNS.Infrastructure.Configurations.SalesReceipts
                 .HasForeignKey<SalesReceipt>(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            var init = new SalesReceiptInitializer();
-            builder.HasData(init.Entities);
+            builder.HasData(new SalesReceiptInitializer().Entities);
         }
     }
 }

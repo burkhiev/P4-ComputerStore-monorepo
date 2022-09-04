@@ -1,29 +1,30 @@
 ﻿using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions;
+using FNS.Services.Dtos.Balances;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
 namespace FNS.Presentation.Controllers
 {
-    [Route("api/products")]
     [ApiController]
+    [Route("api/products/balance")]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public sealed class ProductsController : ControllerBase
+    public sealed class ProductsBalanceController : ControllerBase
     {
         private readonly IRootService _rootService;
 
-        public ProductsController(IRootService rootService)
+        public ProductsBalanceController(IRootService rootService)
         {
             _rootService = rootService;
         }
 
-        private IRootService RootService => _rootService;
+        public IRootService RootService => _rootService;
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllProducts()
+        public IActionResult GetAll()
         {
-            var result = RootService.ProductsService.GetAllProducts();
+            var result = RootService.ProductsBalanceService.GetAll();
 
             if(result.IsFaulted)
             {
@@ -33,26 +34,29 @@ namespace FNS.Presentation.Controllers
             return Ok(result.SuceedResult);
         }
 
-        [HttpGet("sub-category/{subCategoryId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetProductsByCategoryId([Bind("subCategoryId")] string subCategoryId)
-        {
-            var result = RootService.ProductsService.GetProductsBySubCategoryId(subCategoryId);
-
-            if(result.IsFaulted)
-            {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
-            }
-
-            return Ok(result.SuceedResult);
-        }
-
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet]
+        [ProducesResponseType(typeof(ProductBalanceDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> GetAdditionalProductInfo([Bind("id")] string id)
+        [Route("{id}")]
+        public async Task<IActionResult> GetByIdAsync([Bind("id")] string id)
         {
-            var result = await RootService.ProductsService.GetProductWithAdditionalInfoByIdAsync(id);
+            var result = await RootService.ProductsBalanceService.GetByIdAsync(id);
+
+            if(result.IsFaulted)
+            {
+                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+            }
+
+            return Ok(result.SuceedResult);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<ProductBalanceDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
+        [Route("prod-id/{productId}")]
+        public async Task<IActionResult> GetByIdProductIdAsync([Bind("productId")] string productId)
+        {
+            var result = await RootService.ProductsBalanceService.GetByProductIdAsync(productId);
 
             if(result.IsFaulted)
             {

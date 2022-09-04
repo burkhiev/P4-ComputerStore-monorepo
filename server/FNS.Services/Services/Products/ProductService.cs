@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using FNS.Domain.Models.Products;
 using FNS.Domain.Repositories;
-using FNS.Domain.Utilities;
 using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions.Products;
 using FNS.Services.Dtos.Products;
-using FNS.Services.Mappers;
+using FNS.Services.Mappers.Products;
 using Microsoft.AspNetCore.Http;
 
 namespace FNS.Services.Services.Products
@@ -68,7 +67,7 @@ namespace FNS.Services.Services.Products
         {
             public ProductNotFoundOpResult() : base()
             {
-                ProblemDetails = new AppProblemDetails
+                FaultResult = new AppProblemDetails
                 {
                     Title = "Product not found.",
                     Detail = "Product with specified Id is not found.",

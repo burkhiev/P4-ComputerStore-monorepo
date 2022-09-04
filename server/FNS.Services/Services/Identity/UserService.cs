@@ -54,7 +54,7 @@ namespace FNS.Services.Services.Identity
         {
             public UserNotFoundResult()
             {
-                ProblemDetails = new AppProblemDetails
+                FaultResult = new AppProblemDetails
                 {
                     Title = $"{typeof(User).Name} not found",
                     Detail = $"{typeof(User).Name} with specified Id is not found",

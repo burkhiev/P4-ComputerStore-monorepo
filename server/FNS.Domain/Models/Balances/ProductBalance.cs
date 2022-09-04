@@ -1,6 +1,8 @@
-﻿namespace FNS.Domain.Models.Products
+﻿using FNS.Domain.Models.Products;
+
+namespace FNS.Domain.Models.Balances
 {
-    public class BalanceTable : EntityBase, IEntityBase
+    public class ProductBalance : EntityBase
     {
         public string ProductId { get; set; }
         public Product Product { get; set; }

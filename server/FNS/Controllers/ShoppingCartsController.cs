@@ -25,7 +25,7 @@ namespace FNS.Presentation.Controllers
         public IActionResult GetAllCarts()
         {
             var result = RootService.ShoppingCartService.GetAll();
-            return Ok(result.Result);
+            return Ok(result.SuceedResult);
         }
 
         [HttpGet("{id}")]
@@ -37,10 +37,10 @@ namespace FNS.Presentation.Controllers
 
             if(result.IsFaulted)
             {
-                return StatusCode(result.ProblemDetails.StatusCode, result.ProblemDetails);
+                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
 
-            return Ok(result.Result);
+            return Ok(result.SuceedResult);
         }
 
         [HttpGet("user/{userId}")]
@@ -52,10 +52,10 @@ namespace FNS.Presentation.Controllers
 
             if(result.IsFaulted)
             {
-                return StatusCode(result.ProblemDetails.StatusCode, result.ProblemDetails);
+                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
 
-            return Ok(result.Result);
+            return Ok(result.SuceedResult);
         }
     }
 }

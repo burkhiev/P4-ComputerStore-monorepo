@@ -2,11 +2,10 @@
 using FNS.Domain.Models.Products;
 using FNS.Services.Dtos.Products;
 using FNS.Services.Mappers.Consts;
-using FNS.Services.Mappers.Products;
 
-namespace FNS.Services.Mappers
+namespace FNS.Services.Mappers.Products
 {
-    internal sealed class ProductMapperConfiguration : IMapperCongurationBase
+    internal sealed class ProductMapperConfiguration : IBaseMapperConguration
     {
         private readonly MapperConfiguration _mapperConfig;
 

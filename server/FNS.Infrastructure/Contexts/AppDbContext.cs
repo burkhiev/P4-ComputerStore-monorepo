@@ -1,4 +1,5 @@
-﻿using FNS.Domain.Models.Identity;
+﻿using FNS.Domain.Models.Balances;
+using FNS.Domain.Models.Identity;
 using FNS.Domain.Models.Products;
 using FNS.Domain.Models.SalesReceipts;
 using FNS.Domain.Models.ShoppingCarts;
@@ -23,6 +24,7 @@ namespace FNS.Contexts.Infrastructure
         public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
         public DbSet<SalesReceipt> SalesReceipts { get; set; }
         public DbSet<SalesReceiptWithProduct> SalesReceiptsWithProducts { get; set; }
+        public DbSet<ProductBalance> ProductBalances { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

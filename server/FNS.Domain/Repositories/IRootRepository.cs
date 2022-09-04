@@ -1,4 +1,4 @@
-﻿using FNS.Domain.Models.SalesReceipts;
+﻿using FNS.Domain.Repositories.Balances;
 using FNS.Domain.Repositories.Identity;
 using FNS.Domain.Repositories.Products;
 using FNS.Domain.Repositories.SalesReceipts;
@@ -17,5 +17,6 @@ namespace FNS.Domain.Repositories
         IShoppingCartRepository ShoppingCartRepository { get; }
         ISalesReceiptRepository SalesReceiptRepository { get; }
         ISalesReceiptWithProductRepository SalesReceiptWithProductRepository { get; }
+        IProductBalanceRepository ProductBalanceRepository { get; }
     }
 }

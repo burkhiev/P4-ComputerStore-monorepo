@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using FNS.Domain.Models.ShoppingCarts;
-using FNS.Services.Dtos.Identity;
 using FNS.Services.Dtos.Products;
 using FNS.Services.Dtos.ShoppingCarts;
-using FNS.Services.Mappers.Identity;
 using FNS.Services.Mappers.Products;
 
 namespace FNS.Services.Mappers.ShoppingCarts
 {
-    internal sealed class ShoppingCartConfiguration : IMapperCongurationBase
+    internal sealed class ShoppingCartConfiguration : IBaseMapperConguration
     {
 
         private readonly MapperConfiguration _mapperConfig;

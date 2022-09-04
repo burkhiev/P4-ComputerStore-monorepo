@@ -55,7 +55,7 @@ namespace FNS.Services.Services.Sales
         {
             public SalesReceiptNotFoundResult()
             {
-                ProblemDetails = new AppProblemDetails
+                FaultResult = new AppProblemDetails
                 {
                     Title = $"{typeof(SalesReceipt).Name} not found",
                     Detail = $"{typeof(SalesReceipt).Name} with specified Id is not found",

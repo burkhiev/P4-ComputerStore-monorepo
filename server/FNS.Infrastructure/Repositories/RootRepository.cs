@@ -8,6 +8,8 @@ using FNS.Domain.Repositories.Identity;
 using FNS.Infrastructure.Repositories.Identity;
 using FNS.Domain.Repositories.SalesReceipts;
 using FNS.Infrastructure.Repositories.SalesReceipts;
+using FNS.Domain.Repositories.Balances;
+using FNS.Infrastructure.Repositories.Balances;
 
 namespace FNS.ContextsInfrastructure.Repositories
 {
@@ -23,6 +25,7 @@ namespace FNS.ContextsInfrastructure.Repositories
         private readonly Lazy<IShoppingCartItemsRepository> _shoppingCartItemsRepository;
         private readonly Lazy<ISalesReceiptRepository> _salesReceiptRepository;
         private readonly Lazy<ISalesReceiptWithProductRepository> _salesReceiptWithProductRepository;
+        private readonly Lazy<IProductBalanceRepository> _productBalanceRepository;
 
         public RootRepository(AppDbContext db)
         {
@@ -36,6 +39,7 @@ namespace FNS.ContextsInfrastructure.Repositories
             _shoppingCartItemsRepository = new Lazy<IShoppingCartItemsRepository>(() => new ShoppingCartItemsRepository(_db));
             _salesReceiptRepository = new Lazy<ISalesReceiptRepository>(() => new SalesReceiptRepository(_db));
             _salesReceiptWithProductRepository = new Lazy<ISalesReceiptWithProductRepository>(() => new SalesReceiptWithProductRepository(_db));
+            _productBalanceRepository = new Lazy<IProductBalanceRepository>(() => new ProductBalancesRepository(_db));
         }
 
         public AppDbContext Db => _db;
@@ -57,6 +61,8 @@ namespace FNS.ContextsInfrastructure.Repositories
         public ISalesReceiptRepository SalesReceiptRepository => _salesReceiptRepository.Value;
 
         public ISalesReceiptWithProductRepository SalesReceiptWithProductRepository => _salesReceiptWithProductRepository.Value;
+
+        public IProductBalanceRepository ProductBalanceRepository => _productBalanceRepository.Value;
 
         public async Task<int> SaveChangesAsync(CancellationToken ct = default)
         {

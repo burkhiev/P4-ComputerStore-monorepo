@@ -81,7 +81,7 @@ namespace FNS.Services.Services.ShoppingCarts
         {
             public ShoppingCartNotFoundByUserIdResult()
             {
-                ProblemDetails = new AppProblemDetails
+                FaultResult = new AppProblemDetails
                 {
                     Title = "ShoppingCart not found",
                     Detail = $"ShoppingCart with specified userId is not found.",
@@ -94,7 +94,7 @@ namespace FNS.Services.Services.ShoppingCarts
         {
             public ShoppingCartNotFoundResult()
             {
-                ProblemDetails = new AppProblemDetails
+                FaultResult = new AppProblemDetails
                 {
                     Title = "ShoppingCart not found",
                     Detail = $"ShoppingCart with specified Id is not found.",

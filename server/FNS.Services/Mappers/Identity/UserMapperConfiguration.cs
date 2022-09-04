@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using FNS.Domain.Models.Identity;
 using FNS.Services.Dtos.Identity;
-using FNS.Services.Mappers.Products;
 
 namespace FNS.Services.Mappers.Identity
 {
-    internal sealed class UserMapperConfiguration : IMapperCongurationBase
+    internal sealed class UserMapperConfiguration : IBaseMapperConguration
     {
         private readonly MapperConfiguration _mapperConfiguration;
 

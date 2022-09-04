@@ -6,7 +6,7 @@ using FNS.Services.Mappers.Products;
 
 namespace FNS.Services.Mappers.SalesReceipts
 {
-    internal sealed class SalesReceiptsMapperConfiguration : IMapperCongurationBase
+    internal sealed class SalesReceiptsMapperConfiguration : IBaseMapperConguration
     {
         private readonly MapperConfiguration _mapperConfiguration;
 

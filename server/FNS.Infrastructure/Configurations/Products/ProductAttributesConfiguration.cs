@@ -1,22 +1,22 @@
 ﻿using FNS.Domain.Enums.Measures;
 using FNS.Domain.Models.Products;
-using FNS.Infrastructure.Abstractions;
-using FNS.Infrastructure.Initializers.Products;
-using Microsoft.EntityFrameworkCore;
+using FNS.ContextsInfrastructure.Initializers.Products;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Linq.Expressions;
+using FNS.Infrastructure.Configurations;
+using Microsoft.EntityFrameworkCore;
 
-namespace FNS.Infrastructure.Configurations.Products
+namespace FNS.ContextsInfrastructure.Configurations.Products
 {
-    internal class ProductAttributesConfiguration : IAppEntityTypeConfiguration<ProductAttribute>
+    internal sealed class ProductAttributesConfiguration : IEntityTypeConfiguration<ProductAttribute>
     {
         public const int MaxNameLength = 100;
         public const int MaxMeasureLength = 50;
 
         public void Configure(EntityTypeBuilder<ProductAttribute> builder)
         {
-            SharedConfigureActions(builder);
+            EntityBaseConfigurator.ConfigureDefault(builder);
 
             builder.Property(p => p.Name)
                 .IsRequired()
@@ -30,27 +30,6 @@ namespace FNS.Infrastructure.Configurations.Products
 
             var init = new ProductAttributesInitializer();
             builder.HasData(init.Entities);
-        }
-
-        public void SharedConfigureActions(EntityTypeBuilder<ProductAttribute> builder)
-        {
-            builder.UseXminAsConcurrencyToken();
-
-            builder.HasKey(p => p.Id);
-
-            builder.Property(p => p.Tumbstone)
-                .IsRequired()
-                .HasDefaultValue(false);
-
-            builder.Property(p => p.CreatedAt)
-                .IsRequired()
-                .ValueGeneratedOnAdd()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            builder.Property(p => p.UpdatedAt)
-                .IsRequired()
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         }
 
         /// <summary>

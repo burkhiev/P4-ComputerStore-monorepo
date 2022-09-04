@@ -1,12 +1,13 @@
-﻿using FNS.Domain.Models;
+﻿using FNS.Contexts.Infrastructure;
+using FNS.Domain.Models;
 using FNS.Domain.Repositories;
 using System.Linq.Expressions;
 
-namespace FNS.Infrastructure.Repositories.Products
+namespace FNS.ContextsInfrastructure.Repositories.Products
 {
-    public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : EntityBase, new()
+    internal abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IEntityBase, new()
     {
-        private readonly AppDbContext _db;
+        protected readonly AppDbContext _db;
 
         public RepositoryBase(AppDbContext db)
         {
@@ -21,7 +22,7 @@ namespace FNS.Infrastructure.Repositories.Products
             return result.Entity;
         }
 
-        public async Task<T?> FindByIdAsync(Guid id, CancellationToken ct = default)
+        public async Task<T?> FindByIdAsync(string id, CancellationToken ct = default)
         {
             var result = await Db.Set<T>().FindAsync(new object[] { id }, ct);
             return result;
@@ -47,21 +48,24 @@ namespace FNS.Infrastructure.Repositories.Products
 
         public T Remove(T value)
         {
-            var entity = Db.Set<T>().Find(value.Id);
-
-            if(entity is null)
-            {
-                return value;
-            }
-
-            entity.Tumbstone = true;
-            return entity;
-        }
-
-        public T RemovePermanently(T value)
-        {
             var result = Db.Set<T>().Remove(value);
             return result.Entity;
+        }
+
+        public async Task LoadCollectionsAsync(T entity, CancellationToken ct = default, params Expression<Func<T, IEnumerable<object>>>[] expressions)
+        {
+            foreach(var exp in expressions)
+            {
+                await Db.Entry(entity).Collection(exp).LoadAsync(ct);
+            }
+        }
+
+        public async Task LoadReferencesAsync(T entity, CancellationToken ct = default, params Expression<Func<T, object?>>[] expressions)
+        {
+            foreach(var exp in expressions)
+            {
+                await Db.Entry(entity).Reference(exp).LoadAsync(ct);
+            }
         }
     }
 }

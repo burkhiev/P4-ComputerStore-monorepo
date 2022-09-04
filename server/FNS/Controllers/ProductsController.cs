@@ -5,7 +5,7 @@ using System.Net.Mime;
 
 namespace FNS.Presentation.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/products")]
     [ApiController]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public sealed class ProductsController : ControllerBase
@@ -23,29 +23,43 @@ namespace FNS.Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllProducts()
         {
-            var result = RootService.ProductsService.GetAllProductsDtos();
+            var result = RootService.ProductsService.GetAllProducts();
 
             if(result.IsFaulted)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.ProblemDetails.StatusCode, result.ProblemDetails);
             }
 
-            return Ok(result.SucceedResult);
+            return Ok(result.Result);
+        }
+
+        [HttpGet("sub-category/{subCategoryId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProductsByCategoryId([Bind("subCategoryId")] string subCategoryId)
+        {
+            var result = RootService.ProductsService.GetProductsBySubCategoryId(subCategoryId);
+
+            if(result.IsFaulted)
+            {
+                return StatusCode(result.ProblemDetails.StatusCode, result.ProblemDetails);
+            }
+
+            return Ok(result.Result);
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> GetAdditionalProductInfo(Guid id)
+        public async Task<IActionResult> GetAdditionalProductInfo([Bind("id")] string id)
         {
-            var result = await RootService.ProductsService.GetProductAdditionalInfoAsync(id);
+            var result = await RootService.ProductsService.GetProductWithAdditionalInfoByIdAsync(id);
 
             if(result.IsFaulted)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.ProblemDetails.StatusCode, result.ProblemDetails);
             }
 
-            return Ok(result.SucceedResult);
+            return Ok(result.Result);
         }
     }
 }

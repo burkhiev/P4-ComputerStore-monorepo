@@ -1,103 +1,74 @@
 ﻿using AutoMapper;
+using FNS.Domain.Models.Products;
 using FNS.Domain.Repositories;
+using FNS.Domain.Utilities;
 using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions.Products;
 using FNS.Services.Dtos.Products;
-using FNS.Services.Mappers.Products;
+using FNS.Services.Mappers;
 using Microsoft.AspNetCore.Http;
-using System.Dynamic;
 
 namespace FNS.Services.Services.Products
 {
-    public sealed class ProductService : IProductsService
+    internal sealed class ProductService : IProductsService
     {
         private readonly IRootRepository _rootRepository;
-        private readonly IMapper _mapper;
+        private readonly ProductMapperConfiguration _mapperConfig;
 
         public ProductService(IRootRepository rootRepository)
         {
             _rootRepository = rootRepository;
-            _mapper = ProductMapperService.Mapper;
+            _mapperConfig = new ProductMapperConfiguration();
         }
 
         private IRootRepository RootRepository => _rootRepository;
 
-        public AppOperationResult<IEnumerable<ProductDto>> GetAllProductsDtos()
-        {
-            var products = RootRepository.ProductRepositoryManager.ProductRepository.GetAll();
-            var productsDtos = _mapper.ProjectTo<ProductDto>(products);
+        private IMapper Mapper => _mapperConfig.Mapper;
 
-            var result = new AppOperationResult<IEnumerable<ProductDto>>(productsDtos);
+        [Obsolete("For debugging")]
+        public AppOpResult<IEnumerable<ProductDto>> GetAllProducts()
+        {
+            var products = RootRepository.ProductRepository.GetAll().ToArray();
+            var productsDtos = Mapper.Map<IEnumerable<ProductDto>>(products);
+
+            var result = new AppOpResult<IEnumerable<ProductDto>>(productsDtos);
             return result;
         }
 
-        public async Task<AppOperationResult<ProductAdditionalInfoDto>> GetProductAdditionalInfoAsync(Guid id, CancellationToken ct = default)
+        public AppOpResult<IEnumerable<ProductDto>> GetProductsBySubCategoryId(string subCategoryId)
         {
-            var product = await RootRepository.ProductRepositoryManager.ProductRepository.FindWithIncludesAsync(id, ct);
+            var products = RootRepository.ProductRepository
+                .FindByCondition(product => product.SubCategoryId == subCategoryId);
+            var productsDtos = Mapper.Map<IEnumerable<ProductDto>>(products);
+
+            var result = new AppOpResult<IEnumerable<ProductDto>>(productsDtos);
+            return result;
+        }
+
+        public async Task<AppOpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id, CancellationToken ct = default)
+        {
+            var product = await RootRepository.ProductRepository.FindByIdAsync(id, ct);
 
             if(product is null)
             {
-                var errResult = new ProductNotFoundOperationResult();
+                var errResult = new ProductNotFoundOpResult();
                 return errResult;
             }
 
-            var additionalInfo = _mapper.Map<ProductAdditionalInfoDto>(product);
-            dynamic[] resultAttrValues = new ExpandoObject[product.ProductAttributeValues.Count];
+            await RootRepository.ProductRepository.LoadAttributesAndTheirValuesAsync(product, ct);
 
-            for(int i = 0; i < product.ProductAttributeValues.Count; i++)
-            {
-                var attrValue = product.ProductAttributeValues[i];
-                var attribute = attrValue.ProductAttribute;
-
-                resultAttrValues[i] = new ExpandoObject();
-                resultAttrValues[i].Name = attrValue.ProductAttribute.Name;
-
-                if(attribute.Measure is not null)
-                {
-                    resultAttrValues[i].Measure = attribute.Measure;
-                }
-
-                if(attrValue.Value is null)
-                {
-                    resultAttrValues[i].Value = null;
-                }
-                else if(attribute.ClrType.Equals(typeof(string).Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    resultAttrValues[i].Value = attrValue.Value;
-                }
-                else if(attribute.ClrType.Equals(typeof(int).Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    resultAttrValues[i].Value = int.Parse(attrValue.Value);
-                }
-                else if(attribute.ClrType.Equals(typeof(float).Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    resultAttrValues[i].Value = float.Parse(attrValue.Value);
-                }
-                else if(attribute.ClrType.Equals(typeof(double).Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    resultAttrValues[i].Value = double.Parse(attrValue.Value);
-                }
-                else if(attribute.ClrType.Equals(typeof(decimal).Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    resultAttrValues[i].Value = decimal.Parse(attrValue.Value);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            additionalInfo.Attributes = resultAttrValues;
-            var result = new AppOperationResult<ProductAdditionalInfoDto>(additionalInfo);
+            var dto = Mapper.Map<Product, ProductWithAdditionalInfoDto>(product);
+            var result = new AppOpResult<ProductWithAdditionalInfoDto>(dto);
 
             return result;
         }
+        
 
-        private sealed class ProductNotFoundOperationResult : AppOperationResult<ProductAdditionalInfoDto>
+        private sealed class ProductNotFoundOpResult : AppOpResult<ProductWithAdditionalInfoDto>
         {
-            public ProductNotFoundOperationResult() : base()
+            public ProductNotFoundOpResult() : base()
             {
-                FaultResult = new AppProblemDetails
+                ProblemDetails = new AppProblemDetails
                 {
                     Title = "Product not found.",
                     Detail = "Product with specified Id is not found.",

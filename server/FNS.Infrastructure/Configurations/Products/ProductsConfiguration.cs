@@ -1,12 +1,12 @@
 ﻿using FNS.Domain.Models.Products;
-using FNS.Infrastructure.Abstractions;
-using FNS.Infrastructure.Initializers.Products;
+using FNS.ContextsInfrastructure.Initializers.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using FNS.Infrastructure.Configurations;
 
-namespace FNS.Infrastructure.Configurations.Products
+namespace FNS.ContextsInfrastructure.Configurations.Products
 {
-    internal sealed class ProductsConfiguration : IAppEntityTypeConfiguration<Product>
+    internal sealed class ProductsConfiguration : IEntityTypeConfiguration<Product>
     {
         public const int MaxNameLength = 200;
         public const int MaxDescriptionLength = 1000;
@@ -14,7 +14,7 @@ namespace FNS.Infrastructure.Configurations.Products
 
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            SharedConfigureActions(builder);
+            EntityBaseConfigurator.ConfigureDefault(builder);
 
             builder.Property(p => p.Name)
                 .IsRequired()
@@ -29,35 +29,13 @@ namespace FNS.Infrastructure.Configurations.Products
             builder.Property(p => p.Price)
                 .HasDefaultValue(0);
 
-
             builder.HasOne(p => p.SubCategory)
                 .WithMany(sc => sc.Products)
                 .HasForeignKey(p => p.SubCategoryId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             var init = new ProductsInitializer();
             builder.HasData(init.Entities);
-        }
-
-        public void SharedConfigureActions(EntityTypeBuilder<Product> builder)
-        {
-            builder.UseXminAsConcurrencyToken();
-
-            builder.HasKey(p => p.Id);
-
-            builder.Property(p => p.Tumbstone)
-                .IsRequired()
-                .HasDefaultValue(false);
-
-            builder.Property(p => p.CreatedAt)
-                .IsRequired()
-                .ValueGeneratedOnAdd()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            builder.Property(p => p.UpdatedAt)
-                .IsRequired()
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         }
     }
 }

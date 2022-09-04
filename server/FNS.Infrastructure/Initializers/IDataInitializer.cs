@@ -1,8 +1,8 @@
 ﻿using FNS.Domain.Models;
 
-namespace FNS.Infrastructure.Initializers
+namespace FNS.ContextsInfrastructure.Initializers
 {
-    internal interface IDataInitializer<T> where T : EntityBase, new()
+    internal interface IDataInitializer<T> where T : class, new()
     {
         IEnumerable<T> Entities { get; }
     }

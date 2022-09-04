@@ -1,42 +1,37 @@
 ﻿using Bogus;
 using FNS.Domain.Models.Products;
-using FNS.Infrastructure.Configurations.Products;
-using NodaTime;
+using FNS.ContextsInfrastructure.Configurations.Products;
 
-namespace FNS.Infrastructure.Initializers.Products
+namespace FNS.ContextsInfrastructure.Initializers.Products
 {
-    internal class ProductsInitializer : IDataInitializer<Product>
+    internal sealed class ProductsInitializer : IDataInitializer<Product>
     {
-        private static readonly object _locker = new object();
-        private static readonly IEnumerable<Product> _entities;
+        private readonly IEnumerable<Product> _entities;
 
-        static ProductsInitializer()
+        public ProductsInitializer()
         {
-            var faker = new Faker();
-
-            lock(_locker)
+            if(_entities is not null)
             {
-                if(_entities is not null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                string guidBasis = "00000000-0000-0000-0000-00000000000";
-                var subCategoryInit = new SubCategoriesInitializer();
-                var processorsSubCategory = subCategoryInit.Entities.FirstOrDefault(e => e.Name == "Процессоры");
+            var processorsSubCategory = new SubCategoriesInitializer().Entities
+                .FirstOrDefault(e => e.Name == "Процессоры");
 
-                if(processorsSubCategory is null)
-                {
-                    throw new InvalidDataException();
-                }
+            if(processorsSubCategory is null)
+            {
+                throw new InvalidDataException();
+            }
 
-                var entities = new List<Product>
+            var faker = new Faker();
+            string guidBasis = "00000000-0000-0000-0000-00000000000";
+
+            var entities = new List<Product>
                 {
                     new Product
                     {
-                        Id = Guid.Parse(guidBasis + "1"),
+                        Id = Guid.Parse(guidBasis + "1").ToString(),
                         Name = "AMD Ryzen 5 3600 OEM",
-                        CreatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
                         Description = GetDescription(),
                         Price = 12_599,
                         ProductCode = "1372637",
@@ -44,9 +39,8 @@ namespace FNS.Infrastructure.Initializers.Products
                     },
                     new Product
                     {
-                        Id = Guid.Parse(guidBasis + "2"),
+                        Id = Guid.Parse(guidBasis + "2").ToString(),
                         Name = "AMD Ryzen 5 3600 BOX",
-                        CreatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
                         Description = GetDescription(),
                         Price = 12_899,
                         ProductCode = "5059834",
@@ -54,9 +48,8 @@ namespace FNS.Infrastructure.Initializers.Products
                     },
                     new Product
                     {
-                        Id = Guid.Parse(guidBasis + "3"),
+                        Id = Guid.Parse(guidBasis + "3").ToString(),
                         Name = "AMD Ryzen 5 PRO 4650G OEM",
-                        CreatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
                         Description = GetDescription(),
                         Price = 12_599,
                         ProductCode = "1689358",
@@ -64,9 +57,8 @@ namespace FNS.Infrastructure.Initializers.Products
                     },
                     new Product
                     {
-                        Id = Guid.Parse(guidBasis + "4"),
+                        Id = Guid.Parse(guidBasis + "4").ToString(),
                         Name = "AMD Ryzen 5 5600X OEM",
-                        CreatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow),
                         Description = GetDescription(),
                         Price = 16_199,
                         ProductCode = "4721161",
@@ -74,11 +66,10 @@ namespace FNS.Infrastructure.Initializers.Products
                     },
                 };
 
-                _entities = entities.AsReadOnly();
-            }
+            _entities = entities.AsReadOnly();
         }
 
-        private static string GetDescription()
+        private string GetDescription()
         {
             var faker = new Faker();
             string? description = null;

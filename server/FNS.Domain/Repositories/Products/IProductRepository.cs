@@ -4,6 +4,6 @@ namespace FNS.Domain.Repositories.Products
 {
     public interface IProductRepository : IRepositoryBase<Product>
     {
-        Task<Product?> FindWithIncludesAsync(Guid id, CancellationToken ct);
+        Task<Product> LoadAttributesAndTheirValuesAsync(Product product, CancellationToken ct);
     }
 }

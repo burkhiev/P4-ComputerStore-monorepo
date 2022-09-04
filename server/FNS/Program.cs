@@ -1,12 +1,15 @@
 using FNS.Domain.Repositories;
-using FNS.Infrastructure;
-using FNS.Infrastructure.Repositories;
+using FNS.ContextsInfrastructure.Repositories;
 using FNS.Presentation.Middlewares;
 using FNS.Services.Abstractions;
 using FNS.Services.Services;
 using Microsoft.EntityFrameworkCore;
 using FNS.Presentation.Utilities.ExtensionMethods;
 using System.Text.Json;
+using FNS.Contexts.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using FNS.Domain.Models.Identity;
+using FNS.Presentation.Utilities.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.Converters.Add(new InstantConverter());
     });
 
 builder.Services.AddDbContextPool<AppDbContext>(options =>
@@ -22,6 +26,9 @@ builder.Services.AddDbContextPool<AppDbContext>(options =>
     string connString = builder.Configuration.GetConnectionString("Npgsql");
     options.UseNpgsql(connString, opt => opt.UseNodaTime());
 });
+
+builder.Services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

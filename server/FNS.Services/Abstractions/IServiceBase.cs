@@ -2,7 +2,9 @@
 
 namespace FNS.Services.Abstractions
 {
-    public interface IServiceBase<T> where T : EntityBase, new()
+    public interface IServiceBase<T>
+        where T : class, IEntityBase, new()
     {
+        
     }
 }

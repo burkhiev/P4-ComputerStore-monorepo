@@ -13,7 +13,7 @@ namespace FNS.Infrastructure.Initializers.SalesReceipts
         public SalesReceiptInitializer()
         {
             var faker = new Faker();
-            var users = new UserInitializer().Entities.ToArray();
+            var users = new UsersInitializer().Entities.ToArray();
 
             string guidBasis1 = "00000000-0000-0000-0000-00000000000";
 

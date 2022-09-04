@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace FNS.Services.Services.Identity
 {
-    internal sealed class UserService : IUserService
+    internal sealed class UserService : IUsersService
     {
         private readonly IRootRepository _rootRepository;
         private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace FNS.Services.Services.Identity
 
         public AppOpResult<IEnumerable<UserDto>> GetAllUsers()
         {
-            var users = RootRepository.UsersRepository.GetAll();
+            var users = RootRepository.Users.GetAll();
             var dtos = Mapper.Map<IEnumerable<UserDto>>(users);
 
             var result = new AppOpResult<IEnumerable<UserDto>>(dtos);
@@ -36,7 +36,7 @@ namespace FNS.Services.Services.Identity
         [Obsolete("For debugging")]
         public async Task<AppOpResult<UserDto>> GetUserByIdAsync(string id, CancellationToken ct = default)
         {
-            var user = await RootRepository.UsersRepository.FindByIdAsync(id, ct);
+            var user = await RootRepository.Users.FindByIdAsync(id, ct);
 
             if(user is null)
             {

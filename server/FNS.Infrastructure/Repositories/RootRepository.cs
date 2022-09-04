@@ -10,59 +10,69 @@ using FNS.Domain.Repositories.SalesReceipts;
 using FNS.Infrastructure.Repositories.SalesReceipts;
 using FNS.Domain.Repositories.Balances;
 using FNS.Infrastructure.Repositories.Balances;
+using FNS.Infrastructure.Repositories.Purchases;
+using FNS.Domain.Repositories.Purchases;
 
 namespace FNS.ContextsInfrastructure.Repositories
 {
     public sealed class RootRepository : IRootRepository
     {
         private readonly AppDbContext _db;
-        private readonly Lazy<IUsersRepository> _usersRepository;
-        private readonly Lazy<IProductRepository> _productRepository;
-        private readonly Lazy<IProductAttributeRepository> _productAttributeRepository;
-        private readonly Lazy<IProductAttributeValueRepository> _productAttributeValueRepository;
-        private readonly Lazy<ISubCategoryRepository> _subCategoryRepository;
-        private readonly Lazy<IShoppingCartRepository> _shoppingCartRepository;
-        private readonly Lazy<IShoppingCartItemsRepository> _shoppingCartItemsRepository;
-        private readonly Lazy<ISalesReceiptRepository> _salesReceiptRepository;
-        private readonly Lazy<ISalesReceiptWithProductRepository> _salesReceiptWithProductRepository;
-        private readonly Lazy<IProductBalanceRepository> _productBalanceRepository;
+        private readonly Lazy<IUsersRepository> _users;
+        private readonly Lazy<IProductRepository> _products;
+        private readonly Lazy<IProductAttributeRepository> _productAttributes;
+        private readonly Lazy<IProductAttributeValueRepository> _productAttributeValues;
+        private readonly Lazy<ISubCategoryRepository> _subCategories;
+        private readonly Lazy<IShoppingCartRepository> _shoppingCarts;
+        private readonly Lazy<IShoppingCartItemsRepository> _shoppingCartItems;
+        private readonly Lazy<ISalesReceiptRepository> _salesReceipts;
+        private readonly Lazy<ISalesReceiptWithProductRepository> _salesReceiptWithProducts;
+        private readonly Lazy<IProductBalanceRepository> _productBalances;
+        private readonly Lazy<IPurchaseInvoicesRepository> _purchaseInvoices;
+        private readonly Lazy<IPurchaseInvoiceItemsRepository> _purchaseInvoiceItems;
 
         public RootRepository(AppDbContext db)
         {
             _db = db;
-            _usersRepository = new Lazy<IUsersRepository>(() => new UsersRepository(_db));
-            _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(_db));
-            _productAttributeRepository = new Lazy<IProductAttributeRepository>(() => new ProductAttributeRepository(_db));
-            _productAttributeValueRepository = new Lazy<IProductAttributeValueRepository>(() => new ProductAttributeValueRepository(_db));
-            _subCategoryRepository = new Lazy<ISubCategoryRepository>(() => new SubCategoryRepository(_db));
-            _shoppingCartRepository = new Lazy<IShoppingCartRepository>(() => new ShoppingCartRepository(_db));
-            _shoppingCartItemsRepository = new Lazy<IShoppingCartItemsRepository>(() => new ShoppingCartItemsRepository(_db));
-            _salesReceiptRepository = new Lazy<ISalesReceiptRepository>(() => new SalesReceiptRepository(_db));
-            _salesReceiptWithProductRepository = new Lazy<ISalesReceiptWithProductRepository>(() => new SalesReceiptWithProductRepository(_db));
-            _productBalanceRepository = new Lazy<IProductBalanceRepository>(() => new ProductBalancesRepository(_db));
+            _users = new Lazy<IUsersRepository>(() => new UsersRepository(_db));
+            _products = new Lazy<IProductRepository>(() => new ProductRepository(_db));
+            _productAttributes = new Lazy<IProductAttributeRepository>(() => new ProductAttributeRepository(_db));
+            _productAttributeValues = new Lazy<IProductAttributeValueRepository>(() => new ProductAttributeValueRepository(_db));
+            _subCategories = new Lazy<ISubCategoryRepository>(() => new SubCategoryRepository(_db));
+            _shoppingCarts = new Lazy<IShoppingCartRepository>(() => new ShoppingCartRepository(_db));
+            _shoppingCartItems = new Lazy<IShoppingCartItemsRepository>(() => new ShoppingCartItemsRepository(_db));
+            _salesReceipts = new Lazy<ISalesReceiptRepository>(() => new SalesReceiptRepository(_db));
+            _salesReceiptWithProducts = new Lazy<ISalesReceiptWithProductRepository>(() => new SalesReceiptWithProductRepository(_db));
+            _productBalances = new Lazy<IProductBalanceRepository>(() => new ProductBalancesRepository(_db));
+            _purchaseInvoices = new Lazy<IPurchaseInvoicesRepository>(() => new PurchaseInvoicesRepository(_db));
+            _purchaseInvoiceItems = new Lazy<IPurchaseInvoiceItemsRepository>(() => new PurchaseInvoiceItemsRepository(_db));
         }
 
         public AppDbContext Db => _db;
 
-        public IUsersRepository UsersRepository => _usersRepository.Value;
+        public IUsersRepository Users => _users.Value;
 
-        public IProductRepository ProductRepository => _productRepository.Value;
+        public IProductRepository Products => _products.Value;
 
-        public IProductAttributeRepository ProductAttributeRepository => _productAttributeRepository.Value;
+        public IProductAttributeRepository ProductAttributes => _productAttributes.Value;
 
-        public IProductAttributeValueRepository ProductWithAttributeValuesRepository => _productAttributeValueRepository.Value;
+        public IProductAttributeValueRepository ProductWithAttributeValues => _productAttributeValues.Value;
 
-        public ISubCategoryRepository SubCategoryRepository => _subCategoryRepository.Value;
+        public ISubCategoryRepository SubCategories => _subCategories.Value;
 
-        public IShoppingCartItemsRepository ShoppingCartItemsRepository => _shoppingCartItemsRepository.Value;
+        public IShoppingCartItemsRepository ShoppingCartItems => _shoppingCartItems.Value;
 
-        public IShoppingCartRepository ShoppingCartRepository => _shoppingCartRepository.Value;
+        public IShoppingCartRepository ShoppingCarts => _shoppingCarts.Value;
 
-        public ISalesReceiptRepository SalesReceiptRepository => _salesReceiptRepository.Value;
+        public ISalesReceiptRepository SalesReceipts => _salesReceipts.Value;
 
-        public ISalesReceiptWithProductRepository SalesReceiptWithProductRepository => _salesReceiptWithProductRepository.Value;
+        public ISalesReceiptWithProductRepository SalesReceiptWithProducts => _salesReceiptWithProducts.Value;
 
-        public IProductBalanceRepository ProductBalanceRepository => _productBalanceRepository.Value;
+        public IProductBalanceRepository ProductBalances => _productBalances.Value;
+
+        public IPurchaseInvoicesRepository PurchaseInvoices => _purchaseInvoices.Value;
+
+        public IPurchaseInvoiceItemsRepository PurchaseInvoiceItems => _purchaseInvoiceItems.Value;
 
         public async Task<int> SaveChangesAsync(CancellationToken ct = default)
         {

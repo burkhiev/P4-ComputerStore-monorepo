@@ -10,7 +10,7 @@ namespace FNS.Infrastructure.Initializers.ShoppingCarts
 
         public ShoppingCartsInitializer()
         {
-            var users = new UserInitializer().Entities.ToArray();
+            var users = new UsersInitializer().Entities.ToArray();
 
             string guidBasis1 = "00000000-0000-0000-0000-00000000000";
 

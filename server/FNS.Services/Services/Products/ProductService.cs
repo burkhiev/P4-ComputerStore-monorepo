@@ -24,10 +24,15 @@ namespace FNS.Services.Services.Products
 
         private IMapper Mapper => _mapperConfig.Mapper;
 
+        public Task<AppOpResult<IEnumerable<ProductAttributeDto>>> GetAllProductAttributes()
+        {
+            throw new NotImplementedException(); // TODO
+        }
+
         [Obsolete("For debugging")]
         public AppOpResult<IEnumerable<ProductDto>> GetAllProducts()
         {
-            var products = RootRepository.ProductRepository.GetAll().ToArray();
+            var products = RootRepository.Products.GetAll().ToArray();
             var productsDtos = Mapper.Map<IEnumerable<ProductDto>>(products);
 
             var result = new AppOpResult<IEnumerable<ProductDto>>(productsDtos);
@@ -36,7 +41,7 @@ namespace FNS.Services.Services.Products
 
         public AppOpResult<IEnumerable<ProductDto>> GetProductsBySubCategoryId(string subCategoryId)
         {
-            var products = RootRepository.ProductRepository
+            var products = RootRepository.Products
                 .FindByCondition(product => product.SubCategoryId == subCategoryId);
             var productsDtos = Mapper.Map<IEnumerable<ProductDto>>(products);
 
@@ -46,7 +51,7 @@ namespace FNS.Services.Services.Products
 
         public async Task<AppOpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id, CancellationToken ct = default)
         {
-            var product = await RootRepository.ProductRepository.FindByIdAsync(id, ct);
+            var product = await RootRepository.Products.FindByIdAsync(id, ct);
 
             if(product is null)
             {
@@ -54,7 +59,7 @@ namespace FNS.Services.Services.Products
                 return errResult;
             }
 
-            await RootRepository.ProductRepository.LoadAttributesAndTheirValuesAsync(product, ct);
+            await RootRepository.Products.LoadAttributesAndTheirValuesAsync(product, ct);
 
             var dto = Mapper.Map<Product, ProductWithAdditionalInfoDto>(product);
             var result = new AppOpResult<ProductWithAdditionalInfoDto>(dto);

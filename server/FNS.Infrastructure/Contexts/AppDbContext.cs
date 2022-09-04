@@ -1,6 +1,7 @@
 ﻿using FNS.Domain.Models.Balances;
 using FNS.Domain.Models.Identity;
 using FNS.Domain.Models.Products;
+using FNS.Domain.Models.Purchases;
 using FNS.Domain.Models.SalesReceipts;
 using FNS.Domain.Models.ShoppingCarts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -25,6 +26,8 @@ namespace FNS.Contexts.Infrastructure
         public DbSet<SalesReceipt> SalesReceipts { get; set; }
         public DbSet<SalesReceiptWithProduct> SalesReceiptsWithProducts { get; set; }
         public DbSet<ProductBalance> ProductBalances { get; set; }
+        public DbSet<PurchaseInvoiceItem> PurchaseInvoices { get; set; }
+        public DbSet<PurchaseInvoiceItem> PurchaseInvoiceItems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

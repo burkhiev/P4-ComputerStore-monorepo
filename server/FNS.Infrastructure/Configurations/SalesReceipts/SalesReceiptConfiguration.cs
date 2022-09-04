@@ -25,9 +25,9 @@ namespace FNS.Infrastructure.Configurations.SalesReceipts
                 .SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
             builder.HasOne(p => p.User)
-                .WithOne(p => p.SalesReceipt)
-                .HasForeignKey<SalesReceipt>(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(p => p.SalesReceipts)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasData(new SalesReceiptInitializer().Entities);
         }

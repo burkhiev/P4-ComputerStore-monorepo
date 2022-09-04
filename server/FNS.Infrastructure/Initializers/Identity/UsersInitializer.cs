@@ -3,11 +3,11 @@ using FNS.Domain.Models.Identity;
 
 namespace FNS.Infrastructure.Initializers.Identity
 {
-    internal sealed class UserInitializer : IDataInitializer<User>
+    internal sealed class UsersInitializer : IDataInitializer<User>
     {
         private readonly IEnumerable<User> _entities;
 
-        public UserInitializer()
+        public UsersInitializer()
         {
             string guidBasis = "00000000-0000-0000-0000-00000000000";
 

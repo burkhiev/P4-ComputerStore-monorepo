@@ -3,6 +3,7 @@ using System;
 using FNS.Contexts.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FNS.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220904112047_add-tables_PurchaseInvoices_PurchaseInvoiceItems")]
+    partial class addtables_PurchaseInvoices_PurchaseInvoiceItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,13 +166,13 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a52e8ea1-0fab-47de-a882-467129b3a363",
+                            ConcurrencyStamp = "80afe008-0217-4b68-8d90-299c37e184a9",
                             ConcurrencyToken = 0u,
                             Email = "user1@gmail.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bbafab93-7aab-4c3e-9eb1-abd7ff14f001",
+                            SecurityStamp = "878ecf47-9863-48f6-92d6-6808b60b37b9",
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -178,13 +180,13 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c1c58f00-dd85-4944-9f32-ca068a3ca2e9",
+                            ConcurrencyStamp = "4c232515-2123-4c6b-8500-ad9b35a7217a",
                             ConcurrencyToken = 0u,
                             Email = "user2@gmail.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "46efbb9c-a2eb-40e3-9051-e1ed8f095fc9",
+                            SecurityStamp = "633ed3c3-715b-4486-a48c-8b13a48f03ba",
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -192,13 +194,13 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "41a35d11-48a3-4f20-85d8-2b5077d46f30",
+                            ConcurrencyStamp = "8717bda9-031b-4355-bb31-961db77e2e84",
                             ConcurrencyToken = 0u,
                             Email = "admin@yandex.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "fca965cb-9ed9-471f-808e-a8583892d0a2",
+                            SecurityStamp = "ed0bd226-2590-4f59-9979-df73e5b1ce07",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -254,7 +256,7 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             ConcurrencyToken = 0u,
-                            Description = "Rerum nihil asperiores blanditiis hic eos officiis suscipit officia provident. Nesciunt totam vero autem saepe harum voluptatem ut in. Sint incidunt et saepe est et nobis. Eius cupiditate eum at. Sit beatae velit dolorum soluta architecto.\n\nAut laudantium ut quia harum molestiae sapiente dolor. Ea nostrum et tempora velit sit in aperiam fuga. A numquam ea hic tempora nihil aut eaque culpa.\n\nQui vitae fuga enim vitae sunt. Ut minus eos voluptatibus eum. Quibusdam provident et. Ea nisi consequatur molestiae culpa alias.\n\nExpedita ut perspiciatis quo cum perspiciatis tempora quisquam quis. Hic qui commodi ad et autem. Dicta vero occaecati eos. Temporibus et corrupti nihil ipsam nisi. Et earum itaque eveniet et. Perferendis eveniet facere.\n\nAnimi molestias architecto illum modi cumque est. Consectetur hic voluptatem ipsa pariatur temporibus error odio sint adipisci. Hic vel voluptatem. Sit quia dignissimos et. Ducimus ea velit possimus ut rem earum.",
+                            Description = "Magni maxime magnam non vel est quod. Eum vero similique voluptas fuga est minima omnis quis. Facere consectetur nostrum. Sapiente fugiat quia et.\n\nNobis neque voluptatum porro unde blanditiis provident. Provident qui earum deleniti molestias quibusdam perferendis exercitationem. Explicabo expedita at suscipit molestiae. Porro dolor exercitationem. Illum rem et modi et perferendis consequuntur et quia. Omnis dolore quasi repellat.\n\nUt et qui. Autem nihil placeat nulla rerum. Nam itaque odit quis eos quibusdam voluptas reprehenderit est. Accusamus sit accusamus error quam ipsa. Doloremque autem et.\n\nSunt velit quasi qui et necessitatibus sequi saepe magni. Aut commodi dicta ea. Molestiae animi ea molestias delectus ipsum ea eaque eius. Soluta at ut molestiae enim.\n\nVoluptatem aut enim id atque. Esse iste alias dignissimos quis exercitationem sit sapiente aut amet. Quia ut non.",
                             Name = "AMD Ryzen 5 3600 OEM",
                             Price = 12599m,
                             ProductCode = "1372637",
@@ -264,7 +266,7 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             ConcurrencyToken = 0u,
-                            Description = "Similique exercitationem voluptas. Ut ut suscipit suscipit non. Facilis quo eveniet et tenetur earum aspernatur. Repellendus quis rerum.\n\nDeserunt culpa nulla libero harum error impedit accusantium id dolor. Dolorem placeat saepe corrupti eum ab. Ipsam mollitia repudiandae minus provident animi et voluptas sed.\n\nEt voluptatem voluptatem quia aut. Dolorem quas adipisci. Modi perspiciatis eos ut voluptatem nesciunt fugiat atque.\n\nEsse sit autem quis recusandae commodi ut porro. Aperiam earum numquam id qui inventore sed ad at. Vel enim nesciunt qui aut aliquid eum.\n\nTotam ut aspernatur voluptatum. Ut incidunt architecto consequatur aperiam. Non ducimus officia sapiente aut. Quia sit odit aut et autem. Repellat in odio enim qui est necessitatibus.",
+                            Description = "Natus assumenda harum excepturi quia iure quia eligendi. Aliquid beatae perferendis iure minus eveniet. Autem voluptates tempore et voluptates accusamus ut. Nemo sit quia nihil quo recusandae aliquid sit neque laudantium. Et qui corporis et rerum sit ullam.\n\nAutem sed accusamus omnis praesentium odit cumque consequatur corrupti. Libero voluptatem quia placeat sit hic pariatur quas sed. Quia quasi aut nostrum eligendi reprehenderit. Quam rerum quo rerum. Ex consequatur adipisci consequatur maiores commodi.\n\nAt ut perspiciatis omnis velit ad ipsam non. Ut rerum officia quaerat quasi. Qui distinctio laborum consequuntur. Ipsa ut quos est fugit.\n\nSapiente autem magnam qui officiis. Amet hic praesentium dolores ut quia pariatur sunt dolorem ipsum. Nisi deleniti nihil quod similique sed quibusdam aliquam iure.\n\nEum culpa nulla similique sunt sint est vel est blanditiis. Sit sapiente voluptate possimus aut fugiat est est iste et. Officia optio nisi aut impedit est ut.",
                             Name = "AMD Ryzen 5 3600 BOX",
                             Price = 12899m,
                             ProductCode = "5059834",
@@ -274,7 +276,7 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             ConcurrencyToken = 0u,
-                            Description = "Perspiciatis nisi nihil assumenda quo. Esse voluptatum aut. Sed magni architecto. Itaque perspiciatis voluptatem fugiat.\n\nPerferendis voluptatum animi est atque. Et aut officia quod. Libero et consequuntur facere quo deserunt. Dolores id repellat sunt provident delectus libero et ipsa est. Fugiat odit cumque qui unde consequatur aliquid optio repellat.\n\nNisi porro est atque sunt dicta. Quia et quis nemo fugiat vel laudantium ex neque. Facilis laboriosam numquam ea. Corporis molestiae cum neque aut omnis accusamus corporis laboriosam voluptas. Sunt culpa dolores atque earum. Eius sit natus sapiente qui.\n\nSimilique doloremque velit molestiae aut quo. Et consequatur autem sint ipsa suscipit incidunt porro. Id et veniam. Repudiandae voluptates et dolorum perspiciatis vel tempora id non.\n\nAsperiores quas numquam reiciendis quis. Doloremque tenetur amet nemo vel quo voluptatem sit voluptatem praesentium. Consectetur illo earum pariatur est ab aut.",
+                            Description = "Dolores in modi modi officiis dolores. Iure non dolores. Similique ea at illo nesciunt aut. Sed est est et et velit neque quaerat dolores.\n\nExpedita magni iure. Ullam voluptas facilis id magnam ut earum voluptate aliquid. Qui optio nostrum. Illo nesciunt magni. Sequi aut deserunt vel natus doloribus aut distinctio.\n\nMinus et ut nulla velit omnis. Voluptas sed ut repellat sed et tempore. Similique dolorem eos. Numquam aut itaque qui officia odio atque consequatur error. Repellat delectus laudantium exercitationem.\n\nBeatae officiis numquam doloremque voluptatum cum. Qui facilis quas dolore consequatur pariatur facere earum labore incidunt. Et voluptates et labore praesentium.\n\nAut suscipit quisquam corrupti labore voluptatem. Officia in sint. Aspernatur qui dolores accusantium rerum quo dolorum molestiae.",
                             Name = "AMD Ryzen 5 PRO 4650G OEM",
                             Price = 12599m,
                             ProductCode = "1689358",
@@ -284,7 +286,7 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
                             ConcurrencyToken = 0u,
-                            Description = "Est earum autem error cumque voluptas. Qui quam quia nam non autem dolores. Placeat quod voluptate porro placeat cumque suscipit aliquam sit eius. Porro cupiditate odio commodi ratione culpa provident.\n\nRem vel est sapiente. Consequatur quia sed atque enim. Cupiditate amet molestias.\n\nUt impedit et vero est alias libero ipsum fugiat id. Vel quo autem amet facere voluptates porro possimus. Qui cupiditate laudantium labore et ipsa quis nostrum cum explicabo. Cumque autem nihil natus vel sunt nesciunt qui. Quasi nam facere quidem rerum qui.\n\nDolorem aut est assumenda. Velit rerum rerum sit consequatur odio. Cupiditate tenetur at et expedita cupiditate quod voluptatem repellendus doloribus.\n\nVoluptatem inventore et atque et nam. Dolores magnam ut. Consequatur alias voluptates libero beatae adipisci. Incidunt voluptas id.",
+                            Description = "Dolorum asperiores eum tempora cum totam. Saepe voluptas quidem eos velit nulla sed. Nihil similique voluptatem architecto rerum deleniti molestiae.\n\nSunt facere blanditiis. Amet fugiat iste alias vitae rerum impedit veritatis. Rem sequi qui consequatur sunt ut. At corrupti quos ex enim voluptatibus et rem sed.\n\nError maxime provident ipsa doloribus quo rerum. Sunt a odit voluptatum at labore eos sint. Totam qui sit.\n\nVoluptas harum accusamus nesciunt vel et. Non itaque harum rem hic autem laborum molestiae earum nam. Quia saepe corrupti iure minima impedit praesentium. Et in assumenda.\n\nQui sit aperiam omnis nihil aliquam eum. Sunt architecto molestiae. Et laudantium non eveniet. Sed aut voluptate nihil libero veniam. Accusamus quam saepe quas nisi possimus quaerat.",
                             Name = "AMD Ryzen 5 5600X OEM",
                             Price = 16199m,
                             ProductCode = "4721161",
@@ -632,15 +634,7 @@ namespace FNS.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PurchaseInvoice");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "00000000-0000-0000-0000-000000000001",
-                            ConcurrencyToken = 0u,
-                            UserId = "00000000-0000-0000-0000-000000000003"
-                        });
+                    b.ToTable("PurchaseInvoices");
                 });
 
             modelBuilder.Entity("FNS.Domain.Models.Purchases.PurchaseInvoiceItem", b =>
@@ -678,41 +672,7 @@ namespace FNS.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseInvoiceId");
 
-                    b.ToTable("PurchaseInvoiceItem");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "00000000-0000-0000-0000-000000000001",
-                            Amount = 2,
-                            ConcurrencyToken = 0u,
-                            ProductId = "00000000-0000-0000-0000-000000000001",
-                            PurchaseInvoiceId = "00000000-0000-0000-0000-000000000001"
-                        },
-                        new
-                        {
-                            Id = "00000000-0000-0000-0000-000000000002",
-                            Amount = 3,
-                            ConcurrencyToken = 0u,
-                            ProductId = "00000000-0000-0000-0000-000000000002",
-                            PurchaseInvoiceId = "00000000-0000-0000-0000-000000000001"
-                        },
-                        new
-                        {
-                            Id = "00000000-0000-0000-0000-000000000003",
-                            Amount = 7,
-                            ConcurrencyToken = 0u,
-                            ProductId = "00000000-0000-0000-0000-000000000003",
-                            PurchaseInvoiceId = "00000000-0000-0000-0000-000000000001"
-                        },
-                        new
-                        {
-                            Id = "00000000-0000-0000-0000-000000000004",
-                            Amount = 5,
-                            ConcurrencyToken = 0u,
-                            ProductId = "00000000-0000-0000-0000-000000000004",
-                            PurchaseInvoiceId = "00000000-0000-0000-0000-000000000001"
-                        });
+                    b.ToTable("PurchaseInvoiceItems");
                 });
 
             modelBuilder.Entity("FNS.Domain.Models.SalesReceipts.SalesReceipt", b =>
@@ -751,21 +711,21 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             ConcurrencyToken = 0u,
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16307901439445135L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16555359798529035L),
                             UserId = "00000000-0000-0000-0000-000000000001"
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             ConcurrencyToken = 0u,
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16434331166209636L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16539736006708536L),
                             UserId = "00000000-0000-0000-0000-000000000002"
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             ConcurrencyToken = 0u,
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16404357750467261L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16616559348166370L),
                             UserId = "00000000-0000-0000-0000-000000000003"
                         });
                 });
@@ -1095,7 +1055,7 @@ namespace FNS.Infrastructure.Migrations
                     b.HasOne("FNS.Domain.Models.Products.Product", "Product")
                         .WithMany("ProductBalances")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Product");
@@ -1106,7 +1066,7 @@ namespace FNS.Infrastructure.Migrations
                     b.HasOne("FNS.Domain.Models.Products.SubCategory", "SubCategory")
                         .WithMany("Products")
                         .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("SubCategory");
@@ -1117,13 +1077,13 @@ namespace FNS.Infrastructure.Migrations
                     b.HasOne("FNS.Domain.Models.Products.ProductAttribute", "ProductAttribute")
                         .WithMany("ProductAttributeValues")
                         .HasForeignKey("ProductAttributeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("FNS.Domain.Models.Products.Product", "Product")
                         .WithMany("ProductAttributeValues")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Product");
@@ -1136,7 +1096,7 @@ namespace FNS.Infrastructure.Migrations
                     b.HasOne("FNS.Domain.Models.Identity.User", "User")
                         .WithMany("PurchaseInvoices")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1147,13 +1107,13 @@ namespace FNS.Infrastructure.Migrations
                     b.HasOne("FNS.Domain.Models.Products.Product", "Product")
                         .WithMany("PurchaseInvoiceItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("FNS.Domain.Models.Purchases.PurchaseInvoice", "PurchaseInvoice")
                         .WithMany("PurchaseInvoiceItems")
                         .HasForeignKey("PurchaseInvoiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Product");
@@ -1196,7 +1156,7 @@ namespace FNS.Infrastructure.Migrations
                     b.HasOne("FNS.Domain.Models.Identity.User", "User")
                         .WithOne("ShoppingCart")
                         .HasForeignKey("FNS.Domain.Models.ShoppingCarts.ShoppingCart", "UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1207,13 +1167,13 @@ namespace FNS.Infrastructure.Migrations
                     b.HasOne("FNS.Domain.Models.Products.Product", "Product")
                         .WithMany("ShoppingCartItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("FNS.Domain.Models.ShoppingCarts.ShoppingCart", "ShoppingCart")
                         .WithMany("ShoppingCartItems")
                         .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Product");

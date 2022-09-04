@@ -11,7 +11,7 @@ using NodaTime;
 
 namespace FNS.Services.Services.Sales
 {
-    internal sealed class SaleService : ISalesReceiptService
+    internal sealed class SaleService : ISalesReceiptsService
     {
         private readonly IRootRepository _rootRepository;
         private readonly IMapper _mapper;
@@ -28,7 +28,7 @@ namespace FNS.Services.Services.Sales
 
         public AppOpResult<IEnumerable<SalesReceiptDto>> GetAll()
         {
-            var receiptes = RootRepository.SalesReceiptRepository.GetAll().ToArray();
+            var receiptes = RootRepository.SalesReceipts.GetAll().ToArray();
             var dtos = Mapper.Map<IEnumerable<SalesReceiptDto>>(receiptes);
 
             var result = new AppOpResult<IEnumerable<SalesReceiptDto>>(dtos);
@@ -37,7 +37,7 @@ namespace FNS.Services.Services.Sales
 
         public async Task<AppOpResult<SalesReceiptWithAdditionalInfoDto>> GetWithAdditionalAsync(string id, CancellationToken ct = default)
         {
-            var receipt = await RootRepository.SalesReceiptRepository.FindByIdAsync(id, ct);
+            var receipt = await RootRepository.SalesReceipts.FindByIdAsync(id, ct);
 
             if(receipt is null)
             {
@@ -45,7 +45,7 @@ namespace FNS.Services.Services.Sales
                 return errResult;
             }
 
-            await RootRepository.SalesReceiptWithProductRepository.LoadAdditionalInfoBySalesReceiptId(receipt.Id, ct);
+            await RootRepository.SalesReceiptWithProducts.LoadAdditionalInfoBySalesReceiptId(receipt.Id, ct);
 
             var dtos = Mapper.Map<SalesReceiptWithAdditionalInfoDto>(receipt);
             var result = new AppOpResult<SalesReceiptWithAdditionalInfoDto>(dtos);
@@ -56,7 +56,7 @@ namespace FNS.Services.Services.Sales
         public async Task<AppOpResult<SaleSuccessResultDto>> MakeSaleAsync(SaleDto saleInfo)
         {
             // проверяем наличие пользователя
-            var user = await RootRepository.UsersRepository.FindByIdAsync(saleInfo.UserId);
+            var user = await RootRepository.Users.FindByIdAsync(saleInfo.UserId);
 
             if(user is null)
             {
@@ -71,7 +71,7 @@ namespace FNS.Services.Services.Sales
             foreach(var prodSaleInfo in saleInfo.ProductsInfo)
             {
                 // проверяем, существует ли товар с указанным ID
-                var product = await RootRepository.ProductRepository.FindByIdAsync(prodSaleInfo.Id);
+                var product = await RootRepository.Products.FindByIdAsync(prodSaleInfo.Id);
 
                 if(product is null)
                 {
@@ -80,7 +80,7 @@ namespace FNS.Services.Services.Sales
                 }
 
                 // проверяем, если ли запись для учета остатков товара
-                var balances = RootRepository.ProductBalanceRepository.FindByCondition(x => x.ProductId == product.Id).ToArray();
+                var balances = RootRepository.ProductBalances.FindByCondition(x => x.ProductId == product.Id).ToArray();
 
                 if(balances.Length != 1)
                 {
@@ -98,7 +98,7 @@ namespace FNS.Services.Services.Sales
 
                 // вычет
                 prodBalance.Amount -= prodSaleInfo.Amount;
-                RootRepository.ProductBalanceRepository.Update(prodBalance);
+                RootRepository.ProductBalances.Update(prodBalance);
             }
 
             if(someProductIsNotFound)

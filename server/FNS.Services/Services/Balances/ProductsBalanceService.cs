@@ -27,7 +27,7 @@ namespace FNS.Services.Services.Balances
 
         public AppOpResult<IEnumerable<ProductBalanceDto>> GetAll()
         {
-            var balances = RootRepository.ProductBalanceRepository.GetAll();
+            var balances = RootRepository.ProductBalances.GetAll();
             var dtos = Mapper.Map<IEnumerable<ProductBalanceDto>>(balances);
 
             var result = new AppOpResult<IEnumerable<ProductBalanceDto>>(dtos);
@@ -36,7 +36,7 @@ namespace FNS.Services.Services.Balances
 
         public async Task<AppOpResult<ProductBalanceDto>> GetByIdAsync(string productBalanceId)
         {
-            var balance = await RootRepository.ProductBalanceRepository.FindByIdAsync(productBalanceId);
+            var balance = await RootRepository.ProductBalances.FindByIdAsync(productBalanceId);
 
             if(balance is null)
             {
@@ -52,7 +52,7 @@ namespace FNS.Services.Services.Balances
 
         public async Task<AppOpResult<IEnumerable<ProductBalanceDto>>> GetByProductIdAsync(string productId)
         {
-            var product = await RootRepository.ProductRepository.FindByIdAsync(productId);
+            var product = await RootRepository.Products.FindByIdAsync(productId);
 
             if(product is null)
             {
@@ -60,7 +60,7 @@ namespace FNS.Services.Services.Balances
                 return faultResult;
             }
 
-            var balances = RootRepository.ProductBalanceRepository.FindByCondition(x => x.ProductId == productId);
+            var balances = RootRepository.ProductBalances.FindByCondition(x => x.ProductId == productId);
             var dtos = Mapper.Map<IEnumerable<ProductBalanceDto>>(balances);
 
             var result = new AppOpResult<IEnumerable<ProductBalanceDto>>(dtos);

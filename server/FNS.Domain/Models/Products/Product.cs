@@ -1,4 +1,5 @@
 ﻿using FNS.Domain.Models.Balances;
+using FNS.Domain.Models.Purchases;
 using FNS.Domain.Models.SalesReceipts;
 using FNS.Domain.Models.ShoppingCarts;
 
@@ -16,5 +17,6 @@ namespace FNS.Domain.Models.Products
         public List<ShoppingCartItem> ShoppingCartItems { get; set; }
         public List<SalesReceiptWithProduct> SalesReceiptsWithProducts { get; set; }
         public List<ProductBalance> ProductBalances { get; set; }
+        public List<PurchaseInvoiceItem> PurchaseInvoiceItems { get; set; }
     }
 }

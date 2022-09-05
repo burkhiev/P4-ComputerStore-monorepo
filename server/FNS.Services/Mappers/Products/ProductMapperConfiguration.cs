@@ -18,22 +18,33 @@ namespace FNS.Services.Mappers.Products
         private void Configure(IMapperConfigurationExpression config)
         {
             config.CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId));
 
             config.CreateMap<Product, ProductWithAdditionalInfoDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.ConcurrencyToken))
+                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId))
                 .ForMember(dest => dest.AdditionalAttributes, opt => opt.MapFrom((src, dest) =>
                 {
                     var attrs = new Dictionary<string, dynamic?>();
                     var attrValues = src.ProductAttributeValues;
 
-                    attrs.Add(nameof(src.ConcurrencyToken), src.ConcurrencyToken);
+                    if(attrValues is null)
+                    {
+                        return attrs;
+                    }
 
                     foreach(var attrValue in attrValues)
                     {
                         var attr = attrValue.ProductAttribute;
-                        attrs[attr.Name] = attrValue.Value;
 
                         if(attrValue.Value is null)
                         {
@@ -61,12 +72,29 @@ namespace FNS.Services.Mappers.Products
                         }
                         else
                         {
-                            throw new NotImplementedException();
+                            throw new NotImplementedException("Not implemented CLR type converting.");
                         }
                     }
 
                     return attrs;
                 }));
+
+            config.CreateMap<ProductWithAdditionalInfoDto, Product>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.xmin, opt => opt.MapFrom(src => src.ConcurrencyToken))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId))
+                .ForMember(dest => dest.ProductAttributeValues, opt => opt.Ignore());
+
+            config.CreateMap<ProductForCreateDto, Product>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
+                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId));
         }
     }
 }

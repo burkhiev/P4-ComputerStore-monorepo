@@ -3,6 +3,6 @@
     public interface IEntityBase
     {
         string Id { get; set; }
-        public uint ConcurrencyToken { get; set; }
+        public uint xmin { get; set; }
     }
 }

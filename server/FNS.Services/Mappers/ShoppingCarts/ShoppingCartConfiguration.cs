@@ -24,7 +24,7 @@ namespace FNS.Services.Mappers.ShoppingCarts
 
             config.CreateMap<ShoppingCart, ShoppingCartWithAdditionalInfoDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.ConcurrencyToken))
+                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.ShoppingCartItems, opt => opt.MapFrom((src, dest) =>
                 {

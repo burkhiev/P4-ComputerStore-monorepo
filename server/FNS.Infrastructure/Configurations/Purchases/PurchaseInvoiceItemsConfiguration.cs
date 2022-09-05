@@ -16,12 +16,12 @@ namespace FNS.Infrastructure.Configurations.Purchases
             builder.HasOne(p => p.PurchaseInvoice)
                 .WithMany(p => p.PurchaseInvoiceItems)
                 .HasForeignKey(p => p.PurchaseInvoiceId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(p => p.Product)
                 .WithMany(p => p.PurchaseInvoiceItems)
                 .HasForeignKey(p => p.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasData(new PurchaseInvoiceItemsInitializer().Entities);
         }

@@ -14,7 +14,7 @@ namespace FNS.Infrastructure.Configurations.Purchases
             builder.HasOne(x => x.User)
                 .WithMany(u => u.PurchaseInvoices)
                 .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasData(new PurchaseInvoiceInitializer().Entities);
         }

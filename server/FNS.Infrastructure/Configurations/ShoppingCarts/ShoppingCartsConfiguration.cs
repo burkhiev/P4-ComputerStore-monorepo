@@ -14,7 +14,7 @@ namespace FNS.Infrastructure.Configurations.ShoppingCarts
             builder.HasOne(p => p.User)
                 .WithOne(p => p.ShoppingCart)
                 .HasForeignKey<ShoppingCart>(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             var init = new ShoppingCartsInitializer();
             builder.HasData(init.Entities);

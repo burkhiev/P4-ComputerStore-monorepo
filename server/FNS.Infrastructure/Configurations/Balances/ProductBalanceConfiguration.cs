@@ -16,7 +16,7 @@ namespace FNS.Infrastructure.Configurations.Balances
             builder.HasOne(p => p.Product)
                 .WithMany(p => p.ProductBalances)
                 .HasForeignKey(p => p.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasData(new ProductBalanceInitializer().Entities);
         }

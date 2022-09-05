@@ -13,10 +13,10 @@ namespace FNS.Domain.Models.Products
         public decimal Price { get; set; }
         public string SubCategoryId { get; set; }
         public SubCategory SubCategory { get; set; }
-        public List<ProductAttributeValue> ProductAttributeValues { get; set; }
-        public List<ShoppingCartItem> ShoppingCartItems { get; set; }
-        public List<SalesReceiptWithProduct> SalesReceiptsWithProducts { get; set; }
-        public List<ProductBalance> ProductBalances { get; set; }
-        public List<PurchaseInvoiceItem> PurchaseInvoiceItems { get; set; }
+        public List<ProductAttributeValue>? ProductAttributeValues { get; set; }
+        public List<ShoppingCartItem>? ShoppingCartItems { get; set; }
+        public List<SalesReceiptWithProduct>? SalesReceiptsWithProducts { get; set; }
+        public List<ProductBalance>? ProductBalances { get; set; }
+        public List<PurchaseInvoiceItem>? PurchaseInvoiceItems { get; set; }
     }
 }

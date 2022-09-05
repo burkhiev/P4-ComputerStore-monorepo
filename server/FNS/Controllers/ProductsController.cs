@@ -1,12 +1,14 @@
 ﻿using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions;
+using FNS.Services.Dtos.Products;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
 namespace FNS.Presentation.Controllers
 {
-    [Route("api/products")]
     [ApiController]
+    [Route("api/products")]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public sealed class ProductsController : ControllerBase
     {
@@ -20,8 +22,8 @@ namespace FNS.Presentation.Controllers
         private IRootService RootService => _rootService;
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllProducts()
+        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        public IActionResult GetAll()
         {
             var result = RootService.ProductsService.GetAllProducts();
 
@@ -34,8 +36,8 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpGet("sub-category/{subCategoryId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetProductsByCategoryId([Bind("subCategoryId")] string subCategoryId)
+        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        public IActionResult GetProductsByCategoryId([Bind("subCategoryId")] string subCategoryId)
         {
             var result = RootService.ProductsService.GetProductsBySubCategoryId(subCategoryId);
 
@@ -48,9 +50,9 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProductWithAdditionalInfoDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> GetAdditionalProductInfo([Bind("id")] string id)
+        public async Task<IActionResult> GetWithAdditionalInfo([Bind("id")] string id)
         {
             var result = await RootService.ProductsService.GetProductWithAdditionalInfoByIdAsync(id);
 
@@ -60,6 +62,50 @@ namespace FNS.Presentation.Controllers
             }
 
             return Ok(result.SuceedResult);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(ProductWithAdditionalInfoDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> Create(ProductForCreateDto dto)
+        {
+            var result = await RootService.ProductsService.CreateProduct(dto);
+
+            if(result.IsFaulted)
+            {
+                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+            }
+
+            return Ok(result.SuceedResult);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(ProductWithAdditionalInfoDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> Update(ProductWithAdditionalInfoDto dto)
+        {
+            var result = await RootService.ProductsService.UpdateProduct(dto);
+
+            if(result.IsFaulted)
+            {
+                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+            }
+
+            return Ok(result.SuceedResult);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete([Bind("id")] string id)
+        {
+            var result = await RootService.ProductsService.DeleteProductAsync(id);
+
+            if(result.IsFaulted)
+            {
+                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+            }
+
+            return NoContent();
         }
     }
 }

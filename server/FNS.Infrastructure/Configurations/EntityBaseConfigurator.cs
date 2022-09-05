@@ -13,18 +13,6 @@ namespace FNS.Infrastructure.Configurations
             builder.HasKey(p => p.Id);
 
             builder.UseXminAsConcurrencyToken();
-            builder.Property(p => p.ConcurrencyToken)
-                .HasColumnName("xmin")
-                .HasColumnType("xid")
-                .ValueGeneratedOnAddOrUpdate()
-                .IsConcurrencyToken();
-
-
-            builder.Property(p => p.ConcurrencyToken).Metadata
-                .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
-
-            builder.Property(p => p.ConcurrencyToken).Metadata
-                .SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
         }
     }
 }

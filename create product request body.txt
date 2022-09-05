@@ -1,0 +1,13 @@
+{
+  "id": "28b2adf4-0d4c-4257-862e-8394a10dfa82",
+  "concurrencyToken": 1028,
+  "name": "NEW_NAME",
+  "description": "DESC",
+  "productCode": "CODE",
+  "price": 1000,
+  "subCategoryId": "00000000-0000-0000-0000-000000000001",
+  "additionalAttributes": {
+    "00000000-0000-0000-0000-000000000002": "AM3",
+    "00000000-0000-0000-0000-000000000003": 2019
+  }
+}

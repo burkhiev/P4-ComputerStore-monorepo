@@ -1,9 +1,7 @@
 ﻿namespace FNS.Services.Dtos.Products
 {
-    public sealed class ProductAttributeDto
+    public sealed class ProductAttributeForCreateDto
     {
-        public string Id { get; set; }
-        public uint ConcurrencyToken { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
         public string? Measure { get; set; }

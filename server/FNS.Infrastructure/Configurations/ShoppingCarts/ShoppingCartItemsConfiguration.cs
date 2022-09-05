@@ -16,12 +16,12 @@ namespace FNS.Infrastructure.Configurations.ShoppingCarts
             builder.HasOne(p => p.ShoppingCart)
                 .WithMany(p => p.ShoppingCartItems)
                 .HasForeignKey(p => p.ShoppingCartId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(p => p.Product)
                 .WithMany(p => p.ShoppingCartItems)
                 .HasForeignKey(p => p.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             var init = new ShoppingCartsItemsInitializer();
             builder.HasData(init.Entities);

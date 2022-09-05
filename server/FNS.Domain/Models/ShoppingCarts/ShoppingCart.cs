@@ -6,6 +6,6 @@ namespace FNS.Domain.Models.ShoppingCarts
     {
         public string UserId { get; set; }
         public User User { get; set; }
-        public List<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public List<ShoppingCartItem>? ShoppingCartItems { get; set; }
     }
 }

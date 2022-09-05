@@ -8,6 +8,6 @@ namespace FNS.Domain.Models.SalesReceipts
         public string UserId { get; set; }
         public User User { get; set; }
         public Instant CreatedAt { get; set; }
-        public List<SalesReceiptWithProduct> SalesReceiptsWithProducts{ get; set; }
+        public List<SalesReceiptWithProduct>? SalesReceiptsWithProducts{ get; set; }
     }
 }

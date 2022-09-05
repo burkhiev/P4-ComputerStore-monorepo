@@ -16,12 +16,12 @@ namespace FNS.Infrastructure.Configurations.SalesReceipts
             builder.HasOne(p => p.Product)
                 .WithMany(p => p.SalesReceiptsWithProducts)
                 .HasForeignKey(p => p.ProductId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(p => p.SalesReceipt)
                 .WithMany(p => p.SalesReceiptsWithProducts)
                 .HasForeignKey(p => p.SalesReceiptId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasData(new SalesReceiptWithProductInitializer().Entities);
         }

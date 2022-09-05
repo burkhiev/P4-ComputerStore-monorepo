@@ -32,7 +32,7 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
             builder.HasOne(p => p.SubCategory)
                 .WithMany(sc => sc.Products)
                 .HasForeignKey(p => p.SubCategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             var init = new ProductsInitializer();
             builder.HasData(init.Entities);

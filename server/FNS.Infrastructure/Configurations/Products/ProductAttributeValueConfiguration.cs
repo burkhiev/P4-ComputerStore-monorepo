@@ -19,12 +19,12 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
             builder.HasOne(p => p.Product)
                 .WithMany(p => p.ProductAttributeValues)
                 .HasForeignKey(p => p.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(p => p.ProductAttribute)
                 .WithMany(pa => pa.ProductAttributeValues)
                 .HasForeignKey(p => p.ProductAttributeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             var init = new ProductAttributeValuesInitializer();
             builder.HasData(init.Entities);

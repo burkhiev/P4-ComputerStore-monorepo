@@ -5,8 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FNS.Infrastructure.Configurations.ShoppingCarts
 {
-    internal sealed class ShoppingCartItemsConfiguration : IEntityTypeConfiguration<ShoppingCartItem>
+    public sealed class ShoppingCartItemsConfiguration : IEntityTypeConfiguration<ShoppingCartItem>
     {
+        public const int MinShoppingCartAmountValue = 1;
+        public const int MaxShoppingCartAmountValue = 1000;
+
         public void Configure(EntityTypeBuilder<ShoppingCartItem> builder)
         {
             EntityBaseConfigurator.ConfigureDefault(builder);

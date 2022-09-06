@@ -7,14 +7,14 @@ using System.Net.Mime;
 namespace FNS.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/products/attrs")]
+    [Route("api/sub-cat")]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
-    public class ProductAttributeController : ControllerBase
+    public sealed class SubCategoryController : ControllerBase
     {
         private readonly IRootService _rootService;
 
-        public ProductAttributeController(IRootService rootService)
+        public SubCategoryController(IRootService rootService)
         {
             _rootService = rootService;
         }
@@ -22,10 +22,10 @@ namespace FNS.Presentation.Controllers
         public IRootService RootService => _rootService;
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<ProductAttributeDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<SubCategoryDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
         public IActionResult GetAll()
         {
-            var result = RootService.ProductsService.GetAllProductAttributes();
+            var result = RootService.ProductsService.GetAllSubCategories();
 
             if(result.IsFaulted)
             {
@@ -36,10 +36,11 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(ProductAttributeDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> CreateAsync(ProductAttributeForCreateDto dto)
+        [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> CreateAsync(SubCategoryForCreateDto dto)
         {
-            var result = await RootService.ProductsService.CreateProductAttributeAsync(dto);
+            var result = await RootService.ProductsService.CreateSubCategoryAsync(dto);
 
             if(result.IsFaulted)
             {
@@ -50,11 +51,11 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(typeof(ProductAttributeDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> UpdateAsync(ProductAttributeDto dto)
+        [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> UpdateAsync(SubCategoryDto dto)
         {
-            var result = await RootService.ProductsService.UpdateProductAttribute(dto);
+            var result = await RootService.ProductsService.UpdateSubCategoryAsync(dto);
 
             if(result.IsFaulted)
             {
@@ -65,17 +66,18 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(ProductAttributeDto), StatusCodes.Status204NoContent, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> DeleteAsync([Bind("id")] string id)
+        [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> DeleteAsync(string id)
         {
-            var result = await RootService.ProductsService.DeleteProductAttributeAsync(id);
+            var result = await RootService.ProductsService.DeleteSubCategoryAsync(id);
 
             if(result.IsFaulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
 
-            return NoContent();
+            return Ok(result.SuceedResult);
         }
     }
 }

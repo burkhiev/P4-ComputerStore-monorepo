@@ -7,6 +7,6 @@ namespace FNS.Services.Dtos.ShoppingCarts
         public string Id { get; set; }
         public uint ConcurrencyToken { get; set; }
         public string UserId { get; set; }
-        public List<ShoppingCartItemDto> ShoppingCartItems { get; set; }
+        public List<ShoppingCartItemWithProductDto> ShoppingCartItems { get; set; }
     }
 }

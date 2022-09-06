@@ -8,7 +8,8 @@ namespace FNS.Presentation.Controllers
 {
     [ApiController]
     [Route("api/purchase-invoices")]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
     public sealed class PurchaseController : ControllerBase
     {
         private readonly IRootService _rootService;
@@ -28,14 +29,28 @@ namespace FNS.Presentation.Controllers
             return Ok(result.SuceedResult);
         }
 
-        [HttpGet]
-        [Route("items/{invoiceId}")]
+        [HttpGet("items/{invoiceId}")]
         [ProducesResponseType(typeof(IEnumerable<PurchaseInvoiceDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> GetAllPurchaseInvoices([Bind("invoiceId")] string invoiceId)
+        public async Task<IActionResult> GetAllPurchaseInvoiceItemsAsync([Bind("invoiceId")] string invoiceId)
         {
             var result = await RootService.PurchasesService.GetInvoiceItemsByInvoiceId(invoiceId);
             
+            if(result.IsFaulted)
+            {
+                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+            }
+
+            return Ok(result.SuceedResult);
+        }
+
+        [HttpPost("items")]
+        [ProducesResponseType(typeof(PurchaseInvoiceDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> GetAllPurchaseInvoicesItemsAsync([Bind("invoiceId")] string invoiceId)
+        {
+            var result = await RootService.PurchasesService.GetInvoiceItemsByInvoiceId(invoiceId);
+
             if(result.IsFaulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);

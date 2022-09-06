@@ -12,11 +12,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNS.Domain", "FNS.Domain\FNS.Domain.csproj", "{4E4C5DB6-7183-43BB-BDA3-D37FE1BFC0FF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNS.Services", "FNS.Services\FNS.Services.csproj", "{97C8D422-3185-4D7E-BFD5-9C28DEC668AA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E3C1A8CF-0210-4A83-8F6A-F1E4492E3EA8} = {E3C1A8CF-0210-4A83-8F6A-F1E4492E3EA8}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNS.Infrastructure", "FNS.Infrastructure\FNS.Infrastructure.csproj", "{E3C1A8CF-0210-4A83-8F6A-F1E4492E3EA8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{97C8D422-3185-4D7E-BFD5-9C28DEC668AA} = {97C8D422-3185-4D7E-BFD5-9C28DEC668AA}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

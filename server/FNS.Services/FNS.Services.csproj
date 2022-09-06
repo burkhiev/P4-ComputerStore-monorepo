@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FNS.Domain\FNS.Domain.csproj" />
+    <ProjectReference Include="..\FNS.Infrastructure\FNS.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

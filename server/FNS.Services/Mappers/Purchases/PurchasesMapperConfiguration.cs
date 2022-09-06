@@ -19,7 +19,8 @@ namespace FNS.Services.Mappers.Purchases
         {
             config.CreateMap<PurchaseInvoice, PurchaseInvoiceDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
 
             config.CreateMap<PurchaseInvoiceItem, PurchaseInvoiceItemDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

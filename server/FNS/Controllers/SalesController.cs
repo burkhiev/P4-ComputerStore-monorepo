@@ -8,7 +8,8 @@ namespace FNS.Presentation.Controllers
 {
     [Route("api/sales")]
     [ApiController]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
     public sealed class SalesController : ControllerBase
     {
         private readonly IRootService _rootService;
@@ -37,7 +38,7 @@ namespace FNS.Presentation.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(SalesReceiptWithAdditionalInfoDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Get([Bind("id")] string id)
+        public async Task<IActionResult> GetByIdAsync([Bind("id")] string id)
         {
             var result = await RootService.SalesReceiptService.GetWithAdditionalAsync(id);
 
@@ -53,7 +54,7 @@ namespace FNS.Presentation.Controllers
         [ProducesResponseType(typeof(SaleSuccessResultDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Sale([Bind($"saleInfo")] SaleDto saleInfo)
+        public async Task<IActionResult> SaleAsync([Bind($"saleInfo")] SaleDto saleInfo)
         {
             var result = await RootService.SalesReceiptService.MakeSaleAsync(saleInfo);
 

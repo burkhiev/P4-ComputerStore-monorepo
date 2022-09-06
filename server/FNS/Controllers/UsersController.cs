@@ -1,10 +1,14 @@
-﻿using FNS.Services.Abstractions;
+﻿using FNS.Domain.Utilities.OperationResults;
+using FNS.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 
 namespace FNS.Presentation.Controllers
 {
     [Route("api/users")]
     [ApiController]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
     public class UsersController : ControllerBase
     {
         private readonly IRootService _rootService;
@@ -24,7 +28,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> GetByIdAsync(string id)
         {
             var result = await RootService.UserService.GetUserByIdAsync(id);
 

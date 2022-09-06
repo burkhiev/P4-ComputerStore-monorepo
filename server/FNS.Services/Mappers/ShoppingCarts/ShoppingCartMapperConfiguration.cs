@@ -6,11 +6,11 @@ using FNS.Services.Mappers.Products;
 
 namespace FNS.Services.Mappers.ShoppingCarts
 {
-    internal sealed class ShoppingCartConfiguration : IBaseMapperConguration
+    internal sealed class ShoppingCartMapperConfiguration : IBaseMapperConguration
     {
 
         private readonly MapperConfiguration _mapperConfig;
-        public ShoppingCartConfiguration()
+        public ShoppingCartMapperConfiguration()
         {
             _mapperConfig = new MapperConfiguration(config => Configure(config));
         }
@@ -20,7 +20,8 @@ namespace FNS.Services.Mappers.ShoppingCarts
         private void Configure(IMapperConfigurationExpression config)
         {
             config.CreateMap<ShoppingCart, ShoppingCartDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
             config.CreateMap<ShoppingCart, ShoppingCartWithAdditionalInfoDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -29,18 +30,24 @@ namespace FNS.Services.Mappers.ShoppingCarts
                 .ForMember(dest => dest.ShoppingCartItems, opt => opt.MapFrom((src, dest) =>
                 {
                     var productMapper = new ProductMapperConfiguration().Mapper;
-                    var shoppingCartItemDtos = new List<ShoppingCartItemDto>(src.ShoppingCartItems.Count);
+                    var shoppingCartItemDtos = new List<ShoppingCartItemWithProductDto>(src.ShoppingCartItems?.Count ?? 0);
+
+                    if(src.ShoppingCartItems is null)
+                    {
+                        return shoppingCartItemDtos;
+                    }
 
                     foreach(var item in src.ShoppingCartItems)
                     {
                         var productDto = productMapper.Map<ProductDto>(item.Product);
 
-                        var shoppingCartItemDto = new ShoppingCartItemDto
+                        var shoppingCartItemDto = new ShoppingCartItemWithProductDto
                         {
                             Id = item.Id,
+                            ConcurrencyToken = item.xmin,
                             ShoppingCartId = src.Id,
                             Amount = item.Amount,
-                            Product = productDto
+                            Product = productDto,
                         };
 
                         shoppingCartItemDtos.Add(shoppingCartItemDto);
@@ -48,6 +55,11 @@ namespace FNS.Services.Mappers.ShoppingCarts
 
                     return shoppingCartItemDtos;
                 }));
+
+            config.CreateMap<ShoppingCart, ShoppingCart>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.xmin, opt => opt.MapFrom(src => src.xmin));
         }
     }
 }

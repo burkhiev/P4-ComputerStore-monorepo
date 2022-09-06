@@ -5,6 +5,7 @@ using FNS.Domain.Models.Products;
 using FNS.Domain.Repositories;
 using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions.Products;
+using FNS.Services.Dtos;
 using FNS.Services.Dtos.Products;
 using FNS.Services.Mappers.Products;
 using Microsoft.AspNetCore.Http;
@@ -17,17 +18,20 @@ namespace FNS.Services.Services.Products
         private readonly IRootRepository _rootRepository;
         private readonly ProductMapperConfiguration _productMapperConfig;
         private readonly ProductAttributesMapperConfiguration _productAttributeMapperConfig;
+        private readonly SubCategoryMapperConfiguration _subCategoryMapperConfig;
 
         public ProductService(IRootRepository rootRepository)
         {
             _rootRepository = rootRepository;
             _productMapperConfig = new ProductMapperConfiguration();
             _productAttributeMapperConfig = new ProductAttributesMapperConfiguration();
+            _subCategoryMapperConfig = new SubCategoryMapperConfiguration();
         }
 
         private IRootRepository RootRepository => _rootRepository;
         private IMapper ProductMapper => _productMapperConfig.Mapper;
         private IMapper ProductAttributeMapper => _productAttributeMapperConfig.Mapper;
+        private IMapper SubCategoryMapper => _subCategoryMapperConfig.Mapper;
 
         public AppOpResult<IEnumerable<ProductDto>> GetAllProducts()
         {
@@ -209,7 +213,7 @@ namespace FNS.Services.Services.Products
             return result;
         }
 
-        public async Task<AppOpResult<DummyModel>> DeleteProductAsync(string id)
+        public async Task<AppOpResult<EmptyDto>> DeleteProductAsync(string id)
         {
             var product = await RootRepository.Products.FindByIdAsync(id);
 
@@ -219,7 +223,7 @@ namespace FNS.Services.Services.Products
                 await RootRepository.SaveChangesAsync();
             }
 
-            var result = new EmptyOpResult();
+            var result = new AppOpResult<EmptyDto>();
             return result;
         }
 
@@ -274,7 +278,7 @@ namespace FNS.Services.Services.Products
             return result;
         }
 
-        public async Task<AppOpResult<DummyModel>> DeleteProductAttributeAsync(string id)
+        public async Task<AppOpResult<EmptyDto>> DeleteProductAttributeAsync(string id)
         {
             var attribute = await RootRepository.ProductAttributes.FindByIdAsync(id);
 
@@ -284,7 +288,101 @@ namespace FNS.Services.Services.Products
                 await RootRepository.SaveChangesAsync();
             }
 
-            var result = new AppOpResult<DummyModel>();
+            var result = new AppOpResult<EmptyDto>();
+            return result;
+        }
+
+        public AppOpResult<IEnumerable<SubCategoryDto>> GetAllSubCategories()
+        {
+            var subCategories = RootRepository.SubCategories.GetAll().ToList();
+            var dtos = SubCategoryMapper.Map<IEnumerable<SubCategoryDto>>(subCategories);
+
+            var result = new AppOpResult<IEnumerable<SubCategoryDto>>(dtos);
+            return result;
+        }
+
+        public async Task<AppOpResult<SubCategoryDto>> CreateSubCategoryAsync(SubCategoryForCreateDto attrDto)
+        {
+            var subCategory = new SubCategory 
+            { 
+                Id = Guid.NewGuid().ToString(),
+                Name = attrDto.Name ,
+            };
+
+            await RootRepository.SubCategories.AddAsync(subCategory);
+
+            try
+            {
+                await RootRepository.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException ex)
+            {
+                var fault = new InvalidDbConcurrencyUpdateOpResult<SubCategoryDto>();
+                return fault;
+            }
+            catch (DbUpdateException ex)
+            {
+                var fault = new InvalidDbUpdateOpResult<SubCategoryDto>();
+                return fault;
+            }
+
+            var dto = SubCategoryMapper.Map<SubCategoryDto>(subCategory);
+            var result = new AppOpResult<SubCategoryDto>(dto);
+
+            return result;
+        }
+
+        public async Task<AppOpResult<SubCategoryDto>> UpdateSubCategoryAsync(SubCategoryDto attrDto)
+        {
+            var subCategory = SubCategoryMapper.Map<SubCategory>(attrDto);
+            RootRepository.SubCategories.Update(subCategory);
+
+            try
+            {
+                await RootRepository.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException ex)
+            {
+                var fault = new InvalidDbConcurrencyUpdateOpResult<SubCategoryDto>();
+                return fault;
+            }
+            catch(DbUpdateException ex)
+            {
+                var fault = new InvalidDbUpdateOpResult<SubCategoryDto>();
+                return fault;
+            }
+
+            var dto = SubCategoryMapper.Map<SubCategoryDto>(subCategory);
+            var result = new AppOpResult<SubCategoryDto>(dto);
+
+            return result;
+        }
+
+        public async Task<AppOpResult<EmptyDto>> DeleteSubCategoryAsync(string id)
+        {
+            var subCategory = await RootRepository.SubCategories.FindByIdAsync(id);
+
+            if(subCategory is not null)
+            {
+                RootRepository.SubCategories.Remove(subCategory);
+
+                try
+                {
+                    await RootRepository.SaveChangesAsync();
+                }
+                catch(DbUpdateConcurrencyException ex)
+                {
+                    var fault = new InvalidDbConcurrencyUpdateOpResult<EmptyDto>();
+                    return fault;
+                }
+                catch(DbUpdateException ex)
+                {
+                    var fault = new InvalidDbUpdateOpResult<EmptyDto>();
+                    return fault;
+                }
+            }
+
+            var result = new AppOpResult<EmptyDto>();
             return result;
         }
 

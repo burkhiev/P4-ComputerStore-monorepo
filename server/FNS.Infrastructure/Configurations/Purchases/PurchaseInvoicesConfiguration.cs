@@ -11,6 +11,9 @@ namespace FNS.Infrastructure.Configurations.Purchases
         {
             EntityBaseConfigurator.ConfigureDefault(builder);
 
+            builder.Property(x => x.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
             builder.HasOne(x => x.User)
                 .WithMany(u => u.PurchaseInvoices)
                 .HasForeignKey(x => x.UserId)

@@ -4,12 +4,13 @@ using FNS.Domain.Models.Products;
 using FNS.Domain.Models.Purchases;
 using FNS.Domain.Models.SalesReceipts;
 using FNS.Domain.Models.ShoppingCarts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FNS.Contexts.Infrastructure
 {
-    public sealed class AppDbContext : IdentityDbContext<User>
+    public sealed class AppDbContext : IdentityDbContext<User, IdentityRole, string>
     {
         public AppDbContext(DbContextOptions options)
             : base(options)

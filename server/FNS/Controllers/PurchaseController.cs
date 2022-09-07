@@ -36,22 +36,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.PurchasesService.GetInvoiceItemsByInvoiceId(invoiceId);
             
-            if(result.IsFaulted)
-            {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
-            }
-
-            return Ok(result.SuceedResult);
-        }
-
-        [HttpPost("items")]
-        [ProducesResponseType(typeof(PurchaseInvoiceDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> GetAllPurchaseInvoicesItemsAsync([Bind("invoiceId")] string invoiceId)
-        {
-            var result = await RootService.PurchasesService.GetInvoiceItemsByInvoiceId(invoiceId);
-
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }

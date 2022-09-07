@@ -1,15 +1,19 @@
 ﻿using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions;
 using FNS.Services.Dtos.SalesReceipts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
 namespace FNS.Presentation.Controllers
 {
-    [Route("api/sales")]
+    [Authorize(Roles = "admin")]
     [ApiController]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
+    [Route("api/sales")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public sealed class SalesController : ControllerBase
     {
         private readonly IRootService _rootService;
@@ -27,7 +31,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = RootService.SalesReceiptService.GetAll();
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -42,7 +46,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.SalesReceiptService.GetWithAdditionalAsync(id);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -58,7 +62,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.SalesReceiptService.MakeSaleAsync(saleInfo);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }

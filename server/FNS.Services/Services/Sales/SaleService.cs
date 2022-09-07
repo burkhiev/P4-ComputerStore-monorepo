@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using FNS.Domain.Exceptions;
 using FNS.Domain.Models.SalesReceipts;
+using FNS.Domain.Models.ShoppingCarts;
 using FNS.Domain.Repositories;
 using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions.SalesReceipts;
 using FNS.Services.Dtos.SalesReceipts;
 using FNS.Services.Mappers.SalesReceipts;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using NodaTime;
 
 namespace FNS.Services.Services.Sales
@@ -35,9 +37,9 @@ namespace FNS.Services.Services.Sales
             return result;
         }
 
-        public async Task<AppOpResult<SalesReceiptWithAdditionalInfoDto>> GetWithAdditionalAsync(string id, CancellationToken ct = default)
+        public async Task<AppOpResult<SalesReceiptWithAdditionalInfoDto>> GetWithAdditionalAsync(string id)
         {
-            var receipt = await RootRepository.SalesReceipts.FindByIdAsync(id, ct);
+            var receipt = await RootRepository.SalesReceipts.FindByIdAsync(id);
 
             if(receipt is null)
             {
@@ -45,7 +47,7 @@ namespace FNS.Services.Services.Sales
                 return errResult;
             }
 
-            await RootRepository.SalesReceiptWithProducts.LoadAdditionalInfoBySalesReceiptId(receipt.Id, ct);
+            await RootRepository.SalesReceiptWithProducts.LoadAdditionalInfoBySalesReceiptId(receipt.Id);
 
             var dtos = Mapper.Map<SalesReceiptWithAdditionalInfoDto>(receipt);
             var result = new AppOpResult<SalesReceiptWithAdditionalInfoDto>(dtos);
@@ -65,22 +67,34 @@ namespace FNS.Services.Services.Sales
             }
 
 
-            bool someProductIsNotFound = false;
+            // ищем корзину
+            var cart = RootRepository.ShoppingCarts.FindByCondition(x => x.UserId == user.Id).FirstOrDefault();
+
+            if(cart is null)
+            {
+                var fault = new SaleFailedBecauseShoppingCartNotFoundResult();
+                return fault;
+            }
+
+
+            // переносим товары из корзины в чек
+            cart.ShoppingCartItems = new List<ShoppingCartItem>();
+            await RootRepository.ShoppingCarts.LoadShoppingCartsWithItemsAndProducts(cart);
+
+            var salesReceipt = new SalesReceipt
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = user.Id,
+            };
+            await RootRepository.SalesReceipts.AddAsync(salesReceipt);
+
+
             bool notEnoughProductsInStock = false;
 
-            foreach(var prodSaleInfo in saleInfo.ProductsInfo)
+            foreach(var cartItem in cart.ShoppingCartItems)
             {
-                // проверяем, существует ли товар с указанным ID
-                var product = await RootRepository.Products.FindByIdAsync(prodSaleInfo.Id);
-
-                if(product is null)
-                {
-                    someProductIsNotFound = true;
-                    break;
-                }
-
-                // проверяем, если ли запись для учета остатков товара
-                var balances = RootRepository.ProductBalances.FindByCondition(x => x.ProductId == product.Id).ToArray();
+                // проверяем остатки товара
+                var balances = RootRepository.ProductBalances.FindByCondition(x => x.ProductId == cartItem.ProductId).ToArray();
 
                 if(balances.Length != 1)
                 {
@@ -89,22 +103,24 @@ namespace FNS.Services.Services.Sales
 
                 var prodBalance = balances[0];
 
-                // по найденной учетной записи сверяем остатки и кол-во продаваемого товара
-                if(prodSaleInfo.Amount > prodBalance.Amount)
+                if(cartItem.Amount > prodBalance.Amount)
                 {
                     notEnoughProductsInStock = true;
                     break;
                 }
 
-                // вычет
-                prodBalance.Amount -= prodSaleInfo.Amount;
+                // вычет из остатков
+                prodBalance.Amount -= cartItem.Amount;
                 RootRepository.ProductBalances.Update(prodBalance);
-            }
 
-            if(someProductIsNotFound)
-            {
-                var fault = new SaleFailedBecauseSomeProductNotFoundOpResult();
-                return fault;
+                // добавление в чек
+                await RootRepository.SalesReceiptWithProducts.AddAsync(new SalesReceiptWithProduct
+                { 
+                    Id = Guid.NewGuid().ToString(),
+                    SalesReceiptId = salesReceipt.Id,
+                    ProductId = cartItem.ProductId,
+                    Amount = cartItem.Amount,
+                });
             }
 
             if(notEnoughProductsInStock)
@@ -114,11 +130,23 @@ namespace FNS.Services.Services.Sales
             }
 
 
-            int changedRecords = await RootRepository.SaveChangesAsync();
+            // очистка корзины
+            RootRepository.ShoppingCartItems.RemoveMany(cart.ShoppingCartItems);
 
-            if(changedRecords != saleInfo.ProductsInfo.Count)
+
+            try
             {
-                throw new UnknownException();
+                await RootRepository.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException ex)
+            {
+                var fault = new InvalidDbConcurrencyUpdateOpResult<SaleSuccessResultDto>();
+                return fault;
+            }
+            catch(DbUpdateException ex)
+            {
+                var fault = new InvalidDbConcurrencyUpdateOpResult<SaleSuccessResultDto>();
+                return fault;
             }
 
 
@@ -158,14 +186,14 @@ namespace FNS.Services.Services.Sales
             }
         }
 
-        private sealed class SaleFailedBecauseSomeProductNotFoundOpResult : AppOpResult<SaleSuccessResultDto>
+        private sealed class SaleFailedBecauseShoppingCartNotFoundResult : AppOpResult<SaleSuccessResultDto>
         {
-            public SaleFailedBecauseSomeProductNotFoundOpResult() : base()
+            public SaleFailedBecauseShoppingCartNotFoundResult() : base()
             {
                 FaultResult = new AppProblemDetails
                 {
                     Title = "Sale is not completed",
-                    Detail = "Sale is not completed because cannot find some products in the shopping cart.",
+                    Detail = "Sale is not completed because there is no shopping cart for specified user.",
                     StatusCode = StatusCodes.Status404NotFound,
                 };
             }

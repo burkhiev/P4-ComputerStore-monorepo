@@ -6,6 +6,6 @@ namespace FNS.Services.Abstractions.Indentity
     public interface IUsersService
     {
         AppOpResult<IEnumerable<UserDto>> GetAllUsers();
-        Task<AppOpResult<UserDto>> GetUserByIdAsync(string id, CancellationToken ct = default);
+        Task<AppOpResult<UserDto>> GetUserByIdAsync(string id);
     }
 }

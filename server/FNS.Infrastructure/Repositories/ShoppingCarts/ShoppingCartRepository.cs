@@ -13,7 +13,7 @@ namespace FNS.Infrastructure.Repositories.ShoppingCarts
             // do nothing
         }
 
-        public async Task LoadShoppingCartsWithItemsAndProducts(ShoppingCart shoppingCart, CancellationToken ct = default)
+        public async Task LoadShoppingCartsWithItemsAndProducts(ShoppingCart shoppingCart)
         {
             await Db.ShoppingCarts.Where(c => c.Id == shoppingCart.Id)
                 .Include(cart => cart.ShoppingCartItems)

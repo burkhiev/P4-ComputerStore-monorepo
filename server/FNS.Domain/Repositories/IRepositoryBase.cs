@@ -6,13 +6,14 @@ namespace FNS.Domain.Repositories
     public interface IRepositoryBase<T> where T : class, IEntityBase, new()
     {
         IQueryable<T> GetAll();
-        Task<T?> FindByIdAsync(string id, CancellationToken ct = default);
+        Task<T?> FindByIdAsync(string id);
         IQueryable<T> FindByCondition(Expression<Func<T, bool>> condition);
         Task<T> AddAsync(T value);
         T Update(T value);
-        IEnumerable<T> UpdateMany(IEnumerable<T> values);
+        void UpdateMany(IEnumerable<T> values);
         T Remove(T value);
-        Task LoadCollectionsAsync(T entity, CancellationToken ct = default, params Expression<Func<T, IEnumerable<object>>>[] collectionPropExp);
-        Task LoadReferencesAsync(T entity, CancellationToken ct = default, params Expression<Func<T, object?>>[] collectionPropExp);
+        void RemoveMany(IEnumerable<T> values);
+        Task LoadCollectionsAsync(T entity, params Expression<Func<T, IEnumerable<object>>>[] collectionPropExp);
+        Task LoadReferencesAsync(T entity, params Expression<Func<T, object?>>[] collectionPropExp);
     }
 }

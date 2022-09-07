@@ -34,9 +34,9 @@ namespace FNS.Services.Services.Identity
         }
 
         [Obsolete("For debugging")]
-        public async Task<AppOpResult<UserDto>> GetUserByIdAsync(string id, CancellationToken ct = default)
+        public async Task<AppOpResult<UserDto>> GetUserByIdAsync(string id)
         {
-            var user = await RootRepository.Users.FindByIdAsync(id, ct);
+            var user = await RootRepository.Users.FindByIdAsync(id);
 
             if(user is null)
             {

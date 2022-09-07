@@ -27,7 +27,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = RootService.ProductsService.GetAllProductAttributes();
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -41,7 +41,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.ProductsService.CreateProductAttributeAsync(dto);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -56,7 +56,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.ProductsService.UpdateProductAttribute(dto);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -70,7 +70,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.ProductsService.DeleteProductAttributeAsync(id);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }

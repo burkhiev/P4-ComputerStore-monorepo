@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace FNS.Presentation.Utilities.Converters
 {
-    public sealed class InstantConverter : JsonConverter<Instant>
+    public sealed class NodaTimeInstantConverter : JsonConverter<Instant>
     {
         public override Instant Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

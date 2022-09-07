@@ -32,7 +32,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.UserService.GetUserByIdAsync(id);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }

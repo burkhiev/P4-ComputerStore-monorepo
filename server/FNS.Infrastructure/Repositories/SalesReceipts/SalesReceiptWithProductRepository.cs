@@ -13,13 +13,13 @@ namespace FNS.Infrastructure.Repositories.SalesReceipts
             // do nothing
         }
 
-        public async Task LoadAdditionalInfoBySalesReceiptId(string salesReceiptId, CancellationToken ct = default)
+        public async Task LoadAdditionalInfoBySalesReceiptId(string salesReceiptId)
         {
             await Db.SalesReceiptsWithProducts
                 .Where(e => e.SalesReceiptId == salesReceiptId)
                 .Include(e => e.SalesReceipt)
                 .Include(e => e.Product)
-                .LoadAsync(ct);
+                .LoadAsync();
         }
     }
 }

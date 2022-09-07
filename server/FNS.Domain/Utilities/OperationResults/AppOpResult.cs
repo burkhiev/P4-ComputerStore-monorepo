@@ -15,9 +15,9 @@ namespace FNS.Domain.Utilities.OperationResults
         }
 
         [MemberNotNullWhen(true, nameof(FaultResult))]
-        public bool IsFaulted => FaultResult is not null;
+        public bool Faulted => FaultResult is not null;
 
-        public bool IsSucceeded => FaultResult is null;
+        public bool Succeeded => FaultResult is null;
 
         public AppProblemDetails? FaultResult { get; set; }
 

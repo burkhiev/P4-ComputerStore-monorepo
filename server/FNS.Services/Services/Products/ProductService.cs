@@ -52,9 +52,9 @@ namespace FNS.Services.Services.Products
             return result;
         }
 
-        public async Task<AppOpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id, CancellationToken ct = default)
+        public async Task<AppOpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id)
         {
-            var product = await RootRepository.Products.FindByIdAsync(id, ct);
+            var product = await RootRepository.Products.FindByIdAsync(id);
 
             if(product is null)
             {
@@ -62,7 +62,7 @@ namespace FNS.Services.Services.Products
                 return errResult;
             }
 
-            await RootRepository.Products.LoadAttributesAndTheirValuesAsync(product, ct);
+            await RootRepository.Products.LoadAttributesAndTheirValuesAsync(product);
 
             var dto = ProductMapper.Map<Product, ProductWithAdditionalInfoDto>(product);
             var result = new AppOpResult<ProductWithAdditionalInfoDto>(dto);

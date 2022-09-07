@@ -27,7 +27,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = RootService.ProductsService.GetAllProducts();
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -41,7 +41,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = RootService.ProductsService.GetProductsBySubCategoryId(subCategoryId);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -56,7 +56,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.ProductsService.GetProductWithAdditionalInfoByIdAsync(id);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -71,7 +71,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.ProductsService.CreateProduct(dto);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -86,7 +86,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.ProductsService.UpdateProduct(dto);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }
@@ -100,7 +100,7 @@ namespace FNS.Presentation.Controllers
         {
             var result = await RootService.ProductsService.DeleteProductAsync(id);
 
-            if(result.IsFaulted)
+            if(result.Faulted)
             {
                 return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
             }

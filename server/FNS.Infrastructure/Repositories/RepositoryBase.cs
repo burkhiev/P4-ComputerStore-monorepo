@@ -22,9 +22,9 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
             return result.Entity;
         }
 
-        public async Task<T?> FindByIdAsync(string id, CancellationToken ct = default)
+        public async Task<T?> FindByIdAsync(string id)
         {
-            var result = await Db.Set<T>().FindAsync(new object[] { id }, ct);
+            var result = await Db.Set<T>().FindAsync(new object[] { id });
             return result;
         }
 
@@ -46,10 +46,9 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
             return result.Entity;
         }
 
-        public IEnumerable<T> UpdateMany(IEnumerable<T> values)
+        public void UpdateMany(IEnumerable<T> values)
         {
             Db.Set<T>().UpdateRange(values);
-            return values;
         }
 
         public T Remove(T value)
@@ -58,19 +57,24 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
             return result.Entity;
         }
 
-        public async Task LoadCollectionsAsync(T entity, CancellationToken ct = default, params Expression<Func<T, IEnumerable<object>>>[] expressions)
+        public void RemoveMany(IEnumerable<T> values)
+        {
+            Db.Set<T>().RemoveRange(values);
+        }
+
+        public async Task LoadCollectionsAsync(T entity, params Expression<Func<T, IEnumerable<object>>>[] expressions)
         {
             foreach(var exp in expressions)
             {
-                await Db.Entry(entity).Collection(exp).LoadAsync(ct);
+                await Db.Entry(entity).Collection(exp).LoadAsync();
             }
         }
 
-        public async Task LoadReferencesAsync(T entity, CancellationToken ct = default, params Expression<Func<T, object?>>[] expressions)
+        public async Task LoadReferencesAsync(T entity, params Expression<Func<T, object?>>[] expressions)
         {
             foreach(var exp in expressions)
             {
-                await Db.Entry(entity).Reference(exp).LoadAsync(ct);
+                await Db.Entry(entity).Reference(exp).LoadAsync();
             }
         }
     }

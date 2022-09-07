@@ -12,7 +12,7 @@ namespace FNS.Infrastructure.Repositories.Identity
             // do nothing
         }
 
-        public async Task<User> LoadAdditionalInfoAsync(User user, CancellationToken ct = default)
+        public async Task<User> LoadAdditionalInfoAsync(User user)
         {
             await Db.Entry(user).Reference(u => u.ShoppingCart).LoadAsync();
             return user;

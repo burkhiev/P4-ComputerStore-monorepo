@@ -12,12 +12,12 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
             // do nothing
         }
 
-        public async Task<Product> LoadAttributesAndTheirValuesAsync(Product product, CancellationToken ct)
+        public async Task<Product> LoadAttributesAndTheirValuesAsync(Product product)
         {
             await Db.ProductAttributeValues
                 .Where(p => p.ProductId == product.Id)
                 .Include(p => p.ProductAttribute)
-                .LoadAsync(ct);
+                .LoadAsync();
 
             return product;
         }

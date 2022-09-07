@@ -11,8 +11,7 @@ namespace FNS.Infrastructure.Configurations.Identity
         {
             EntityBaseConfigurator.ConfigureDefault(builder);
 
-            var init = new UsersInitializer();
-            builder.HasData(init.Entities);
+            builder.HasData(new UsersInitializer().Entities);
         }
     }
 }

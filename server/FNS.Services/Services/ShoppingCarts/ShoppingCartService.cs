@@ -37,9 +37,9 @@ namespace FNS.Services.Services.ShoppingCarts
             return result;
         }
 
-        public async Task<AppOpResult<ShoppingCartWithAdditionalInfoDto>> GetByUserIdWithAdditionalInfoAsync(string userId, CancellationToken ct = default)
+        public async Task<AppOpResult<ShoppingCartWithAdditionalInfoDto>> GetByUserIdWithAdditionalInfoAsync(string userId)
         {
-            var user = await RootRepository.Users.FindByIdAsync(userId, ct);
+            var user = await RootRepository.Users.FindByIdAsync(userId);
 
             if(user is null)
             {
@@ -47,7 +47,7 @@ namespace FNS.Services.Services.ShoppingCarts
                 return errResult;
             }
 
-            await RootRepository.Users.LoadReferencesAsync(user, ct, u => u.ShoppingCart);
+            await RootRepository.Users.LoadReferencesAsync(user, u => u.ShoppingCart);
 
             if(user.ShoppingCart is null)
             {
@@ -55,7 +55,7 @@ namespace FNS.Services.Services.ShoppingCarts
                 return errResult;
             }
 
-            await RootRepository.ShoppingCarts.LoadShoppingCartsWithItemsAndProducts(user.ShoppingCart, ct);
+            await RootRepository.ShoppingCarts.LoadShoppingCartsWithItemsAndProducts(user.ShoppingCart);
 
             var dto = Mapper.Map<ShoppingCartWithAdditionalInfoDto>(user.ShoppingCart);
             var result = new AppOpResult<ShoppingCartWithAdditionalInfoDto>(dto);

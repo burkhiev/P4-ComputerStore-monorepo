@@ -8,7 +8,7 @@ namespace FNS.Services.Abstractions.Products
     {
         AppOpResult<IEnumerable<ProductDto>> GetAllProducts();
         AppOpResult<IEnumerable<ProductDto>> GetProductsBySubCategoryId(string subCategoryId);
-        Task<AppOpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id, CancellationToken ct = default);
+        Task<AppOpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id);
         Task<AppOpResult<ProductWithAdditionalInfoDto>> CreateProduct(ProductForCreateDto dto);
         Task<AppOpResult<ProductWithAdditionalInfoDto>> UpdateProduct(ProductWithAdditionalInfoDto dto);
         Task<AppOpResult<EmptyDto>> DeleteProductAsync(string id);

@@ -5,16 +5,15 @@ using FNS.Domain.Models.Identity;
 using FNS.Domain.Utilities.OperationResults;
 using FNS.Presentation.Utilities.Auth;
 using FNS.Services.Dtos.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FNS.Presentation.Controllers
+namespace FNS.Presentation.Controllers.Identity
 {
     [ApiController]
     [Route("api/accounts")]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
-    public sealed class AccountController : ControllerBase
+    public sealed partial class AccountController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
@@ -28,20 +27,42 @@ namespace FNS.Presentation.Controllers
         public SignInManager<User> SignInManager => _signInManager;
         public UserManager<User> UserManager => _userManager;
 
-        [HttpPost("token")]
-        [ProducesResponseType(typeof(SuccessLoginDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status401Unauthorized, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Login(LoginDto dto)
+        [HttpPost("login")]
+        public partial async Task<IActionResult> Login(LoginDto dto)
         {
-            var claims = await GetIdentityAsync(dto.Email);
+            await SignInManager.SignOutAsync();
+
+            var user = await UserManager.FindByEmailAsync(dto.Email);
+
+            if(user is null)
+            {
+                var problem = new LoginProblemDetails();
+                return Unauthorized(problem);
+            }
+
+
+            var result = await SignInManager.PasswordSignInAsync(
+                user: user, 
+                password: dto.Password, 
+                isPersistent: true,
+                lockoutOnFailure: false);
+
+            if(!result.Succeeded)
+            {
+                var problem = new LoginProblemDetails();
+                return Unauthorized(problem);
+            }
+
+
+            var claims = await GetClaimsAsync(user);
 
             if(claims is null)
             {
-                var badResult = new LoginProblemDetails();
-                return Unauthorized(badResult);
+                var problem = new LoginProblemDetails();
+                return Unauthorized(problem);
             }
 
-            
+
             var now = DateTime.UtcNow;
 
             var jwt = new JwtSecurityToken(
@@ -60,19 +81,21 @@ namespace FNS.Presentation.Controllers
             return Ok(response);
         }
 
-        private async Task<IEnumerable<Claim>?> GetIdentityAsync(string email)
+        [HttpPost("logout")]
+        [Authorize]
+        public partial async Task<IActionResult> Logout()
         {
-            var user = await UserManager.FindByEmailAsync(email);
+            await SignInManager.SignOutAsync();
+            return NoContent();
+        }
 
-            if(user is null)
-            {
-                return null;
-            }
-
+        private async Task<IEnumerable<Claim>?> GetClaimsAsync(User user)
+        {
             var roles = await UserManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
             };

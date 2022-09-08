@@ -37,7 +37,7 @@ namespace FNS.Services.Services.Sales
             return result;
         }
 
-        public async Task<AppOpResult<SalesReceiptWithAdditionalInfoDto>> GetWithAdditionalAsync(string id)
+        public async Task<AppOpResult<SalesReceiptWithAdditionalInfoDto>> GetWithAdditionalInfoAsync(string id)
         {
             var receipt = await RootRepository.SalesReceipts.FindByIdAsync(id);
 
@@ -51,6 +51,25 @@ namespace FNS.Services.Services.Sales
 
             var dtos = Mapper.Map<SalesReceiptWithAdditionalInfoDto>(receipt);
             var result = new AppOpResult<SalesReceiptWithAdditionalInfoDto>(dtos);
+
+            return result;
+        }
+
+        public async Task<AppOpResult<IEnumerable<SalesReceiptWithAdditionalInfoDto>>> GetByUserIdAsync(string userId)
+        {
+            var user = await RootRepository.Users.FindByIdAsync(userId);
+
+            if(user is null)
+            {
+                var badResult = new EntityNotFoundOpResult<IEnumerable<SalesReceiptWithAdditionalInfoDto>>();
+                return badResult;
+            }
+
+            await RootRepository.SalesReceiptWithProducts.LoadAdditionalInfoByUserId(user.Id);
+            var salesReceipts = await RootRepository.SalesReceipts.FindByCondition(x => x.UserId == user.Id).ToListAsync();
+
+            var dtos = Mapper.Map<IEnumerable<SalesReceiptWithAdditionalInfoDto>>(salesReceipts);
+            var result = new AppOpResult<IEnumerable<SalesReceiptWithAdditionalInfoDto>>(dtos);
 
             return result;
         }

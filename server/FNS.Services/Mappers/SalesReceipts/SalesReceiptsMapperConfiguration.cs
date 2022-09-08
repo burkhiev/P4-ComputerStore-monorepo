@@ -26,15 +26,16 @@ namespace FNS.Services.Mappers.SalesReceipts
 
             config.CreateMap<SalesReceipt, SalesReceiptWithAdditionalInfoDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.Details, opt => opt.MapFrom((src, dest) =>
                 {
                     var productMapper = new ProductMapperConfiguration().Mapper;
-                    var details = new List<SalesReceiptWithProductDto>(src.SalesReceiptsWithProducts.Count);
+                    var salesReceiptsWithProducts = src.SalesReceiptsWithProducts ?? new List<SalesReceiptWithProduct>();
 
-                    foreach(var item in src.SalesReceiptsWithProducts)
+                    var details = new List<SalesReceiptWithProductDto>(salesReceiptsWithProducts.Count);
+
+                    foreach(var item in salesReceiptsWithProducts)
                     {
                         details.Add(new SalesReceiptWithProductDto
                         {

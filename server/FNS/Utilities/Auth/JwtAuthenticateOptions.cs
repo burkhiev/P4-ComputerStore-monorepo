@@ -7,7 +7,7 @@ namespace FNS.Presentation.Utilities.Auth
     {
         public const string Issuer = "MyAuthServer";
         public const string Audience = "MyAuthClient";
-        public const int LifetimeSeconds = 20;
+        public const int LifetimeSeconds = 30;
         private const string SecretKey = "mysupersecret_secretkey!123";
         private static readonly SymmetricSecurityKey _symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
 

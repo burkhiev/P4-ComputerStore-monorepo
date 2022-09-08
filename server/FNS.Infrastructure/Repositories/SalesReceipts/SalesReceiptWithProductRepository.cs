@@ -16,9 +16,18 @@ namespace FNS.Infrastructure.Repositories.SalesReceipts
         public async Task LoadAdditionalInfoBySalesReceiptId(string salesReceiptId)
         {
             await Db.SalesReceiptsWithProducts
-                .Where(e => e.SalesReceiptId == salesReceiptId)
                 .Include(e => e.SalesReceipt)
                 .Include(e => e.Product)
+                .Where(e => e.SalesReceiptId == salesReceiptId)
+                .LoadAsync();
+        }
+
+        public async Task LoadAdditionalInfoByUserId(string userId)
+        {
+            await Db.SalesReceiptsWithProducts
+                .Include(e => e.SalesReceipt)
+                .Include(e => e.Product)
+                .Where(e => e.SalesReceipt.UserId == userId)
                 .LoadAsync();
         }
     }

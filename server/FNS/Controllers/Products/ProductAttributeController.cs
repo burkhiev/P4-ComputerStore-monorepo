@@ -1,16 +1,17 @@
 ﻿using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Products;
+using FNS.Services.Utils.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
-namespace FNS.Presentation.Controllers
+namespace FNS.Presentation.Controllers.Products
 {
+    [Authorize(Roles = AppRoleNames.Admin)]
     [ApiController]
     [Route("api/products/attrs")]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
-    public class ProductAttributeController : ControllerBase
+    public sealed partial class ProductAttributeController : ControllerBase
     {
         private readonly IRootService _rootService;
 
@@ -22,8 +23,7 @@ namespace FNS.Presentation.Controllers
         public IRootService RootService => _rootService;
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<ProductAttributeDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        public IActionResult GetAll()
+        public partial IActionResult GetAll()
         {
             var result = RootService.ProductsService.GetAllProductAttributes();
 
@@ -36,8 +36,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(ProductAttributeDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> CreateAsync(ProductAttributeForCreateDto dto)
+        public partial async Task<IActionResult> CreateAsync(ProductAttributeForCreateDto dto)
         {
             var result = await RootService.ProductsService.CreateProductAttributeAsync(dto);
 
@@ -50,9 +49,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(typeof(ProductAttributeDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> UpdateAsync(ProductAttributeDto dto)
+        public partial async Task<IActionResult> UpdateAsync(ProductAttributeDto dto)
         {
             var result = await RootService.ProductsService.UpdateProductAttribute(dto);
 
@@ -65,8 +62,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(ProductAttributeDto), StatusCodes.Status204NoContent, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> DeleteAsync([Bind("id")] string id)
+        public partial async Task<IActionResult> DeleteAsync([Bind("id")] string id)
         {
             var result = await RootService.ProductsService.DeleteProductAttributeAsync(id);
 

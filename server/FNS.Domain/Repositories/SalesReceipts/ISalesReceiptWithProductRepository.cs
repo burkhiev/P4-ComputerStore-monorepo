@@ -5,5 +5,6 @@ namespace FNS.Domain.Repositories.SalesReceipts
     public interface ISalesReceiptWithProductRepository : IRepositoryBase<SalesReceiptWithProduct>
     {
         Task LoadAdditionalInfoBySalesReceiptId(string salesReceiptId);
+        Task LoadAdditionalInfoByUserId(string userId);
     }
 }

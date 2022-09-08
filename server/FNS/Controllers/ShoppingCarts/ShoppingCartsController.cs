@@ -1,19 +1,16 @@
-﻿using FNS.Domain.Models;
-using FNS.Domain.Utilities.OperationResults;
+﻿using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions;
-using FNS.Services.Dtos;
-using FNS.Services.Dtos.Identity;
 using FNS.Services.Dtos.ShoppingCarts;
+using FNS.Services.Utils.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 
-namespace FNS.Presentation.Controllers
+namespace FNS.Presentation.Controllers.ShoppingCarts
 {
+    [Authorize]
     [ApiController]
     [Route("api/carts")]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
-    public class ShoppingCartsController : ControllerBase
+    public partial class ShoppingCartsController : ControllerBase
     {
         private readonly IRootService _rootService;
 
@@ -24,18 +21,16 @@ namespace FNS.Presentation.Controllers
 
         public IRootService RootService => _rootService;
 
+        [Authorize(Roles = AppRoleNames.Admin)]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<ShoppingCartDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        public IActionResult GetAll()
+        public partial IActionResult GetAll()
         {
             var result = RootService.ShoppingCartService.GetAll();
             return Ok(result.SuceedResult);
         }
 
         [HttpGet("users/{userId}")]
-        [ProducesResponseType(typeof(ShoppingCartWithAdditionalInfoDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> GetByUserIdWithAdditionalInfoAsync([Bind("userId")] string userId)
+        public partial async Task<IActionResult> GetByUserIdWithAdditionalInfoAsync([Bind("userId")] string userId)
         {
             var result = await RootService.ShoppingCartService.GetByUserIdWithAdditionalInfoAsync(userId);
 
@@ -48,9 +43,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpPost("users/{userId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> AddProductItemAsync([Bind("userId")] string userId, ShoppingCartItemForCreateDto dto)
+        public partial async Task<IActionResult> AddCartItemAsync([Bind("userId")] string userId, ShoppingCartItemForCreateDto dto)
         {
             if(userId != dto.UserId)
             {
@@ -75,9 +68,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpPut("users/{userId}/cart-items/{itemId}")]
-        [ProducesResponseType(typeof(ShoppingCartForChangeItemAmountDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status404NotFound, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> UpdateShoppingCartItemAmountAsync([Bind("userId")] string userId, ShoppingCartForChangeItemAmountDto dto)
+        public partial async Task<IActionResult> UpdateCartItemAmountAsync([Bind("userId")] string userId, ShoppingCartForChangeItemAmountDto dto)
 {
             var result = await RootService.ShoppingCartService.UpdateItemAmountAsync(userId, dto.ItemId, dto.Amount);
 
@@ -90,8 +81,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpDelete("users/{userId}/cart-items/{itemId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateShoppingCartItemAmountAsync([Bind("userId")] string userId, [Bind("itemId")] string itemId)
+        public partial async Task<IActionResult> DeleteCartItemAsync([Bind("userId")] string userId, [Bind("itemId")] string itemId)
         {
             var result = await RootService.ShoppingCartService.DeleteItemAsync(userId, itemId);
 

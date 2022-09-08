@@ -1,16 +1,15 @@
-﻿using FNS.Domain.Utilities.OperationResults;
-using FNS.Services.Abstractions;
+﻿using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Products;
+using FNS.Services.Utils.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 
-namespace FNS.Presentation.Controllers
+namespace FNS.Presentation.Controllers.SubCategories
 {
+    [Authorize(Roles = AppRoleNames.Admin)]
     [ApiController]
     [Route("api/sub-cat")]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)]
-    public sealed class SubCategoryController : ControllerBase
+    public sealed partial class SubCategoryController : ControllerBase
     {
         private readonly IRootService _rootService;
 
@@ -22,8 +21,7 @@ namespace FNS.Presentation.Controllers
         public IRootService RootService => _rootService;
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<SubCategoryDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        public IActionResult GetAll()
+        public partial IActionResult GetAll()
         {
             var result = RootService.ProductsService.GetAllSubCategories();
 
@@ -36,9 +34,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> CreateAsync(SubCategoryForCreateDto dto)
+        public partial async Task<IActionResult> CreateAsync(SubCategoryForCreateDto dto)
         {
             var result = await RootService.ProductsService.CreateSubCategoryAsync(dto);
 
@@ -51,9 +47,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> UpdateAsync(SubCategoryDto dto)
+        public partial async Task<IActionResult> UpdateAsync(SubCategoryDto dto)
         {
             var result = await RootService.ProductsService.UpdateSubCategoryAsync(dto);
 
@@ -66,9 +60,7 @@ namespace FNS.Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(AppProblemDetails), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> DeleteAsync(string id)
+        public partial async Task<IActionResult> DeleteAsync(string id)
         {
             var result = await RootService.ProductsService.DeleteSubCategoryAsync(id);
 

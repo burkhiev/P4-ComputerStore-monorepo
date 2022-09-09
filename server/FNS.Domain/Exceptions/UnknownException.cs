@@ -4,7 +4,7 @@
     {
         public UnknownException() : base("The unexpected program behavior is detected.")
         {
-
+            // nothing
         }
     }
 }

@@ -12,7 +12,7 @@ namespace FNS.Services.Abstractions
         IProductsService ProductsService { get; }
         IShoppingCartsService ShoppingCartService { get; }
         IUsersService UserService { get; }
-        ISalesReceiptsService SalesReceiptService { get; }
+        ISalesService SalesReceiptService { get; }
         IProductsBalanceService ProductsBalanceService { get; }
         IPurchasesService PurchasesService { get; }
     }

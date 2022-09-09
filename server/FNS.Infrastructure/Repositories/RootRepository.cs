@@ -30,6 +30,8 @@ namespace FNS.ContextsInfrastructure.Repositories
         private readonly Lazy<IProductBalanceRepository> _productBalances;
         private readonly Lazy<IPurchaseInvoicesRepository> _purchaseInvoices;
         private readonly Lazy<IPurchaseInvoiceItemsRepository> _purchaseInvoiceItems;
+        private readonly Lazy<IRolesRepository> _identityRoleRepository;
+        private readonly Lazy<IUserRolesRepository> _userRolesRepository;
 
         public RootRepository(AppDbContext db)
         {
@@ -46,6 +48,8 @@ namespace FNS.ContextsInfrastructure.Repositories
             _productBalances = new Lazy<IProductBalanceRepository>(() => new ProductBalancesRepository(_db));
             _purchaseInvoices = new Lazy<IPurchaseInvoicesRepository>(() => new PurchaseInvoicesRepository(_db));
             _purchaseInvoiceItems = new Lazy<IPurchaseInvoiceItemsRepository>(() => new PurchaseInvoiceItemsRepository(_db));
+            _identityRoleRepository = new Lazy<IRolesRepository>(() => new RoleRepository(_db));
+            _userRolesRepository = new Lazy<IUserRolesRepository>(() => new UserRolesRepository(_db));
         }
 
         public AppDbContext Db => _db;
@@ -73,6 +77,10 @@ namespace FNS.ContextsInfrastructure.Repositories
         public IPurchaseInvoicesRepository PurchaseInvoices => _purchaseInvoices.Value;
 
         public IPurchaseInvoiceItemsRepository PurchaseInvoiceItems => _purchaseInvoiceItems.Value;
+
+        public IRolesRepository Roles => _identityRoleRepository.Value;
+
+        public IUserRolesRepository UserRoles => _userRolesRepository.Value;
 
         public async Task<int> SaveChangesAsync(CancellationToken ct = default)
         {

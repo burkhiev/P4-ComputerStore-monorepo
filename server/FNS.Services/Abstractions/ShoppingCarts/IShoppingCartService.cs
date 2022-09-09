@@ -6,10 +6,10 @@ namespace FNS.Services.Abstractions.ShoppingCarts
 {
     public interface IShoppingCartsService
     {
-        public AppOpResult<IEnumerable<ShoppingCartDto>> GetAll();
-        public Task<AppOpResult<ShoppingCartWithAdditionalInfoDto>> GetByUserIdWithAdditionalInfoAsync(string userId);
-        public Task<AppOpResult<EmptyDto>> AddProductAsync(string userId, string productId);
-        public Task<AppOpResult<ShoppingCartForChangeItemAmountDto>> UpdateItemAmountAsync(string userId, string cartItemId, int newAmount);
-        public Task<AppOpResult<EmptyDto>> DeleteItemAsync(string userId, string cartItemId);
+        public OpResult<IEnumerable<ShoppingCartDto>> GetAll();
+        public Task<OpResult<ShoppingCartWithAdditionalInfoDto>> GetByUserIdWithAdditionalInfoAsync(string userId);
+        public Task<OpResult<ShoppingCartItemDto>> AddProductAsync(string userId, string productId);
+        public Task<OpResult<ShoppingCartForChangeItemAmountDto>> UpdateItemAmountAsync(ShoppingCartForChangeItemAmountDto dto);
+        public Task<OpResult<EmptyDto>> DeleteItemAsync(string userId, string cartItemId);
     }
 }

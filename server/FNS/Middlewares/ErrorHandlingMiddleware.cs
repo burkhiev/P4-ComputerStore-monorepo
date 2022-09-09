@@ -13,7 +13,7 @@ namespace FNS.Presentation.Middlewares
             }
             catch(Exception)
             {
-                var problemDetails = new AppProblemDetails
+                var problemDetails = new ProblemResultInfo
                 {
                     Title = "Unknown error",
                     Detail = "Something went wrong.",

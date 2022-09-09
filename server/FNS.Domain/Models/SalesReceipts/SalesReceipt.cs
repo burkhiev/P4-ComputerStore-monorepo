@@ -3,11 +3,11 @@ using NodaTime;
 
 namespace FNS.Domain.Models.SalesReceipts
 {
-    public sealed class SalesReceipt : EntityBase
+    public class SalesReceipt : EntityBase
     {
         public string UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public Instant CreatedAt { get; set; }
-        public List<SalesReceiptWithProduct>? SalesReceiptsWithProducts{ get; set; }
+        public virtual List<SalesReceiptWithProduct>? SalesReceiptsWithProducts{ get; set; }
     }
 }

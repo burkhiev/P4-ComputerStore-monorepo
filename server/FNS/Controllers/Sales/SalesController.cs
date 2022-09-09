@@ -26,12 +26,12 @@ namespace FNS.Presentation.Controllers.Sales
         {
             var result = RootService.SalesReceiptService.GetAll();
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [Authorize(Roles = AppRoleNames.Admin)]
@@ -40,12 +40,12 @@ namespace FNS.Presentation.Controllers.Sales
         {
             var result = await RootService.SalesReceiptService.GetWithAdditionalInfoAsync(id);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpGet("users/{userId}")]
@@ -53,30 +53,25 @@ namespace FNS.Presentation.Controllers.Sales
         {
             var result = await RootService.SalesReceiptService.GetByUserIdAsync(userId);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpPost("users/{userId}")]
-        public partial async Task<IActionResult> SaleAsync([Bind("userId")] string userId, [Bind("saleInfo")] SaleDto saleInfo)
+        public partial async Task<IActionResult> SaleAsync([Bind("userId")] string userId)
         {
-            if(userId != saleInfo.UserId)
+            var result = await RootService.SalesReceiptService.MakeSaleAsync(userId);
+
+            if(result.Failed)
             {
-                return BadRequest();
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            var result = await RootService.SalesReceiptService.MakeSaleAsync(saleInfo);
-
-            if(result.Faulted)
-            {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
-            }
-
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
     }
 }

@@ -19,6 +19,11 @@ namespace FNS.Services.Mappers.ShoppingCarts
 
         private void Configure(IMapperConfigurationExpression config)
         {
+            config.CreateMap<ShoppingCart, ShoppingCart>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.xmin, opt => opt.MapFrom(src => src.xmin));
+
             config.CreateMap<ShoppingCart, ShoppingCartDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
@@ -56,10 +61,11 @@ namespace FNS.Services.Mappers.ShoppingCarts
                     return shoppingCartItemDtos;
                 }));
 
-            config.CreateMap<ShoppingCart, ShoppingCart>()
+            config.CreateMap<ShoppingCartItem, ShoppingCartItemDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.xmin, opt => opt.MapFrom(src => src.xmin));
+                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
         }
     }
 }

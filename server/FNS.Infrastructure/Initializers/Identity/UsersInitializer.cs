@@ -1,6 +1,7 @@
 ﻿using FNS.ContextsInfrastructure.Initializers;
 using FNS.Domain.Models.Identity;
 using Microsoft.AspNetCore.Identity;
+using NodaTime;
 
 namespace FNS.Infrastructure.Initializers.Identity
 {
@@ -22,6 +23,8 @@ namespace FNS.Infrastructure.Initializers.Identity
             var adminName = "admin";
             var adminEmail = "admin@yandex.ru";
 
+            var createdAt = Instant.FromUtc(2022, 09, 08, 17, 11);
+
             var users = new List<User>
             {
                 new User
@@ -31,6 +34,7 @@ namespace FNS.Infrastructure.Initializers.Identity
                     NormalizedUserName = user1Name.ToUpper(),
                     Email = user1Email,
                     NormalizedEmail = user1Email.ToUpper(),
+                    CreatedAt = createdAt,
                 },
                 new User
                 {
@@ -39,6 +43,7 @@ namespace FNS.Infrastructure.Initializers.Identity
                     NormalizedUserName = user2Name.ToUpper(),
                     Email = user2Email,
                     NormalizedEmail = user2Email.ToUpper(),
+                    CreatedAt = createdAt,
                 },
                 new User
                 {
@@ -47,6 +52,7 @@ namespace FNS.Infrastructure.Initializers.Identity
                     NormalizedUserName = adminName.ToUpper(),
                     Email = adminEmail,
                     NormalizedEmail = adminEmail.ToUpper(),
+                    CreatedAt = createdAt,
                 },
             };
 

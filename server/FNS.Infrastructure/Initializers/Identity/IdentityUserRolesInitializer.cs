@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FNS.Infrastructure.Initializers.Identity
 {
-    internal sealed class IdentityUserRolesInitializer : IDataInitializer<IdentityUserRole<string>>
+    public sealed class IdentityUserRolesInitializer : IDataInitializer<IdentityUserRole<string>>
     {
         private readonly IEnumerable<IdentityUserRole<string>> _entities;
 
         public IdentityUserRolesInitializer()
         {   
-            var roles = new IdentityRolesInitializer().Entities.ToList();
+            var roles = new RolesInitializer().Entities.ToList();
             var users = new UsersInitializer().Entities.ToList();
 
             var adminRole = roles[0];
@@ -23,17 +23,17 @@ namespace FNS.Infrastructure.Initializers.Identity
             {
                 new IdentityUserRole<string>
                 { 
-                    UserId = admin.Id, 
-                    RoleId = adminRole.Id 
+                    UserId = admin.Id,
+                    RoleId = adminRole.Id
                 },
                 new IdentityUserRole<string>
                 { 
                     UserId = user1.Id,
-                    RoleId = userRole.Id 
+                    RoleId = userRole.Id
                 },
                 new IdentityUserRole<string>
                 { 
-                    UserId = user2.Id, 
+                    UserId = user2.Id,
                     RoleId = userRole.Id
                 },
             };

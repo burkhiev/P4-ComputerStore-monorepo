@@ -34,8 +34,7 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
                 .HasForeignKey(p => p.SubCategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            var init = new ProductsInitializer();
-            builder.HasData(init.Entities);
+            builder.HasData(new ProductsInitializer().Entities);
         }
     }
 }

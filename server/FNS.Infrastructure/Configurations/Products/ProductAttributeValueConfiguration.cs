@@ -26,8 +26,7 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
                 .HasForeignKey(p => p.ProductAttributeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            var init = new ProductAttributeValuesInitializer();
-            builder.HasData(init.Entities);
+            builder.HasData(new ProductAttributeValuesInitializer().Entities);
         }
     }
 }

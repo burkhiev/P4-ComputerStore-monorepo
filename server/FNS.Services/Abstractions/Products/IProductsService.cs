@@ -6,19 +6,19 @@ namespace FNS.Services.Abstractions.Products
 {
     public interface IProductsService
     {
-        AppOpResult<IEnumerable<ProductDto>> GetAllProducts();
-        AppOpResult<IEnumerable<ProductDto>> GetProductsBySubCategoryId(string subCategoryId);
-        Task<AppOpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id);
-        Task<AppOpResult<ProductWithAdditionalInfoDto>> CreateProduct(ProductForCreateDto dto);
-        Task<AppOpResult<ProductWithAdditionalInfoDto>> UpdateProduct(ProductWithAdditionalInfoDto dto);
-        Task<AppOpResult<EmptyDto>> DeleteProductAsync(string id);
-        AppOpResult<IEnumerable<ProductAttributeDto>> GetAllProductAttributes();
-        Task<AppOpResult<ProductAttributeDto>> CreateProductAttributeAsync(ProductAttributeForCreateDto attrDto);
-        Task<AppOpResult<ProductAttributeDto>> UpdateProductAttribute(ProductAttributeDto attrDto);
-        Task<AppOpResult<EmptyDto>> DeleteProductAttributeAsync(string id);
-        AppOpResult<IEnumerable<SubCategoryDto>> GetAllSubCategories();
-        Task<AppOpResult<SubCategoryDto>> CreateSubCategoryAsync(SubCategoryForCreateDto attrDto);
-        Task<AppOpResult<SubCategoryDto>> UpdateSubCategoryAsync(SubCategoryDto attrDto);
-        Task<AppOpResult<EmptyDto>> DeleteSubCategoryAsync(string id);
+        OpResult<IEnumerable<ProductDto>> GetAllProducts();
+        OpResult<IEnumerable<ProductDto>> GetProductsBySubCategoryId(string subCategoryId);
+        Task<OpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id);
+        Task<OpResult<ProductWithAdditionalInfoDto>> CreateProduct(ProductForCreateDto dto);
+        Task<OpResult<ProductWithAdditionalInfoDto>> UpdateProduct(ProductWithAdditionalInfoDto dto);
+        Task<OpResult<EmptyDto>> DeleteProductAsync(string id);
+        OpResult<IEnumerable<ProductAttributeDto>> GetAllProductAttributes();
+        Task<OpResult<ProductAttributeDto>> CreateProductAttributeAsync(ProductAttributeForCreateDto attrDto);
+        Task<OpResult<ProductAttributeDto>> UpdateProductAttribute(ProductAttributeDto attrDto);
+        Task<OpResult<EmptyDto>> DeleteProductAttributeAsync(string id);
+        OpResult<IEnumerable<SubCategoryDto>> GetAllSubCategories();
+        Task<OpResult<SubCategoryDto>> CreateSubCategoryAsync(SubCategoryForCreateDto attrDto);
+        Task<OpResult<SubCategoryDto>> UpdateSubCategoryAsync(SubCategoryDto attrDto);
+        Task<OpResult<EmptyDto>> DeleteSubCategoryAsync(string id);
     }
 }

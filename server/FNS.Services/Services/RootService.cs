@@ -20,7 +20,7 @@ namespace FNS.Services.Services
         private readonly Lazy<IProductsService> _productsService;
         private readonly Lazy<IShoppingCartsService> _shoppingCartService;
         private readonly Lazy<IUsersService> _userService;
-        private readonly Lazy<ISalesReceiptsService> _salesReceiptService;
+        private readonly Lazy<ISalesService> _salesReceiptService;
         private readonly Lazy<IProductsBalanceService> _productsBalanceService;
         private readonly Lazy<IPurchasesService> _purchasesService;
 
@@ -29,7 +29,7 @@ namespace FNS.Services.Services
             _productsService = new Lazy<IProductsService>(() => new ProductService(rootRepository));
             _shoppingCartService = new Lazy<IShoppingCartsService>(() => new ShoppingCartService(rootRepository));
             _userService = new Lazy<IUsersService>(() => new UserService(rootRepository));
-            _salesReceiptService = new Lazy<ISalesReceiptsService>(() => new SaleService(rootRepository));
+            _salesReceiptService = new Lazy<ISalesService>(() => new SalesService(rootRepository));
             _productsBalanceService = new Lazy<IProductsBalanceService>(() => new ProductsBalanceService(rootRepository));
             _purchasesService = new Lazy<IPurchasesService>(() => new PurchasesService(rootRepository));
         }
@@ -40,7 +40,7 @@ namespace FNS.Services.Services
 
         public IUsersService UserService => _userService.Value;
 
-        public ISalesReceiptsService SalesReceiptService => _salesReceiptService.Value;
+        public ISalesService SalesReceiptService => _salesReceiptService.Value;
 
         public IProductsBalanceService ProductsBalanceService => _productsBalanceService.Value;
 

@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace FNS.Domain.Utilities.OperationResults
 {
-    public sealed class InvalidDbUpdateOpResult<T> : AppOpResult<T>
+    public sealed class InvalidDbUpdateResult<T> : OpResult<T>
     {
-        public InvalidDbUpdateOpResult() : base()
+        public InvalidDbUpdateResult() : base()
         {
-            FaultResult = new AppProblemDetails
+            FailResult = new ProblemResultInfo
             {
                 Title = "Update error",
                 Detail = "Unexpected error occurred. One of the cause is invalid entity Id.",

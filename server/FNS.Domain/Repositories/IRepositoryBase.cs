@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace FNS.Domain.Repositories
 {
-    public interface IRepositoryBase<T> where T : class, IEntityBase, new()
+    public interface IRepositoryBase<T> where T : class, new()
     {
         IQueryable<T> GetAll();
         Task<T?> FindByIdAsync(string id);

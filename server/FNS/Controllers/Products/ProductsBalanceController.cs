@@ -21,12 +21,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = RootService.ProductsBalanceService.GetAll();
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpGet]
@@ -35,12 +35,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsBalanceService.GetByProductIdAsync(productId);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
     }
 }

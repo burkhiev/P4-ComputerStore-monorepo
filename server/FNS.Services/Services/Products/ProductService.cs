@@ -33,44 +33,44 @@ namespace FNS.Services.Services.Products
         private IMapper ProductAttributeMapper => _productAttributeMapperConfig.Mapper;
         private IMapper SubCategoryMapper => _subCategoryMapperConfig.Mapper;
 
-        public AppOpResult<IEnumerable<ProductDto>> GetAllProducts()
+        public OpResult<IEnumerable<ProductDto>> GetAllProducts()
         {
             var products = RootRepository.Products.GetAll().ToArray();
             var productsDtos = ProductMapper.Map<IEnumerable<ProductDto>>(products);
 
-            var result = new AppOpResult<IEnumerable<ProductDto>>(productsDtos);
+            var result = new OpResult<IEnumerable<ProductDto>>(productsDtos);
             return result;
         }
 
-        public AppOpResult<IEnumerable<ProductDto>> GetProductsBySubCategoryId(string subCategoryId)
+        public OpResult<IEnumerable<ProductDto>> GetProductsBySubCategoryId(string subCategoryId)
         {
             var products = RootRepository.Products
                 .FindByCondition(product => product.SubCategoryId == subCategoryId);
             var productsDtos = ProductMapper.Map<IEnumerable<ProductDto>>(products);
 
-            var result = new AppOpResult<IEnumerable<ProductDto>>(productsDtos);
+            var result = new OpResult<IEnumerable<ProductDto>>(productsDtos);
             return result;
         }
 
-        public async Task<AppOpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id)
+        public async Task<OpResult<ProductWithAdditionalInfoDto>> GetProductWithAdditionalInfoByIdAsync(string id)
         {
             var product = await RootRepository.Products.FindByIdAsync(id);
 
             if(product is null)
             {
-                var errResult = new EntityNotFoundOpResult<ProductWithAdditionalInfoDto>();
-                return errResult;
+                var notFoundResult = new NotFoundResult<ProductWithAdditionalInfoDto, Product>();
+                return notFoundResult;
             }
 
             await RootRepository.Products.LoadAttributesAndTheirValuesAsync(product);
 
             var dto = ProductMapper.Map<Product, ProductWithAdditionalInfoDto>(product);
-            var result = new AppOpResult<ProductWithAdditionalInfoDto>(dto);
+            var result = new OpResult<ProductWithAdditionalInfoDto>(dto);
 
             return result;
         }
 
-        public async Task<AppOpResult<ProductWithAdditionalInfoDto>> CreateProduct(ProductForCreateDto dto)
+        public async Task<OpResult<ProductWithAdditionalInfoDto>> CreateProduct(ProductForCreateDto dto)
         {
             var product = ProductMapper.Map<Product>(dto);
 
@@ -82,8 +82,8 @@ namespace FNS.Services.Services.Products
 
             if(subCategory is null)
             {
-                var fault = new ProductNotCreatedDueInvalidSubCategoryIdOpResult();
-                return fault;
+                var notFoundResult = new NotFoundResult<ProductWithAdditionalInfoDto, SubCategory>();
+                return notFoundResult;
             }
 
 
@@ -112,20 +112,20 @@ namespace FNS.Services.Services.Products
 
             if(someAttributeNotFound)
             {
-                var fault = new ProductNotCreatedDueInvalidAttributeIdOpResult();
-                return fault;
+                var notFoundResult = new NotFoundResult<ProductWithAdditionalInfoDto, ProductAttribute>();
+                return notFoundResult;
             }
 
 
             await RootRepository.SaveChangesAsync();
 
             var newDto = ProductMapper.Map<ProductWithAdditionalInfoDto>(product);
-            var result = new AppOpResult<ProductWithAdditionalInfoDto>(newDto);
+            var result = new OpResult<ProductWithAdditionalInfoDto>(newDto);
 
             return result;
         }
 
-        public async Task<AppOpResult<ProductWithAdditionalInfoDto>> UpdateProduct(ProductWithAdditionalInfoDto dto)
+        public async Task<OpResult<ProductWithAdditionalInfoDto>> UpdateProduct(ProductWithAdditionalInfoDto dto)
         {
             // Проверка на конкурентность
             // При установке Xmin Concurrency Token на уже загруженную сущность
@@ -184,8 +184,8 @@ namespace FNS.Services.Services.Products
 
             if(someAttrIsNotFound)
             {
-                var fault = new ProductNotUpdatedDueInvalidAttributeIdOpResult();
-                return fault;
+                var notFoundResult = new NotFoundResult<ProductWithAdditionalInfoDto, ProductAttribute>();
+                return notFoundResult;
             }
 
 
@@ -196,24 +196,24 @@ namespace FNS.Services.Services.Products
             }
             catch(DbUpdateConcurrencyException ex)
             {
-                var fault = new InvalidDbConcurrencyUpdateOpResult<ProductWithAdditionalInfoDto>();
+                var fault = new InvalidDbConcurrencyUpdateResult<ProductWithAdditionalInfoDto>();
                 return fault;
             }
             catch(DbUpdateException ex)
             {
-                var fault = new InvalidDbUpdateOpResult<ProductWithAdditionalInfoDto>();
+                var fault = new InvalidDbUpdateResult<ProductWithAdditionalInfoDto>();
                 return fault;
             }
 
 
             var newProduct = await RootRepository.Products.FindByIdAsync(product.Id);
             var productDto = ProductMapper.Map<ProductWithAdditionalInfoDto>(product);
-            var result = new AppOpResult<ProductWithAdditionalInfoDto>(productDto);
+            var result = new OpResult<ProductWithAdditionalInfoDto>(productDto);
 
             return result;
         }
 
-        public async Task<AppOpResult<EmptyDto>> DeleteProductAsync(string id)
+        public async Task<OpResult<EmptyDto>> DeleteProductAsync(string id)
         {
             var product = await RootRepository.Products.FindByIdAsync(id);
 
@@ -223,20 +223,20 @@ namespace FNS.Services.Services.Products
                 await RootRepository.SaveChangesAsync();
             }
 
-            var result = new AppOpResult<EmptyDto>();
+            var result = new OpResult<EmptyDto>();
             return result;
         }
 
-        public AppOpResult<IEnumerable<ProductAttributeDto>> GetAllProductAttributes()
+        public OpResult<IEnumerable<ProductAttributeDto>> GetAllProductAttributes()
         {
             var attributes = RootRepository.ProductAttributes.GetAll().ToList();
             var dtos = ProductAttributeMapper.Map<IEnumerable<ProductAttributeDto>>(attributes);
 
-            var result = new AppOpResult<IEnumerable<ProductAttributeDto>>(dtos);
+            var result = new OpResult<IEnumerable<ProductAttributeDto>>(dtos);
             return result;
         }
 
-        public async Task<AppOpResult<ProductAttributeDto>> CreateProductAttributeAsync(ProductAttributeForCreateDto attrDto)
+        public async Task<OpResult<ProductAttributeDto>> CreateProductAttributeAsync(ProductAttributeForCreateDto attrDto)
         {
             var attr = ProductAttributeMapper.Map<ProductAttribute>(attrDto);
             attr.Id = Guid.NewGuid().ToString();
@@ -245,12 +245,12 @@ namespace FNS.Services.Services.Products
             await RootRepository.SaveChangesAsync();
 
             var dto = ProductAttributeMapper.Map<ProductAttributeDto>(newAttr);
-            var result = new AppOpResult<ProductAttributeDto>(dto);
+            var result = new OpResult<ProductAttributeDto>(dto);
 
             return result;
         }
 
-        public async Task<AppOpResult<ProductAttributeDto>> UpdateProductAttribute(ProductAttributeDto attrDto)
+        public async Task<OpResult<ProductAttributeDto>> UpdateProductAttribute(ProductAttributeDto attrDto)
         {
             var attribute = ProductAttributeMapper.Map<ProductAttribute>(attrDto);
             RootRepository.ProductAttributes.Update(attribute);
@@ -262,23 +262,23 @@ namespace FNS.Services.Services.Products
             }
             catch(DbUpdateConcurrencyException ex)
             {
-                var fault = new InvalidDbConcurrencyUpdateOpResult<ProductAttributeDto>();
+                var fault = new InvalidDbConcurrencyUpdateResult<ProductAttributeDto>();
                 return fault;
             }
             catch(DbUpdateException ex)
             {
-                var fault = new InvalidDbUpdateOpResult<ProductAttributeDto>();
+                var fault = new InvalidDbUpdateResult<ProductAttributeDto>();
                 return fault;
             }
 
 
             var newAttrDto = ProductAttributeMapper.Map<ProductAttributeDto>(attribute);
-            var result = new AppOpResult<ProductAttributeDto>(newAttrDto);
+            var result = new OpResult<ProductAttributeDto>(newAttrDto);
 
             return result;
         }
 
-        public async Task<AppOpResult<EmptyDto>> DeleteProductAttributeAsync(string id)
+        public async Task<OpResult<EmptyDto>> DeleteProductAttributeAsync(string id)
         {
             var attribute = await RootRepository.ProductAttributes.FindByIdAsync(id);
 
@@ -288,20 +288,20 @@ namespace FNS.Services.Services.Products
                 await RootRepository.SaveChangesAsync();
             }
 
-            var result = new AppOpResult<EmptyDto>();
+            var result = new OpResult<EmptyDto>();
             return result;
         }
 
-        public AppOpResult<IEnumerable<SubCategoryDto>> GetAllSubCategories()
+        public OpResult<IEnumerable<SubCategoryDto>> GetAllSubCategories()
         {
             var subCategories = RootRepository.SubCategories.GetAll().ToList();
             var dtos = SubCategoryMapper.Map<IEnumerable<SubCategoryDto>>(subCategories);
 
-            var result = new AppOpResult<IEnumerable<SubCategoryDto>>(dtos);
+            var result = new OpResult<IEnumerable<SubCategoryDto>>(dtos);
             return result;
         }
 
-        public async Task<AppOpResult<SubCategoryDto>> CreateSubCategoryAsync(SubCategoryForCreateDto attrDto)
+        public async Task<OpResult<SubCategoryDto>> CreateSubCategoryAsync(SubCategoryForCreateDto attrDto)
         {
             var subCategory = new SubCategory 
             { 
@@ -317,22 +317,22 @@ namespace FNS.Services.Services.Products
             }
             catch(DbUpdateConcurrencyException ex)
             {
-                var fault = new InvalidDbConcurrencyUpdateOpResult<SubCategoryDto>();
+                var fault = new InvalidDbConcurrencyUpdateResult<SubCategoryDto>();
                 return fault;
             }
             catch (DbUpdateException ex)
             {
-                var fault = new InvalidDbUpdateOpResult<SubCategoryDto>();
+                var fault = new InvalidDbUpdateResult<SubCategoryDto>();
                 return fault;
             }
 
             var dto = SubCategoryMapper.Map<SubCategoryDto>(subCategory);
-            var result = new AppOpResult<SubCategoryDto>(dto);
+            var result = new OpResult<SubCategoryDto>(dto);
 
             return result;
         }
 
-        public async Task<AppOpResult<SubCategoryDto>> UpdateSubCategoryAsync(SubCategoryDto attrDto)
+        public async Task<OpResult<SubCategoryDto>> UpdateSubCategoryAsync(SubCategoryDto attrDto)
         {
             var subCategory = SubCategoryMapper.Map<SubCategory>(attrDto);
             RootRepository.SubCategories.Update(subCategory);
@@ -343,22 +343,22 @@ namespace FNS.Services.Services.Products
             }
             catch(DbUpdateConcurrencyException ex)
             {
-                var fault = new InvalidDbConcurrencyUpdateOpResult<SubCategoryDto>();
+                var fault = new InvalidDbConcurrencyUpdateResult<SubCategoryDto>();
                 return fault;
             }
             catch(DbUpdateException ex)
             {
-                var fault = new InvalidDbUpdateOpResult<SubCategoryDto>();
+                var fault = new InvalidDbUpdateResult<SubCategoryDto>();
                 return fault;
             }
 
             var dto = SubCategoryMapper.Map<SubCategoryDto>(subCategory);
-            var result = new AppOpResult<SubCategoryDto>(dto);
+            var result = new OpResult<SubCategoryDto>(dto);
 
             return result;
         }
 
-        public async Task<AppOpResult<EmptyDto>> DeleteSubCategoryAsync(string id)
+        public async Task<OpResult<EmptyDto>> DeleteSubCategoryAsync(string id)
         {
             var subCategory = await RootRepository.SubCategories.FindByIdAsync(id);
 
@@ -372,70 +372,18 @@ namespace FNS.Services.Services.Products
                 }
                 catch(DbUpdateConcurrencyException ex)
                 {
-                    var fault = new InvalidDbConcurrencyUpdateOpResult<EmptyDto>();
+                    var fault = new InvalidDbConcurrencyUpdateResult<EmptyDto>();
                     return fault;
                 }
                 catch(DbUpdateException ex)
                 {
-                    var fault = new InvalidDbUpdateOpResult<EmptyDto>();
+                    var fault = new InvalidDbUpdateResult<EmptyDto>();
                     return fault;
                 }
             }
 
-            var result = new AppOpResult<EmptyDto>();
+            var result = new OpResult<EmptyDto>();
             return result;
-        }
-
-        private sealed class CannotUpdateProductAttributeDueInvalidAttributeIdOpResult : AppOpResult<ProductAttributeDto>
-        {
-            public CannotUpdateProductAttributeDueInvalidAttributeIdOpResult() : base()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = "Cannot update product attribute.",
-                    Detail = "Product attribute couldn't update because there is no attribute with specified Id.",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
-        }
-
-        private sealed class ProductNotCreatedDueInvalidAttributeIdOpResult : AppOpResult<ProductWithAdditionalInfoDto>
-        {
-            public ProductNotCreatedDueInvalidAttributeIdOpResult() : base()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = $"{nameof(Product)} not created",
-                    Detail = $"{nameof(Product)} not created because there is at least one invalid Id within received Ids.",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
-        }
-
-        private sealed class ProductNotCreatedDueInvalidSubCategoryIdOpResult : AppOpResult<ProductWithAdditionalInfoDto>
-        {
-            public ProductNotCreatedDueInvalidSubCategoryIdOpResult() : base()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = $"{nameof(Product)} not created",
-                    Detail = $"{nameof(Product)} not created because invalid {nameof(SubCategory)} Id received.",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
-        }
-
-        private sealed class ProductNotUpdatedDueInvalidAttributeIdOpResult : AppOpResult<ProductWithAdditionalInfoDto>
-        {
-            public ProductNotUpdatedDueInvalidAttributeIdOpResult() : base()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = $"{nameof(Product)} not updated",
-                    Detail = $"{nameof(Product)} not updated because there is at least one invalid Id within received {nameof(ProductAttribute)} Ids.",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
         }
     }
 }

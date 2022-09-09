@@ -2,10 +2,10 @@
 
 namespace FNS.Domain.Models.ShoppingCarts
 {
-    public sealed class ShoppingCart : EntityBase
+    public class ShoppingCart : EntityBase
     {
         public string UserId { get; set; }
-        public User User { get; set; }
-        public List<ShoppingCartItem>? ShoppingCartItems { get; set; }
+        public virtual User User { get; set; }
+        public virtual List<ShoppingCartItem>? ShoppingCartItems { get; set; }
     }
 }

@@ -25,12 +25,12 @@ namespace FNS.Presentation.Controllers.SubCategories
         {
             var result = RootService.ProductsService.GetAllSubCategories();
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpPost]
@@ -38,12 +38,12 @@ namespace FNS.Presentation.Controllers.SubCategories
         {
             var result = await RootService.ProductsService.CreateSubCategoryAsync(dto);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpPut]
@@ -51,12 +51,12 @@ namespace FNS.Presentation.Controllers.SubCategories
         {
             var result = await RootService.ProductsService.UpdateSubCategoryAsync(dto);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpDelete("{id}")]
@@ -64,12 +64,12 @@ namespace FNS.Presentation.Controllers.SubCategories
         {
             var result = await RootService.ProductsService.DeleteSubCategoryAsync(id);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
     }
 }

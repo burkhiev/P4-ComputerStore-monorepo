@@ -1,9 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mime;
 using System.Security.Claims;
+using FNS.Domain.Exceptions;
 using FNS.Domain.Models.Identity;
 using FNS.Domain.Utilities.OperationResults;
 using FNS.Presentation.Utilities.Auth;
+using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,15 +18,21 @@ namespace FNS.Presentation.Controllers.Identity
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IRootService _rootService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            IRootService rootService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _rootService = rootService;
         }
 
         public SignInManager<User> SignInManager => _signInManager;
         public UserManager<User> UserManager => _userManager;
+        public IRootService RootService => _rootService;
 
         [HttpPost("login")]
         public partial async Task<IActionResult> Login(LoginDto dto)
@@ -47,7 +54,13 @@ namespace FNS.Presentation.Controllers.Identity
                 isPersistent: true,
                 lockoutOnFailure: false);
 
-            if(!result.Succeeded)
+
+            if(result.Succeeded)
+            {
+                //string userId = User.FindAll(ClaimTypes.NameIdentifier).Single().Value;
+                //await RootService.UserService.MarkAsAttendedAsync(userId);
+            }
+            else
             {
                 var problem = new LoginProblemDetails();
                 return Unauthorized(problem);
@@ -70,7 +83,7 @@ namespace FNS.Presentation.Controllers.Identity
                 audience: JwtAuthenticateOptions.Audience,
                 claims: claims,
                 notBefore: now,
-                expires: now.AddSeconds(JwtAuthenticateOptions.LifetimeSeconds),
+                expires: now.AddMinutes(JwtAuthenticateOptions.LifetimeMinutes),
                 signingCredentials: JwtAuthenticateOptions.CreateSigningCredentials());
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -82,9 +95,14 @@ namespace FNS.Presentation.Controllers.Identity
         }
 
         [HttpPost("logout")]
-        [Authorize]
         public partial async Task<IActionResult> Logout()
         {
+            // TODO: проверить наличие св-ва User, при отсутствии аутентификации
+            throw new NotImplementedException();
+
+            //string userId = User.FindAll(ClaimTypes.NameIdentifier).Single().Value;
+            //await RootService.UserService.MarkAsAttendedAsync(userId);
+
             await SignInManager.SignOutAsync();
             return NoContent();
         }
@@ -111,7 +129,7 @@ namespace FNS.Presentation.Controllers.Identity
             return claims;
         }
 
-        private sealed class LoginProblemDetails : AppProblemDetails
+        private sealed class LoginProblemDetails : ProblemResultInfo
         {
             public LoginProblemDetails()
             {

@@ -1,11 +1,10 @@
 ﻿using FNS.Contexts.Infrastructure;
-using FNS.Domain.Models;
 using FNS.Domain.Repositories;
 using System.Linq.Expressions;
 
 namespace FNS.ContextsInfrastructure.Repositories.Products
 {
-    internal abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IEntityBase, new()
+    internal abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, new()
     {
         protected readonly AppDbContext _db;
 
@@ -24,7 +23,7 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
 
         public async Task<T?> FindByIdAsync(string id)
         {
-            var result = await Db.Set<T>().FindAsync(new object[] { id });
+            var result = await Db.Set<T>().FindAsync(id);
             return result;
         }
 

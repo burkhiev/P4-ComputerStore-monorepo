@@ -3,9 +3,10 @@ using FNS.Domain.Models.Identity;
 using FNS.Domain.Repositories;
 using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions.Indentity;
+using FNS.Services.Dtos;
 using FNS.Services.Dtos.Identity;
 using FNS.Services.Mappers.Identity;
-using Microsoft.AspNetCore.Http;
+using NodaTime;
 
 namespace FNS.Services.Services.Identity
 {
@@ -20,47 +21,51 @@ namespace FNS.Services.Services.Identity
             _mapper = new UserMapperConfiguration().Mapper;
         }
 
-        private IRootRepository RootRepository => _rootRepository;
-
+        private IRootRepository RootRepo => _rootRepository;
         private IMapper Mapper => _mapper;
 
-        public AppOpResult<IEnumerable<UserDto>> GetAllUsers()
+        //public async Task<OpResult<EmptyDto>> MarkAsAttendedAsync(string userId)
+        //{
+        //    var user = await RootRepo.Users.FindByIdAsync(userId);
+
+        //    if(user is null)
+        //    {
+        //        var notFound = new NotFoundResult<EmptyDto>(typeof(User));
+        //        return notFound;
+        //    }
+
+        //    var now = DateTime.UtcNow;
+        //    user.LastActionAt = Instant.FromDateTimeUtc(now);
+
+        //    await RootRepo.SaveChangesAsync();
+
+        //    var result = new OpResult<EmptyDto>();
+        //    return result;
+        //}
+
+        public OpResult<IEnumerable<UserDto>> GetAllUsers()
         {
-            var users = RootRepository.Users.GetAll();
+            var users = RootRepo.Users.GetAll();
             var dtos = Mapper.Map<IEnumerable<UserDto>>(users);
 
-            var result = new AppOpResult<IEnumerable<UserDto>>(dtos);
+            var result = new OpResult<IEnumerable<UserDto>>(dtos);
             return result;
         }
 
-        [Obsolete("For debugging")]
-        public async Task<AppOpResult<UserDto>> GetUserByIdAsync(string id)
+        public async Task<OpResult<UserDto>> GetUserByIdAsync(string id)
         {
-            var user = await RootRepository.Users.FindByIdAsync(id);
+            var user = await RootRepo.Users.FindByIdAsync(id);
 
             if(user is null)
             {
-                var errResult = new UserNotFoundResult();
+                var errResult = new NotFoundResult<UserDto, User>();
                 return errResult;
             }
 
             var dto = Mapper.Map<UserDto>(user);
-            var result = new AppOpResult<UserDto>(dto);
+            var result = new OpResult<UserDto>(dto);
 
             return result;
-        }
-
-        private sealed class UserNotFoundResult : AppOpResult<UserDto>
-        {
-            public UserNotFoundResult()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = $"{typeof(User).Name} not found",
-                    Detail = $"{typeof(User).Name} with specified Id is not found",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
         }
     }
 }

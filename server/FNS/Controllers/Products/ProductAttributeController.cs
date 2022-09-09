@@ -27,12 +27,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = RootService.ProductsService.GetAllProductAttributes();
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpPost]
@@ -40,12 +40,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.CreateProductAttributeAsync(dto);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpPut]
@@ -53,12 +53,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.UpdateProductAttribute(dto);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpDelete("{id}")]
@@ -66,9 +66,9 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.DeleteProductAttributeAsync(id);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
             return NoContent();

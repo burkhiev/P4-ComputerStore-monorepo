@@ -1,13 +1,14 @@
 ﻿using FNS.Domain.Utilities.OperationResults;
+using FNS.Services.Dtos;
 using FNS.Services.Dtos.SalesReceipts;
 
 namespace FNS.Services.Abstractions.SalesReceipts
 {
-    public interface ISalesReceiptsService
+    public interface ISalesService
     {
-        AppOpResult<IEnumerable<SalesReceiptDto>> GetAll();
-        Task<AppOpResult<SalesReceiptWithAdditionalInfoDto>> GetWithAdditionalInfoAsync(string id);
-        Task<AppOpResult<IEnumerable<SalesReceiptWithAdditionalInfoDto>>> GetByUserIdAsync(string userId);
-        Task<AppOpResult<SaleSuccessResultDto>> MakeSaleAsync(SaleDto saleInfo);
+        OpResult<IEnumerable<SalesReceiptDto>> GetAll();
+        Task<OpResult<SalesReceiptWithAdditionalInfoDto>> GetWithAdditionalInfoAsync(string id);
+        Task<OpResult<IEnumerable<SalesReceiptWithAdditionalInfoDto>>> GetByUserIdAsync(string userId);
+        Task<OpResult<SaleSuccessResultDto>> MakeSaleAsync(string userId);
     }
 }

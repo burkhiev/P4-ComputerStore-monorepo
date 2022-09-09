@@ -1,10 +1,9 @@
-﻿using FNS.Domain.Utilities.OperationResults;
+﻿using FNS.Infrastructure.Initializers.Identity;
 using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Products;
 using FNS.Services.Utils.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 
 namespace FNS.Presentation.Controllers.Products
 {
@@ -26,12 +25,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = RootService.ProductsService.GetAllProducts();
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpGet("sub-category/{subCategoryId}")]
@@ -39,12 +38,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = RootService.ProductsService.GetProductsBySubCategoryId(subCategoryId);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpGet("{id}")]
@@ -52,12 +51,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.GetProductWithAdditionalInfoByIdAsync(id);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [Authorize(Roles = AppRoleNames.Admin)]
@@ -66,12 +65,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.CreateProduct(dto);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [Authorize(Roles = AppRoleNames.Admin)]
@@ -80,12 +79,12 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.UpdateProduct(dto);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [Authorize(Roles = AppRoleNames.Admin)]
@@ -94,9 +93,9 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.DeleteProductAsync(id);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
             return NoContent();

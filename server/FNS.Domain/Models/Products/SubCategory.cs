@@ -1,8 +1,8 @@
 ﻿namespace FNS.Domain.Models.Products
 {
-    public sealed class SubCategory : EntityBase
+    public class SubCategory : EntityBase
     {
         public string Name { get; set; }
-        public List<Product>? Products { get; set; }
+        public virtual List<Product>? Products { get; set; }
     }
 }

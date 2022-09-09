@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Reflection;
+using AutoMapper;
+using FNS.ContextsInfrastructure.Repositories;
+using FNS.Domain.Exceptions;
+using FNS.Domain.Models.Identity;
 using FNS.Domain.Models.Products;
 using FNS.Domain.Models.ShoppingCarts;
 using FNS.Domain.Repositories;
@@ -6,6 +10,7 @@ using FNS.Domain.Utilities.OperationResults;
 using FNS.Infrastructure.Configurations.ShoppingCarts;
 using FNS.Services.Abstractions.ShoppingCarts;
 using FNS.Services.Dtos;
+using FNS.Services.Dtos.Purchases;
 using FNS.Services.Dtos.ShoppingCarts;
 using FNS.Services.Mappers.ShoppingCarts;
 using Microsoft.AspNetCore.Http;
@@ -13,8 +18,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FNS.Services.Services.ShoppingCarts
 {
+    /// <summary>
+    /// Класс сервиса, отвечающего за работу с корзиной покупателя
+    /// </summary>
     internal sealed class ShoppingCartService : IShoppingCartsService
     {
+        // Макс. кол-во позиций в корзине
+        private const int MaxInCartItemsCount = 20;
+
+        // Макс. кол-во позиций в корзине во всех корзинах вместе
+        private const int CartItemsTotalLimit = 1000;
+
+        // Удаляемое кол-во позиций в корзине
+        private const int CountOfDeletingCarts = 200;
+
         private readonly IRootRepository _rootRepository;
         private readonly ShoppingCartMapperConfiguration _mapperConfig;
 
@@ -24,62 +41,82 @@ namespace FNS.Services.Services.ShoppingCarts
             _mapperConfig = new ShoppingCartMapperConfiguration();
         }
 
-        private IRootRepository RootRepository => _rootRepository;
+        private IRootRepository RootRepo => _rootRepository;
 
         private IMapper Mapper => _mapperConfig.Mapper;
 
-        public AppOpResult<IEnumerable<ShoppingCartDto>> GetAll()
+        public OpResult<IEnumerable<ShoppingCartDto>> GetAll()
         {
-            var shoppingCarts = RootRepository.ShoppingCarts.GetAll().ToArray();
+            var shoppingCarts = RootRepo.ShoppingCarts.GetAll().ToArray();
             var dtos = Mapper.Map<IEnumerable<ShoppingCartDto>>(shoppingCarts);
 
-            var result = new AppOpResult<IEnumerable<ShoppingCartDto>>(dtos);
+            var result = new OpResult<IEnumerable<ShoppingCartDto>>(dtos);
             return result;
         }
 
-        public async Task<AppOpResult<ShoppingCartWithAdditionalInfoDto>> GetByUserIdWithAdditionalInfoAsync(string userId)
+        public async Task<OpResult<ShoppingCartWithAdditionalInfoDto>> GetByUserIdWithAdditionalInfoAsync(string userId)
         {
-            var user = await RootRepository.Users.FindByIdAsync(userId);
+            var user = await RootRepo.Users.FindByIdAsync(userId);
 
             if(user is null)
             {
-                var errResult = new NotFoundShoppingCartByUserIdResult<ShoppingCartWithAdditionalInfoDto>();
-                return errResult;
+                var notFound = new NotFoundResult<ShoppingCartWithAdditionalInfoDto, Product>();
+                return notFound;
             }
 
-            await RootRepository.Users.LoadReferencesAsync(user, u => u.ShoppingCart);
+            await RootRepo.Users.LoadReferencesAsync(user, u => u.ShoppingCart);
 
             if(user.ShoppingCart is null)
             {
-                var errResult = new NotFoundShoppingCartByUserIdResult<ShoppingCartWithAdditionalInfoDto>();
-                return errResult;
+                var notFound = new NotFoundResult<ShoppingCartWithAdditionalInfoDto, ShoppingCart>();
+                return notFound;
             }
 
-            await RootRepository.ShoppingCarts.LoadShoppingCartsWithItemsAndProducts(user.ShoppingCart);
+            await RootRepo.ShoppingCarts.LoadShoppingCartsWithItemsAndProducts(user.ShoppingCart);
 
             var dto = Mapper.Map<ShoppingCartWithAdditionalInfoDto>(user.ShoppingCart);
-            var result = new AppOpResult<ShoppingCartWithAdditionalInfoDto>(dto);
+            var result = new OpResult<ShoppingCartWithAdditionalInfoDto>(dto);
 
             return result;
         }
 
-        public async Task<AppOpResult<EmptyDto>> AddProductAsync(string userId, string productId)
+        public async Task<OpResult<ShoppingCartItemDto>> AddProductAsync(string userId, string productId)
         {
-            var cart = RootRepository.ShoppingCarts.FindByCondition(x => x.UserId == userId).FirstOrDefault();
+            var user = await RootRepo.Users.FindByIdAsync(userId);
 
-            if(cart is null)
+            if(user is null)
             {
-                var fault = new NotFoundShoppingCartByUserIdResult<EmptyDto>();
-                return fault;
+                var notFound = new NotFoundResult<ShoppingCartItemDto, User>();
+                return notFound;
             }
 
 
-            var product = await RootRepository.Products.FindByIdAsync(productId);
+            await RootRepo.Users.LoadReferencesAsync(user, u => u.ShoppingCart);
+            ShoppingCart cart = user.ShoppingCart;
 
-            if(product is null)
+            var allCartItems = RootRepo.ShoppingCartItems.GetAll();
+            var cartItems = allCartItems.Where(x => x.ShoppingCartId == cart.Id);
+
+            // есть ли место приходной накладной?
+            if(cartItems.Count() >= MaxInCartItemsCount)
             {
-                var fault = new NotFoundProductResult<EmptyDto>();
-                return fault;
+                var tooMany = new TooManyRecordsReceivedResult<ShoppingCartItemDto>(MaxInCartItemsCount);
+                return tooMany;
+            }
+
+
+            // удаляем старые записи для предотвращения переполнения БД
+            // Здесь мы смотрим за количеством товара во всех корзинах,
+            // т.к. корзин ровно столько сколько и пользователей
+            if(allCartItems.Count() > CartItemsTotalLimit)
+            {
+                var deletingCarts = RootRepo.ShoppingCartItems.GetAll()
+                    .OrderByDescending(x => x.CreatedAt)
+                    .Take(CountOfDeletingCarts)
+                    .ToList();
+
+                RootRepo.ShoppingCartItems.RemoveMany(deletingCarts);
+                await RootRepo.SaveChangesAsync();
             }
 
 
@@ -91,77 +128,82 @@ namespace FNS.Services.Services.ShoppingCarts
                 ShoppingCartId = cart.Id,
             };
 
-            await RootRepository.ShoppingCartItems.AddAsync(newCartItem);
+            await RootRepo.ShoppingCartItems.AddAsync(newCartItem);
 
 
             try
             {
-                await RootRepository.SaveChangesAsync();
+                await RootRepo.SaveChangesAsync();
             }
             catch(DbUpdateConcurrencyException ex)
             {
-                var fault = new InvalidDbConcurrencyUpdateOpResult<EmptyDto>();
+                var fault = new InvalidDbConcurrencyUpdateResult<ShoppingCartItemDto>();
                 return fault;
             }
             catch(DbUpdateException ex)
             {
-                var fault = new InvalidDbConcurrencyUpdateOpResult<EmptyDto>();
+                var fault = new InvalidDbConcurrencyUpdateResult<ShoppingCartItemDto>();
                 return fault;
             }
 
 
-            var result = new AppOpResult<EmptyDto>();
+            var newCartItemDto = Mapper.Map<ShoppingCartItemDto>(newCartItem);
+            var result = new OpResult<ShoppingCartItemDto>();
+
             return result;
         }
 
-        public async Task<AppOpResult<ShoppingCartForChangeItemAmountDto>> UpdateItemAmountAsync(string userId, string cartItemId, int newAmount)
+        public async Task<OpResult<ShoppingCartForChangeItemAmountDto>> UpdateItemAmountAsync(ShoppingCartForChangeItemAmountDto dto)
         {
             // проверка Id пользователя
-            var user = await RootRepository.Users.FindByIdAsync(userId);
+            var user = await RootRepo.Users
+                .FindByCondition(x => x.Id == dto.UserId)
+                .FirstOrDefaultAsync();
 
             if(user is null)
             {
-                var fault = new NotFoundShoppingCartByUserIdResult<ShoppingCartForChangeItemAmountDto>();
-                return fault;
+                var notFound = new NotFoundResult<ShoppingCartForChangeItemAmountDto, User>();
+                return notFound;
             }
 
 
             // проверка Id позиции в корзине
-            var cartItem = await RootRepository.ShoppingCartItems.FindByIdAsync(cartItemId);
+            var cartItem = await RootRepo.ShoppingCartItems
+                .FindByCondition(x => x.Id == dto.ItemId && x.xmin == dto.ConcurrencyToken)
+                .FirstOrDefaultAsync();
 
             if(cartItem is null)
             {
-                var fault = new NotFoundShoppingCartItemResult<ShoppingCartForChangeItemAmountDto>();
-                return fault;
+                var notFound = new NotFoundResult<ShoppingCartForChangeItemAmountDto, ShoppingCartItem>();
+                return notFound;
             }
 
 
             // проверка количества
-            cartItem.Amount = newAmount;
-
-            if(cartItem.Amount < ShoppingCartItemsConfiguration.MinShoppingCartAmountValue
-               || ShoppingCartItemsConfiguration.MaxShoppingCartAmountValue < cartItem.Amount)
+            if(dto.Amount < ShoppingCartItemsConfiguration.MinShoppingCartAmountValue
+               || ShoppingCartItemsConfiguration.MaxShoppingCartAmountValue < dto.Amount)
             {
-                var fault = new ItemAmountOutOfRangeResult<ShoppingCartForChangeItemAmountDto>();
-                return fault;
+                var outOfRange = new ItemAmountOutOfRangeResult<ShoppingCartForChangeItemAmountDto>();
+                return outOfRange;
             }
 
 
-            RootRepository.ShoppingCartItems.Update(cartItem);
+            cartItem.Amount = dto.Amount;
+            RootRepo.ShoppingCartItems.Update(cartItem);
 
 
             try
             {
-                await RootRepository.SaveChangesAsync();
+                await RootRepo.SaveChangesAsync();
             }
             catch(DbUpdateConcurrencyException ex)
             {
-                var fault = new InvalidDbConcurrencyUpdateOpResult<ShoppingCartForChangeItemAmountDto>();
+                var fault = new InvalidDbConcurrencyUpdateResult<ShoppingCartForChangeItemAmountDto>();
                 return fault;
             }
             catch(DbUpdateException ex)
             {
-                var fault = new InvalidDbConcurrencyUpdateOpResult<ShoppingCartForChangeItemAmountDto>();
+                var fault = new InvalidDbConcurrencyUpdateResult<ShoppingCartForChangeItemAmountDto>();
                 return fault;
             }
 
@@ -173,96 +215,57 @@ namespace FNS.Services.Services.ShoppingCarts
                 Amount = cartItem.Amount 
             };
 
-            var result = new AppOpResult<ShoppingCartForChangeItemAmountDto>(amountDto);
+            var result = new OpResult<ShoppingCartForChangeItemAmountDto>(amountDto);
             return result;
         }
 
-        public async Task<AppOpResult<EmptyDto>> DeleteItemAsync(string userId, string cartItemId)
+        public async Task<OpResult<EmptyDto>> DeleteItemAsync(string userId, string cartItemId)
         {
-            var user = await RootRepository.Users.FindByIdAsync(userId);
+            var user = await RootRepo.Users.FindByIdAsync(userId);
 
             if(user is null)
             {
-                var fault = new NotFoundShoppingCartByUserIdResult<EmptyDto>();
-                return fault;
+                var notFound = new NotFoundResult<EmptyDto, User>();
+                return notFound;
             }
 
 
-            var cartItem = await RootRepository.ShoppingCartItems.FindByIdAsync(cartItemId);
+            var cartItem = await RootRepo.ShoppingCartItems.FindByIdAsync(cartItemId);
 
             if(cartItem is not null)
             {
-                RootRepository.ShoppingCartItems.Remove(cartItem);
+                RootRepo.ShoppingCartItems.Remove(cartItem);
 
                 try
                 {
-                    await RootRepository.SaveChangesAsync();
+                    await RootRepo.SaveChangesAsync();
                 }
                 catch(DbUpdateConcurrencyException ex)
                 {
-                    var fault = new InvalidDbConcurrencyUpdateOpResult<EmptyDto>();
+                    var fault = new InvalidDbConcurrencyUpdateResult<EmptyDto>();
                     return fault;
                 }
                 catch(DbUpdateException ex)
                 {
-                    var fault = new InvalidDbUpdateOpResult<EmptyDto>();
+                    var fault = new InvalidDbUpdateResult<EmptyDto>();
                     return fault;
                 }
             }
 
 
-            var result = new AppOpResult<EmptyDto>();
+            var result = new OpResult<EmptyDto>();
             return result;
         }
 
-        private sealed class NotFoundShoppingCartByUserIdResult<T> : AppOpResult<T>
-        {
-            public NotFoundShoppingCartByUserIdResult()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = "ShoppingCart not found",
-                    Detail = $"ShoppingCart with specified userId is not found.",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
-        }
-
-        private sealed class ItemAmountOutOfRangeResult<T> : AppOpResult<T>
+        private sealed class ItemAmountOutOfRangeResult<T> : OpResult<T>
         {
             public ItemAmountOutOfRangeResult()
             {
-                FaultResult = new AppProblemDetails
+                FailResult = new ProblemResultInfo
                 {
                     Title = $"{nameof(ShoppingCartItem)} entity has invalid property",
                     Detail = $"{nameof(ShoppingCartItem)}.Amount property is out of range.",
                     StatusCode = StatusCodes.Status400BadRequest,
-                };
-            }
-        }
-
-        private sealed class NotFoundProductResult<T> : AppOpResult<T>
-        {
-            public NotFoundProductResult()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = $"{nameof(Product)} not found",
-                    Detail = $"{nameof(ShoppingCartItem)} isn't added because invalid {nameof(Product)} Id received.",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
-        }
-
-        private sealed class NotFoundShoppingCartItemResult<T> : AppOpResult<T>
-        {
-            public NotFoundShoppingCartItemResult()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = $"{nameof(ShoppingCartItem)} not found",
-                    Detail = $"{nameof(ShoppingCartItem)} with specified Id is not found.",
-                    StatusCode = StatusCodes.Status404NotFound,
                 };
             }
         }

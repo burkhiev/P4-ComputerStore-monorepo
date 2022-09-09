@@ -1,4 +1,5 @@
-﻿using FNS.Services.Abstractions;
+﻿using FNS.Presentation.Utilities.Auth;
+using FNS.Services.Abstractions;
 using FNS.Services.Utils.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ namespace FNS.Presentation.Controllers.Identity
     [Authorize]
     [ApiController]
     [Route("api/users")]
+    [TypeFilter(typeof(UserActivityCheckerAttribute))] // TODO:
     public sealed partial class UsersController : ControllerBase
     {
         private readonly IRootService _rootService;
@@ -22,10 +24,10 @@ namespace FNS.Presentation.Controllers.Identity
 
         [Authorize(Roles = AppRoleNames.Admin)]
         [HttpGet("for-admins")]
-        public partial IActionResult GetAll()
+        public partial async Task<IActionResult> GetAll()
         {
             var result = RootService.UserService.GetAllUsers();
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [Authorize(Roles = AppRoleNames.Admin)]
@@ -34,12 +36,12 @@ namespace FNS.Presentation.Controllers.Identity
         {
             var result = await RootService.UserService.GetUserByIdAsync(id);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpGet("{id}")]
@@ -54,12 +56,12 @@ namespace FNS.Presentation.Controllers.Identity
 
             var result = await RootService.UserService.GetUserByIdAsync(currentUserId);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
     }
 }

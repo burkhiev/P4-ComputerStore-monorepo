@@ -1,4 +1,5 @@
 ﻿using FNS.Services.Abstractions;
+using FNS.Services.Dtos.Purchases;
 using FNS.Services.Utils.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,23 +21,41 @@ namespace FNS.Presentation.Controllers.Purchases
         public IRootService RootService => _rootService;
 
         [HttpGet]
-        public partial IActionResult GetAllPurchaseInvoices()
+        public partial async Task<IActionResult> GetAllPurchaseInvoices()
         {
-            var result = RootService.PurchasesService.GetAllInvoices();
-            return Ok(result.SuceedResult);
+            var result = await RootService.PurchasesService.GetAllInvoicesAsync();
+            return Ok(result.SucceedResult);
         }
 
-        [HttpGet("items/{invoiceId}")]
-        public partial async Task<IActionResult> GetPurchaseInvoiceWithItemsAsync([Bind("invoiceId")] string invoiceId)
+        [HttpGet("{invoiceId}/items")]
+        public partial async Task<IActionResult> GetPurchaseInvoiceWithItemsAsync([FromRoute, Bind("invoiceId")] string invoiceId)
         {
             var result = await RootService.PurchasesService.GetInvoiceItemsByInvoiceId(invoiceId);
             
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
+        }
+
+        [HttpPost("users/{userId}")]
+        public partial async Task<IActionResult> MakePurchaseAsync([FromRoute, Bind("userId")] string userId, PurchaseInvoiceForCreateDto dto)
+        {
+            if(userId != dto.UserId)
+            {
+                return BadRequest();
+            }
+
+            var result = await RootService.PurchasesService.MakePurchaseAsync(dto);
+
+            if(result.Failed)
+            {
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
+            }
+
+            return Ok(result.SucceedResult);
         }
     }
 }

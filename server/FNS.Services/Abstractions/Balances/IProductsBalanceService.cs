@@ -5,8 +5,8 @@ namespace FNS.Services.Abstractions.Balances
 {
     public interface IProductsBalanceService
     {
-        AppOpResult<IEnumerable<ProductBalanceDto>> GetAll();
-        Task<AppOpResult<ProductBalanceDto>> GetByIdAsync(string productBalanceId);
-        Task<AppOpResult<IEnumerable<ProductBalanceDto>>> GetByProductIdAsync(string productId);
+        OpResult<IEnumerable<ProductBalanceDto>> GetAll();
+        Task<OpResult<ProductBalanceDto>> GetByIdAsync(string productBalanceId);
+        Task<OpResult<IEnumerable<ProductBalanceDto>>> GetByProductIdAsync(string productId);
     }
 }

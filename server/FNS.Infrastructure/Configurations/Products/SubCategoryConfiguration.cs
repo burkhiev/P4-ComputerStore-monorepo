@@ -18,8 +18,7 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
                 .IsRequired()
                 .HasMaxLength(MaxNameLength);
 
-            var init = new SubCategoriesInitializer();
-            builder.HasData(init.Entities);
+            builder.HasData(new SubCategoriesInitializer().Entities);
         }
     }
 }

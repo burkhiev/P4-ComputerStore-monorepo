@@ -24,8 +24,16 @@ namespace FNS.Services.Mappers.Purchases
 
             config.CreateMap<PurchaseInvoiceItem, PurchaseInvoiceItemDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
                 .ForMember(dest => dest.PurchaseInvoiceId, opt => opt.MapFrom(src => src.PurchaseInvoiceId))
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
+
+            config.CreateMap<PurchaseInvoiceItem, PurchaseInvoiceItemWithAdditionalInfoDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PurchaseInvoiceId, opt => opt.MapFrom(src => src.PurchaseInvoiceId))
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.Product.ProductCode))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
         }
     }

@@ -26,7 +26,7 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         public partial IActionResult GetAll()
         {
             var result = RootService.ShoppingCartService.GetAll();
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpGet("users/{userId}")]
@@ -34,12 +34,12 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         {
             var result = await RootService.ShoppingCartService.GetByUserIdWithAdditionalInfoAsync(userId);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return Ok(result.SuceedResult);
+            return Ok(result.SucceedResult);
         }
 
         [HttpPost("users/{userId}")]
@@ -47,7 +47,7 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         {
             if(userId != dto.UserId)
             {
-                var badResult = new AppProblemDetails
+                var badResult = new ProblemResultInfo
                 {
                     Title = "Invalid arguments received",
                     Detail = $"Invalid {nameof(userId)} path argument.",
@@ -59,25 +59,33 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
 
             var result = await RootService.ShoppingCartService.AddProductAsync(dto.UserId, dto.ProductId);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
             return NoContent();
         }
 
         [HttpPut("users/{userId}/cart-items/{itemId}")]
-        public partial async Task<IActionResult> UpdateCartItemAmountAsync([Bind("userId")] string userId, ShoppingCartForChangeItemAmountDto dto)
+        public partial async Task<IActionResult> UpdateCartItemAmountAsync(
+            [Bind("userId")] string userId,
+            [Bind("itemId")] string itemId,
+            ShoppingCartForChangeItemAmountDto dto)
 {
-            var result = await RootService.ShoppingCartService.UpdateItemAmountAsync(userId, dto.ItemId, dto.Amount);
-
-            if(result.Faulted)
+            if(userId != dto.UserId || itemId != dto.ItemId)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return BadRequest();
             }
 
-            return Ok(result.SuceedResult);
+            var result = await RootService.ShoppingCartService.UpdateItemAmountAsync(dto);
+
+            if(result.Failed)
+            {
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
+            }
+
+            return Ok(result.SucceedResult);
         }
 
         [HttpDelete("users/{userId}/cart-items/{itemId}")]
@@ -85,9 +93,9 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         {
             var result = await RootService.ShoppingCartService.DeleteItemAsync(userId, itemId);
 
-            if(result.Faulted)
+            if(result.Failed)
             {
-                return StatusCode(result.FaultResult.StatusCode, result.FaultResult);
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
             return NoContent();

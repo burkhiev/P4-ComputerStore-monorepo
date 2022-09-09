@@ -4,5 +4,6 @@ namespace FNS.Domain.Repositories.Purchases
 {
     public interface IPurchaseInvoicesRepository : IRepositoryBase<PurchaseInvoice>
     {
+        Task LoadItemsWithProductsAsync(string invoiceId);
     }
 }

@@ -26,8 +26,7 @@ namespace FNS.Infrastructure.Configurations.ShoppingCarts
                 .HasForeignKey(p => p.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            var init = new ShoppingCartsItemsInitializer();
-            builder.HasData(init.Entities);
+            builder.HasData(new ShoppingCartsItemsInitializer().Entities);
         }
     }
 }

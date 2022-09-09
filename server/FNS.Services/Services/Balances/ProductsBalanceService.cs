@@ -6,7 +6,6 @@ using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions.Balances;
 using FNS.Services.Dtos.Balances;
 using FNS.Services.Mappers.Balances;
-using Microsoft.AspNetCore.Http;
 
 namespace FNS.Services.Services.Balances
 {
@@ -25,72 +24,46 @@ namespace FNS.Services.Services.Balances
 
         public IMapper Mapper => _mapper;
 
-        public AppOpResult<IEnumerable<ProductBalanceDto>> GetAll()
+        public OpResult<IEnumerable<ProductBalanceDto>> GetAll()
         {
             var balances = RootRepository.ProductBalances.GetAll();
             var dtos = Mapper.Map<IEnumerable<ProductBalanceDto>>(balances);
 
-            var result = new AppOpResult<IEnumerable<ProductBalanceDto>>(dtos);
+            var result = new OpResult<IEnumerable<ProductBalanceDto>>(dtos);
             return result;
         }
 
-        public async Task<AppOpResult<ProductBalanceDto>> GetByIdAsync(string productBalanceId)
+        public async Task<OpResult<ProductBalanceDto>> GetByIdAsync(string productBalanceId)
         {
             var balance = await RootRepository.ProductBalances.FindByIdAsync(productBalanceId);
 
             if(balance is null)
             {
-                var faultResult = new ProductBalanceNotFoundResult();
-                return faultResult;
+                var notFoundResult = new NotFoundResult<ProductBalanceDto, ProductBalance>();
+                return notFoundResult;
             }
 
             var dto = Mapper.Map<ProductBalanceDto>(balance);
-            var result = new AppOpResult<ProductBalanceDto>(dto);
+            var result = new OpResult<ProductBalanceDto>(dto);
 
             return result;
         }
 
-        public async Task<AppOpResult<IEnumerable<ProductBalanceDto>>> GetByProductIdAsync(string productId)
+        public async Task<OpResult<IEnumerable<ProductBalanceDto>>> GetByProductIdAsync(string productId)
         {
             var product = await RootRepository.Products.FindByIdAsync(productId);
 
             if(product is null)
             {
-                var faultResult = new ProductNotFoundByProductResult();
-                return faultResult;
+                var notFoundResult = new NotFoundResult<IEnumerable<ProductBalanceDto>, Product>();
+                return notFoundResult;
             }
 
             var balances = RootRepository.ProductBalances.FindByCondition(x => x.ProductId == productId);
             var dtos = Mapper.Map<IEnumerable<ProductBalanceDto>>(balances);
 
-            var result = new AppOpResult<IEnumerable<ProductBalanceDto>>(dtos);
+            var result = new OpResult<IEnumerable<ProductBalanceDto>>(dtos);
             return result;
-        }
-
-        private sealed class ProductBalanceNotFoundResult : AppOpResult<ProductBalanceDto>
-        {
-            public ProductBalanceNotFoundResult() : base()
-            {
-                FaultResult = new AppProblemDetails()
-                {
-                    Title = $"{nameof(ProductBalance)} not found",
-                    Detail = $"{nameof(ProductBalance)} with specified Id is not found.",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
-        }
-
-        private sealed class ProductNotFoundByProductResult : AppOpResult<IEnumerable<ProductBalanceDto>>
-        {
-            public ProductNotFoundByProductResult() : base()
-            {
-                FaultResult = new AppProblemDetails
-                {
-                    Title = $"{nameof(ProductBalance)} not found",
-                    Detail = $"{nameof(ProductBalance)} entities for specified {nameof(Product)} Id is not found.",
-                    StatusCode = StatusCodes.Status404NotFound,
-                };
-            }
         }
     }
 }

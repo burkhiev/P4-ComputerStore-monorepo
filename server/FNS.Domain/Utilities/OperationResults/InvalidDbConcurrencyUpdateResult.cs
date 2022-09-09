@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace FNS.Domain.Utilities.OperationResults
 {
-    public sealed class InvalidDbConcurrencyUpdateOpResult<T> : AppOpResult<T>
+    public sealed class InvalidDbConcurrencyUpdateResult<T> : OpResult<T>
     {
-        public InvalidDbConcurrencyUpdateOpResult() : base()
+        public InvalidDbConcurrencyUpdateResult() : base()
         {
-            FaultResult = new AppProblemDetails
+            FailResult = new ProblemResultInfo
             {
                 Title = "Concurrency update error",
                 Detail = "Error occurred because many people tried update one record. Please, try again.",

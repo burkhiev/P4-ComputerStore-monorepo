@@ -79,6 +79,46 @@ namespace FNS.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FNS.Domain.Models.Identity.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "00000000-0000-0000-0000-000000000001",
+                            ConcurrencyStamp = "d93aa3c6-c0c7-48e4-a295-5cabcc33747b",
+                            Name = "admin"
+                        },
+                        new
+                        {
+                            Id = "00000000-0000-0000-0000-000000000002",
+                            ConcurrencyStamp = "4b4640b5-5096-4c84-bd0c-d85ba599161b",
+                            Name = "user"
+                        });
+                });
+
             modelBuilder.Entity("FNS.Domain.Models.Identity.User", b =>
                 {
                     b.Property<string>("Id")
@@ -90,6 +130,11 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
+
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -152,15 +197,16 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ef110111-c5d6-406e-b89f-59343bf52525",
+                            ConcurrencyStamp = "37170f3a-24e9-4ac2-84c4-90c15f0da0f2",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16626570600000000L),
                             Email = "user1@gmail.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1@GMAIL.RU",
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAEAACcQAAAAEILm4xvlaaA26V7qT64ie/6N6q9ZkJezUq1DKKRBij4dIjiGjoM6L2CcYcpjN/hmLQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEB2fX/Upv+39pkzeCHoPxrPj1II4AVP2LrxuAURHM46WoUUh1FcKDkbivd1BTALXcQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3c151401-3b94-443d-9374-cea7196273d3",
+                            SecurityStamp = "856bed5e-9bd3-4852-8b3f-4e91cb344269",
                             TwoFactorEnabled = false,
                             UserName = "user1",
                             xmin = 0u
@@ -169,15 +215,16 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a5e7901c-0d5d-4ae9-a7db-9570c58f2e80",
+                            ConcurrencyStamp = "5d582d31-4955-4d93-b84d-aa6ef179cf04",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16626570600000000L),
                             Email = "user2@gmail.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2@GMAIL.RU",
                             NormalizedUserName = "USER2",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPABeXZftUz81PaQp4vfLlaWWNzBxRxTY+l5UlidtjcdSbQUHi5ZcVimshV9tQ7r0g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEC/RmCnJ4LUrFGKinT40MW3GUji2lZjUnf9lid/L1C+gkeLmuLMG5nBl/TDto2ebVA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5c11e2f8-69a2-41da-b37e-34e6ae4aa389",
+                            SecurityStamp = "8d6cf290-2947-4786-aa84-e7aed1968bfc",
                             TwoFactorEnabled = false,
                             UserName = "user2",
                             xmin = 0u
@@ -186,15 +233,16 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e0efadab-b40a-483b-9eb1-aa439953ee0b",
+                            ConcurrencyStamp = "7c66a862-0c2c-4e86-b776-6d8b685360e9",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16626570600000000L),
                             Email = "admin@yandex.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@YANDEX.RU",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKv5dDd4uBTusSMQ/qvFD7Uz3WJyoxEaDVcUDo34rgelqtuRGKX2yIhJWuxgjqD2VA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOS/h6ZglzpyFJqtv/decDMDIBmNUOSqggvlCf6RqNNXI/AGGt3Ro7QmewVCHC/oLA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a7a4e8c0-0822-4ace-b722-9e4d4de4b5a2",
+                            SecurityStamp = "2d584ca6-633e-4dbc-aa95-249b7695002b",
                             TwoFactorEnabled = false,
                             UserName = "admin",
                             xmin = 0u
@@ -244,7 +292,7 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
-                            Description = "Quasi quia architecto. Qui consequuntur possimus fugiat sint voluptates soluta autem. Sunt asperiores nobis quis commodi. Velit quis in. Sunt quam eos. Architecto dolorem sed repellat.\n\nDoloribus sunt similique repellat. Voluptatibus velit laboriosam sint esse dolorem. Suscipit possimus ad minus distinctio.\n\nMinima laborum voluptatem et quod quia voluptas nulla qui ex. Illo est repudiandae ex similique itaque distinctio quae provident voluptatem. Enim fuga nam magni architecto vero debitis consequatur rerum. Inventore sint enim.\n\nUt numquam praesentium sed velit sed sunt eligendi est. Impedit est atque maiores similique et. Minus delectus dolores.\n\nVeniam iusto consequatur perspiciatis quae laudantium accusantium qui eaque. Ut exercitationem et laudantium. Aspernatur culpa eligendi debitis possimus dignissimos id ratione eos vel. Autem tenetur delectus esse quia.",
+                            Description = "Facilis sit totam quisquam qui expedita eaque iure incidunt ut. Est expedita eos voluptatem et. Reprehenderit laborum autem. Atque enim sit.\n\nIpsum omnis omnis sint enim possimus. Voluptas nam eveniet illo in et reprehenderit iste magni quia. Alias illum officiis excepturi.\n\nRem nemo deleniti velit omnis aut nemo porro. Et excepturi dolor neque modi dolore quis quam incidunt. Voluptatem nobis quo sapiente rerum. Et vitae fugiat culpa quaerat. Dolores ratione quia harum vitae alias sapiente voluptas. Veniam dolor eveniet tempora deserunt tempore asperiores exercitationem.\n\nCupiditate dolorem voluptatem quia iste nostrum est quos molestiae. Ipsum asperiores magnam repudiandae. Nulla consectetur labore dolore accusamus. Reprehenderit commodi ea.\n\nUt quas sed. Doloremque consequuntur eaque facere aut nesciunt id. Soluta consequatur consectetur. Debitis sit consectetur minima. Quia et deleniti ab dicta sint. Incidunt officiis numquam non sit voluptas quas deleniti voluptates.",
                             Name = "AMD Ryzen 5 3600 OEM",
                             Price = 12599m,
                             ProductCode = "1372637",
@@ -254,7 +302,7 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
-                            Description = "Est velit qui quaerat. Ab facilis id. Sit iusto nihil aut sapiente enim voluptas. Dolores impedit dicta ut. Libero aut sint accusamus.\n\nFuga quam exercitationem. Vel maxime consequuntur ut. Ducimus quia sint modi a consequatur ea nihil earum ut. Necessitatibus nihil repudiandae qui repellat odit eius veritatis sapiente. Tempora et accusantium veritatis eos minima deserunt illo accusamus aut.\n\nNumquam ut quidem. Necessitatibus illo at nam. Ipsa eligendi quas accusantium cupiditate at esse. Quidem aspernatur laborum a ut voluptatibus ea consequatur fugit. Iusto odio ab et maiores porro voluptates quo.\n\nFacilis ut sint explicabo impedit ut quam sed vero. Quaerat ipsam veniam voluptates amet sed cumque ut similique. Deserunt et quos et officia odio.\n\nAssumenda molestiae id distinctio. Veniam tempora id commodi aspernatur natus numquam. Animi dolor exercitationem dicta quia pariatur sed quae. Amet rerum quia aliquam veniam aliquid ut.",
+                            Description = "Odio at quis corrupti dolore perferendis qui. Et qui voluptate cumque quisquam fugiat pariatur. Dolore qui totam reprehenderit modi sunt cupiditate ea. Dignissimos optio itaque ut autem possimus.\n\nMaxime accusantium amet inventore dicta aperiam. Voluptas impedit magnam. Quidem qui voluptates et aut et libero cupiditate ea. Vero aut sequi natus.\n\nAut doloribus fuga iure. Qui accusantium minus. Officiis eum qui. Occaecati qui est. Quos nulla ducimus sit et et iure voluptate odio. Fugiat maxime enim.\n\nMaiores et fugit atque expedita. Quas tempore saepe molestiae in aut laborum rem maiores. Repellat in laboriosam ad error. Tempore ut ipsum.\n\nTempora voluptates aliquam dolor omnis quo. Est qui ea quaerat voluptatem repellat expedita facilis. Aspernatur qui et vero. Qui cum fugit molestiae. Et et velit distinctio voluptas voluptatem. In animi et laudantium labore ullam.",
                             Name = "AMD Ryzen 5 3600 BOX",
                             Price = 12899m,
                             ProductCode = "5059834",
@@ -264,7 +312,7 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
-                            Description = "Ullam consequatur et temporibus rerum fuga velit quidem. Officia consequatur cumque tenetur ut. Corrupti numquam in ipsam odio. Aut ea et sint quos quis et.\n\nSunt nostrum accusantium eum voluptates. Explicabo non recusandae autem maiores praesentium consequatur sed ad. Voluptas veniam nostrum dignissimos corrupti ut a quibusdam. Eum enim itaque fuga.\n\nNostrum vitae perferendis et ut numquam eius quae omnis dolor. Eos id consequuntur dignissimos earum et. Voluptatem qui saepe et consequatur. Non rem aut tenetur dolor quisquam porro omnis tenetur fuga. Eligendi facilis quidem sed quia omnis dolores.\n\nQuisquam dolor doloribus quae autem laboriosam asperiores eius non earum. Aperiam rem enim quia cumque est ducimus ratione. Voluptates deserunt voluptate dolor.\n\nRem atque soluta nihil aut voluptatem quas architecto quod et. Ipsa nam ut officia nesciunt sunt aut. Ut autem consequatur tenetur.",
+                            Description = "Saepe qui adipisci sit aut. Ducimus sed cupiditate sed aut qui sit. Voluptatem cumque omnis perspiciatis velit et ipsa.\n\nQui et qui vel hic ea eaque possimus veritatis reprehenderit. Et enim fugit quod qui. Excepturi temporibus voluptate temporibus nulla ea facere nisi saepe. Fugit consequatur est cumque quasi et.\n\nIncidunt delectus eum amet quasi perspiciatis non ipsa. Architecto repellat voluptatibus doloremque quia quae. Minus minima nulla. Recusandae inventore minus earum est nesciunt consequatur porro quam eius.\n\nEt nostrum nihil libero sunt beatae voluptas dolorum et. Nobis quam et eos quaerat itaque omnis ut tenetur animi. Dolor voluptas doloribus aspernatur expedita officiis qui et aliquid delectus.\n\nEt aliquam dolorem distinctio excepturi eos dolor. Et quia dolor in. Quo quam fugiat possimus laboriosam. Deserunt at ipsam. Nulla ipsam quae ratione neque. In facere dolorum.",
                             Name = "AMD Ryzen 5 PRO 4650G OEM",
                             Price = 12599m,
                             ProductCode = "1689358",
@@ -274,7 +322,7 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
-                            Description = "Suscipit nemo et ipsa sit aut eaque repudiandae facere pariatur. Repellendus rem tempora commodi et esse veniam doloremque aperiam cupiditate. Magni voluptatem est.\n\nNon deserunt vitae unde eligendi. Voluptas occaecati maiores id natus cumque et voluptatem quia quia. Aut aut provident.\n\nSunt eos quasi cum optio dignissimos repudiandae voluptas et. Minus nobis eius esse. Atque sit ab non totam odio aliquid quia sit saepe. Molestias est cupiditate voluptatum a consectetur eum nulla commodi facere. Non quis ut hic officia nesciunt qui reprehenderit et. Qui neque fugiat ut dolorum magni.\n\nEnim hic dolorum sed. Itaque quas occaecati a nihil quis esse dignissimos ut itaque. Eum harum suscipit illo sed.\n\nLabore provident distinctio rem aut. Qui rerum qui non officiis qui cupiditate. Quis voluptate doloribus architecto. Nemo qui odit facilis quod corrupti nemo asperiores labore aut. Veritatis eius dignissimos dignissimos facilis eum expedita officiis vero.",
+                            Description = "Consequuntur libero dolorem et vel. Ipsa ipsam praesentium aut qui quas amet aut repudiandae ipsum. Voluptatem sit voluptatem sint odio qui doloremque natus dolorem autem.\n\nVoluptate qui minus accusantium saepe occaecati velit. Ut molestiae nemo harum laborum fuga perferendis. Consequatur maxime molestias odio ipsam tempora commodi fugiat maiores.\n\nNon temporibus voluptatum illum reiciendis molestiae beatae. Debitis libero omnis aliquam aut natus. Fugiat ut quia modi ipsa ratione temporibus qui omnis.\n\nError sit possimus. Nobis distinctio repellat voluptates ut vel ut neque aut. Accusamus ratione et omnis debitis illum voluptate.\n\nEt vitae voluptates ut omnis sit assumenda praesentium quae dolorum. Et laudantium molestias sit adipisci voluptatem fugiat illum veniam. Rerum voluptatem ipsam. Quia enim fuga necessitatibus maiores est. Odit et fugit dicta iusto assumenda qui qui perspiciatis expedita.",
                             Name = "AMD Ryzen 5 5600X OEM",
                             Price = 16199m,
                             ProductCode = "4721161",
@@ -604,7 +652,7 @@ namespace FNS.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PurchaseInvoice");
+                    b.ToTable("PurchaseInvoices");
 
                     b.HasData(
                         new
@@ -645,7 +693,7 @@ namespace FNS.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseInvoiceId");
 
-                    b.ToTable("PurchaseInvoiceItem");
+                    b.ToTable("PurchaseInvoiceItems");
 
                     b.HasData(
                         new
@@ -711,21 +759,21 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16423856450612356L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16596835324325564L),
                             UserId = "00000000-0000-0000-0000-000000000001",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16506611545975354L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16437896569984915L),
                             UserId = "00000000-0000-0000-0000-000000000002",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16576426484559884L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16337216052114194L),
                             UserId = "00000000-0000-0000-0000-000000000003",
                             xmin = 0u
                         });
@@ -845,6 +893,9 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
+                    b.Property<Instant>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("ProductId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -871,6 +922,7 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             Amount = 1,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000001",
                             ShoppingCartId = "00000000-0000-0000-0000-000000000002",
                             xmin = 0u
@@ -879,6 +931,7 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             Amount = 2,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000002",
                             ShoppingCartId = "00000000-0000-0000-0000-000000000002",
                             xmin = 0u
@@ -887,6 +940,7 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             Amount = 1,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000004",
                             ShoppingCartId = "00000000-0000-0000-0000-000000000002",
                             xmin = 0u
@@ -895,49 +949,10 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
                             Amount = 1,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000003",
                             ShoppingCartId = "00000000-0000-0000-0000-000000000001",
                             xmin = 0u
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "00000000-0000-0000-0000-000000000001",
-                            ConcurrencyStamp = "508e6184-15fa-4bb6-b8fc-d238bd536af5",
-                            Name = "admin"
-                        },
-                        new
-                        {
-                            Id = "00000000-0000-0000-0000-000000000002",
-                            ConcurrencyStamp = "5287b4a4-92f3-45e2-af72-af4daeb4be08",
-                            Name = "user"
                         });
                 });
 
@@ -1197,7 +1212,7 @@ namespace FNS.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("FNS.Domain.Models.Identity.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1224,14 +1239,14 @@ namespace FNS.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
+                    b.HasOne("FNS.Domain.Models.Identity.Role", null)
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FNS.Domain.Models.Identity.User", null)
-                        .WithMany()
+                        .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1246,6 +1261,11 @@ namespace FNS.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FNS.Domain.Models.Identity.Role", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("FNS.Domain.Models.Identity.User", b =>
                 {
                     b.Navigation("PurchaseInvoices");
@@ -1254,6 +1274,8 @@ namespace FNS.Infrastructure.Migrations
 
                     b.Navigation("ShoppingCart")
                         .IsRequired();
+
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("FNS.Domain.Models.Products.Product", b =>

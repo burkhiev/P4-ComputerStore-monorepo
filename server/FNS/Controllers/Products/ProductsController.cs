@@ -1,5 +1,4 @@
-﻿using FNS.Infrastructure.Initializers.Identity;
-using FNS.Services.Abstractions;
+﻿using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Products;
 using FNS.Services.Utils.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +24,7 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = RootService.ProductsService.GetAllProducts();
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -38,7 +37,7 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = RootService.ProductsService.GetProductsBySubCategoryId(subCategoryId);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -51,7 +50,7 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.GetProductWithAdditionalInfoByIdAsync(id);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -65,7 +64,7 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.CreateProduct(dto);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -79,7 +78,7 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.UpdateProduct(dto);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -93,7 +92,7 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsService.DeleteProductAsync(id);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }

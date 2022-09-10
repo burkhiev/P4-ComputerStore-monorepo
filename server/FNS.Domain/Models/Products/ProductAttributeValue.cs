@@ -1,4 +1,6 @@
-﻿namespace FNS.Domain.Models.Products
+﻿using NodaTime;
+
+namespace FNS.Domain.Models.Products
 {
     public class ProductAttributeValue : EntityBase
     {
@@ -7,5 +9,6 @@
         public string ProductAttributeId { get; set; }
         public virtual ProductAttribute ProductAttribute { get; set; }
         public string? Value { get; set; }
+        public Instant CreatedAt { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace FNS.Presentation.Controllers.Sales
         {
             var result = RootService.SalesReceiptService.GetAll();
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -40,7 +40,7 @@ namespace FNS.Presentation.Controllers.Sales
         {
             var result = await RootService.SalesReceiptService.GetWithAdditionalInfoAsync(id);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -53,7 +53,7 @@ namespace FNS.Presentation.Controllers.Sales
         {
             var result = await RootService.SalesReceiptService.GetByUserIdAsync(userId);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -66,7 +66,7 @@ namespace FNS.Presentation.Controllers.Sales
         {
             var result = await RootService.SalesReceiptService.MakeSaleAsync(userId);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }

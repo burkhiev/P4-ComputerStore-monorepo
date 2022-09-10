@@ -24,7 +24,7 @@ builder.Services.AddDbContextPool<AppDbContext>(options =>
 });
 
 
-builder.Services.AddIdentity<User, IdentityRole>(options =>
+builder.Services.AddIdentity<User, Role>(options =>
 {
     options.User.RequireUniqueEmail = true;
 
@@ -74,7 +74,7 @@ builder.Services.AddSwaggerGen(options =>
         Description = "JWT Authorization header using the Bearer scheme.\nExample: \"Authorization: Bearer {token}\"", // should
         Scheme = JwtBearerDefaults.AuthenticationScheme, // required
         In = ParameterLocation.Header, // required
-        Type = SecuritySchemeType.Http // required .Http
+        Type = SecuritySchemeType.Http // required SecuritySchemeType.Http
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement

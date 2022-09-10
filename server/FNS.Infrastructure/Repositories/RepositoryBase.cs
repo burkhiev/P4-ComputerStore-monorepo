@@ -63,9 +63,12 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
 
         public async Task LoadCollectionsAsync(T entity, params Expression<Func<T, IEnumerable<object>>>[] expressions)
         {
-            foreach(var exp in expressions)
+            var entry = Db.Entry(entity);
+
+            for(int i = 0; i < expressions.Length; i++)
             {
-                await Db.Entry(entity).Collection(exp).LoadAsync();
+                var exp = expressions[i];
+                await entry.Collection(exp).LoadAsync();
             }
         }
 

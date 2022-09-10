@@ -9,18 +9,18 @@ namespace FNS.Domain.Utilities.OperationResults
             // do nothing
         }
 
-        public OpResult(TSucceededResult succeedResult)
+        public OpResult(TSucceededResult? succeedResult)
         {
             SucceedResult = succeedResult;
         }
 
         [MemberNotNullWhen(true, nameof(FailResult))]
-        public bool Failed => FailResult is not null;
+        public bool IsFailed => FailResult is not null;
 
-        public bool Succeeded => FailResult is null;
+        public bool IsSucceeded => FailResult is null;
 
-        public ProblemResultInfo? FailResult { get; set; }
+        public ProblemResultInfo FailResult { get; set; }
 
-        public TSucceededResult? SucceedResult { get; set; }
+        public TSucceededResult SucceedResult { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = RootService.ProductsBalanceService.GetAll();
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -35,7 +35,7 @@ namespace FNS.Presentation.Controllers.Products
         {
             var result = await RootService.ProductsBalanceService.GetByProductIdAsync(productId);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }

@@ -1,6 +1,7 @@
 ﻿using FNS.Domain.Models.Purchases;
 using FNS.Infrastructure.Initializers.Purchases;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FNS.Infrastructure.Configurations.Purchases
@@ -12,7 +13,12 @@ namespace FNS.Infrastructure.Configurations.Purchases
             EntityBaseConfigurator.ConfigureDefault(builder);
 
             builder.Property(x => x.CreatedAt)
+                .IsRequired()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            builder.Property(x => x.CreatedAt)
+                .Metadata
+                .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
             builder.HasOne(x => x.User)
                 .WithMany(u => u.PurchaseInvoices)

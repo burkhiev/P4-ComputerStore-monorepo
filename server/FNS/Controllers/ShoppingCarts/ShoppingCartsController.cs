@@ -34,7 +34,7 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         {
             var result = await RootService.ShoppingCartService.GetByUserIdWithAdditionalInfoAsync(userId);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -59,7 +59,7 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
 
             var result = await RootService.ShoppingCartService.AddProductAsync(dto.UserId, dto.ProductId);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -80,7 +80,7 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
 
             var result = await RootService.ShoppingCartService.UpdateItemAmountAsync(dto);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -93,7 +93,7 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         {
             var result = await RootService.ShoppingCartService.DeleteItemAsync(userId, itemId);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }

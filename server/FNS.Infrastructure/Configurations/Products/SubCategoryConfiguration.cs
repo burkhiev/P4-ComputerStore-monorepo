@@ -3,6 +3,7 @@ using FNS.ContextsInfrastructure.Initializers.Products;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using FNS.Infrastructure.Configurations;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FNS.ContextsInfrastructure.Configurations.Products
 {
@@ -17,6 +18,14 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
             builder.Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(MaxNameLength);
+
+            builder.Property(p => p.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            builder.Property(p => p.CreatedAt)
+                .Metadata
+                .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
             builder.HasData(new SubCategoriesInitializer().Entities);
         }

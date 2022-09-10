@@ -19,13 +19,13 @@ namespace FNS.Services.Services.Purchases
     internal sealed class PurchasesService : IPurchasesService
     {
         // Макс. кол-во позиций в приходной накладной
-        private const int MaxInPurchaseItemsCount = 20;
+        public const int MaxInPurchaseItemsCount = 20;
 
         // Макс. кол-во всех закупок
-        private const int PurchaseItemsTotalLimit = 500;
+        public const int PurchaseItemsTotalLimit = 500;
 
         // Кол-во удаляемых закупок. Для предотвращения переполнения БД.
-        private const int CountOfDeletingPurchases = 100;
+        public const int CountOfDeletingPurchases = 100;
 
         private readonly IRootRepository _rootRepository;
         private readonly IMapper _mapper;

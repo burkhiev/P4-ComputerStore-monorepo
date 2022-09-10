@@ -1,5 +1,4 @@
 ﻿using FNS.Domain.Utilities.OperationResults;
-using FNS.Services.Dtos;
 using FNS.Services.Dtos.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;

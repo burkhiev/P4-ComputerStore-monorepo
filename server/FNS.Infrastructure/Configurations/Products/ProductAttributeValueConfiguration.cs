@@ -3,6 +3,7 @@ using FNS.ContextsInfrastructure.Initializers.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using FNS.Infrastructure.Configurations;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FNS.ContextsInfrastructure.Configurations.Products
 {
@@ -15,6 +16,14 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
             EntityBaseConfigurator.ConfigureDefault(builder);
 
             builder.Property(p => p.Value).HasMaxLength(MaxValueLength);
+
+            builder.Property(p => p.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            builder.Property(p => p.CreatedAt)
+                .Metadata
+                .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
             builder.HasOne(p => p.Product)
                 .WithMany(p => p.ProductAttributeValues)

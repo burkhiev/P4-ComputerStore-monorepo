@@ -24,13 +24,13 @@ namespace FNS.Services.Services.ShoppingCarts
     internal sealed class ShoppingCartService : IShoppingCartsService
     {
         // Макс. кол-во позиций в корзине
-        private const int MaxInCartItemsCount = 20;
+        public const int MaxInCartItemsCount = 20;
 
         // Макс. кол-во позиций в корзине во всех корзинах вместе
-        private const int CartItemsTotalLimit = 1000;
+        public const int CartItemsTotalLimit = 1000;
 
         // Удаляемое кол-во позиций в корзине
-        private const int CountOfDeletingCarts = 200;
+        public const int CountOfDeletingCarts = 200;
 
         private readonly IRootRepository _rootRepository;
         private readonly ShoppingCartMapperConfiguration _mapperConfig;
@@ -60,7 +60,7 @@ namespace FNS.Services.Services.ShoppingCarts
 
             if(user is null)
             {
-                var notFound = new NotFoundResult<ShoppingCartWithAdditionalInfoDto, Product>();
+                var notFound = new NotFoundResult<ShoppingCartWithAdditionalInfoDto, User>();
                 return notFound;
             }
 

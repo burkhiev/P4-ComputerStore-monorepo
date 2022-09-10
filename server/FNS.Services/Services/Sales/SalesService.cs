@@ -18,13 +18,13 @@ namespace FNS.Services.Services.Sales
     internal sealed class SalesService : ISalesService
     {
         // Макс. кол-во продаж
-        private const int MaxSalesTotalLimit = 1000;
+        public const int MaxSalesTotalLimit = 1000;
 
         // Макс. кол-во товаров в чеке продаж
-        private const int MaxItemsInSaleReceipt = 20;
+        public const int MaxItemsInSaleReceipt = 20;
 
         // Кол-во удаляемых чеков
-        private const int ForDeletingSalesCount = 200;
+        public const int ForDeletingSalesCount = 200;
 
         private readonly IRootRepository _rootRepository;
         private readonly IMapper _mapper;

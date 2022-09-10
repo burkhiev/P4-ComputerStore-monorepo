@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FNS.Domain.Exceptions;
 using FNS.Domain.Models;
+using FNS.Domain.Models.Balances;
 using FNS.Domain.Models.Products;
 using FNS.Domain.Repositories;
 using FNS.Domain.Utilities.OperationResults;
@@ -15,6 +16,13 @@ namespace FNS.Services.Services.Products
 {
     internal sealed class ProductService : IProductsService
     {
+        public const int MaxProductKindsCount = 100;
+        public const int ProductKindsDeletingCount = 20;
+        public const int MaxProductAttributesCount = 1000;
+        public const int AttributeValuesDeletingCount = 20;
+        public const int MaxSubCategoriesCount = 50;
+        public const int SubCategoriesDeletingCount = 5;
+
         private readonly IRootRepository _rootRepository;
         private readonly ProductMapperConfiguration _productMapperConfig;
         private readonly ProductAttributesMapperConfiguration _productAttributeMapperConfig;
@@ -72,33 +80,42 @@ namespace FNS.Services.Services.Products
 
         public async Task<OpResult<ProductWithAdditionalInfoDto>> CreateProduct(ProductForCreateDto dto)
         {
-            var product = ProductMapper.Map<Product>(dto);
+            // удаление старых записей
+            var products = RootRepository.Products.GetAll();
 
-            product.Id = Guid.NewGuid().ToString();
-            await RootRepository.Products.AddAsync(product);
-
-
-            var subCategory = await RootRepository.SubCategories.FindByIdAsync(product.SubCategoryId);
-
-            if(subCategory is null)
+            if(products.Count() > MaxProductKindsCount)
             {
-                var notFoundResult = new NotFoundResult<ProductWithAdditionalInfoDto, SubCategory>();
-                return notFoundResult;
+                var forDeletingProducts = await products
+                    .OrderBy(x => x.CreatedAt)
+                    .Take(ProductKindsDeletingCount)
+                    .ToListAsync();
+
+                RootRepository.Products.RemoveMany(forDeletingProducts);
+                await RootRepository.SaveChangesAsync();
             }
 
 
-            bool someAttributeNotFound = false;
+            // добавление продукта
+            var product = ProductMapper.Map<Product>(dto);
+            product.Id = Guid.NewGuid().ToString();
 
+            await RootRepository.Products.AddAsync(product);
+
+
+            // создание счета для продукта
+            var productBalacnce = new ProductBalance
+            {
+                Id = Guid.NewGuid().ToString(),
+                ProductId = product.Id,
+                Amount = 0,
+            };
+
+            await RootRepository.ProductBalances.AddAsync(productBalacnce);
+
+
+            // добавление значений доп. атрибутов для продукта (все что не входит в модель Product)
             foreach(var attrValue in dto.AdditionalAttributes)
             {
-                var attr = await RootRepository.ProductAttributes.FindByIdAsync(attrValue.Key);
-
-                if(attr is null)
-                {
-                    someAttributeNotFound = true;
-                    break;
-                }
-
                 var newAttrValue = new ProductAttributeValue
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -108,12 +125,6 @@ namespace FNS.Services.Services.Products
                 };
 
                 await RootRepository.ProductWithAttributeValues.AddAsync(newAttrValue);
-            }
-
-            if(someAttributeNotFound)
-            {
-                var notFoundResult = new NotFoundResult<ProductWithAdditionalInfoDto, ProductAttribute>();
-                return notFoundResult;
             }
 
 
@@ -130,8 +141,22 @@ namespace FNS.Services.Services.Products
             // Проверка на конкурентность
             // При установке Xmin Concurrency Token на уже загруженную сущность
             // автоматический отлов конфликтов при сохранении не работает.
+            // Возможно xmin сохраняется, где-то в памяти у провайдера Npsql.
             var product = ProductMapper.Map<Product>(dto);
             RootRepository.Products.Update(product);
+
+
+            var attrValues = RootRepository.ProductWithAttributeValues.GetAll();
+
+            if(attrValues.Count() > MaxProductAttributesCount)
+            {
+                var attrValuesForDelete = attrValues
+                    .OrderBy(x => x.CreatedAt)
+                    .Take(AttributeValuesDeletingCount);
+
+                RootRepository.ProductWithAttributeValues.RemoveMany(attrValuesForDelete);
+                await RootRepository.SaveChangesAsync();
+            }
 
 
             // удаление отсутствующих значений доп. атрибутов
@@ -238,6 +263,19 @@ namespace FNS.Services.Services.Products
 
         public async Task<OpResult<ProductAttributeDto>> CreateProductAttributeAsync(ProductAttributeForCreateDto attrDto)
         {
+            var attrs = RootRepository.ProductAttributes.GetAll();
+
+            if(attrs.Count() > MaxProductKindsCount)
+            {
+                var forDeleteAttrs = await attrs
+                    .OrderBy(x => x.CreatedAt)
+                    .Take(ProductKindsDeletingCount)
+                    .ToListAsync();
+
+                RootRepository.ProductAttributes.RemoveMany(forDeleteAttrs);
+                await RootRepository.SaveChangesAsync();
+            }
+
             var attr = ProductAttributeMapper.Map<ProductAttribute>(attrDto);
             attr.Id = Guid.NewGuid().ToString();
 
@@ -303,7 +341,20 @@ namespace FNS.Services.Services.Products
 
         public async Task<OpResult<SubCategoryDto>> CreateSubCategoryAsync(SubCategoryForCreateDto attrDto)
         {
-            var subCategory = new SubCategory 
+            var subCategories = RootRepository.SubCategories.GetAll();
+
+            if(subCategories.Count() > MaxSubCategoriesCount)
+            {
+                var subCatForDelete = subCategories
+                    .OrderBy(x => x.CreatedAt)
+                    .Take(SubCategoriesDeletingCount);
+
+                RootRepository.SubCategories.RemoveMany(subCatForDelete);
+                await RootRepository.SaveChangesAsync();
+            }
+
+
+            var subCategory = new SubCategory
             { 
                 Id = Guid.NewGuid().ToString(),
                 Name = attrDto.Name ,

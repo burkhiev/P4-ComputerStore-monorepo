@@ -14,13 +14,13 @@ namespace FNS.Presentation.Controllers.Identity
 {
     [ApiController]
     [Route("api/accounts")]
-    public sealed partial class AccountController : ControllerBase
+    public sealed partial class LoginController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IRootService _rootService;
 
-        public AccountController(
+        public LoginController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             IRootService rootService)
@@ -34,33 +34,47 @@ namespace FNS.Presentation.Controllers.Identity
         public UserManager<User> UserManager => _userManager;
         public IRootService RootService => _rootService;
 
+        [HttpPost("register")]
+        public partial async Task<IActionResult> RegisterAsync([FromBody] RegisterDto dto)
+        {
+            var result = await RootService.UserService.CreateUserAsync(UserManager, dto);
+
+            if(result.IsFailed)
+            {
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
+            }
+
+            return Ok(result.SucceedResult);
+        }
+
+        private async Task<IEnumerable<Claim>?> GetClaimsAsync(User user)
+        {
+            var roles = await UserManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+            };
+
+            foreach(var role in roles)
+            {
+                if(role is not null)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+            }
+
+            return claims;
+        }
+
         [HttpPost("login")]
         public partial async Task<IActionResult> Login(LoginDto dto)
         {
-            await SignInManager.SignOutAsync();
-
             var user = await UserManager.FindByEmailAsync(dto.Email);
 
             if(user is null)
-            {
-                var problem = new LoginProblemDetails();
-                return Unauthorized(problem);
-            }
-
-
-            var result = await SignInManager.PasswordSignInAsync(
-                user: user, 
-                password: dto.Password, 
-                isPersistent: true,
-                lockoutOnFailure: false);
-
-
-            if(result.Succeeded)
-            {
-                //string userId = User.FindAll(ClaimTypes.NameIdentifier).Single().Value;
-                //await RootService.UserService.MarkAsAttendedAsync(userId);
-            }
-            else
             {
                 var problem = new LoginProblemDetails();
                 return Unauthorized(problem);
@@ -94,39 +108,23 @@ namespace FNS.Presentation.Controllers.Identity
             return Ok(response);
         }
 
-        [HttpPost("logout")]
-        public partial async Task<IActionResult> Logout()
+        [HttpDelete("{userId}")]
+        [Authorize]
+        public partial async Task<IActionResult> Delete([FromRoute, Bind("userId")] string userId, UserDeletingDto dto)
         {
-            // TODO: проверить наличие св-ва User, при отсутствии аутентификации
-            throw new NotImplementedException();
-
-            //string userId = User.FindAll(ClaimTypes.NameIdentifier).Single().Value;
-            //await RootService.UserService.MarkAsAttendedAsync(userId);
-
-            await SignInManager.SignOutAsync();
-            return NoContent();
-        }
-
-        private async Task<IEnumerable<Claim>?> GetClaimsAsync(User user)
-        {
-            var roles = await UserManager.GetRolesAsync(user);
-
-            var claims = new List<Claim>
+            if(string.IsNullOrWhiteSpace(userId) || userId != dto.Id)
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-            };
-
-            foreach(var role in roles)
-            {
-                if(role is not null)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                }
+                return BadRequest();
             }
 
-            return claims;
+            var result = await RootService.UserService.DeleteUserAsync(UserManager, dto);
+
+            if(result.IsFailed)
+            {
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
+            }
+
+            return NoContent();
         }
 
         private sealed class LoginProblemDetails : ProblemResultInfo

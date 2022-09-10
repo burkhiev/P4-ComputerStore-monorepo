@@ -32,7 +32,7 @@ namespace FNS.Presentation.Controllers.Purchases
         {
             var result = await RootService.PurchasesService.GetInvoiceItemsByInvoiceId(invoiceId);
             
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -50,7 +50,7 @@ namespace FNS.Presentation.Controllers.Purchases
 
             var result = await RootService.PurchasesService.MakePurchaseAsync(dto);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }

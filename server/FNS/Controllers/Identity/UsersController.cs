@@ -1,5 +1,4 @@
-﻿using FNS.Presentation.Utilities.Auth;
-using FNS.Services.Abstractions;
+﻿using FNS.Services.Abstractions;
 using FNS.Services.Utils.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +6,8 @@ using System.Security.Claims;
 
 namespace FNS.Presentation.Controllers.Identity
 {
-    [Authorize]
     [ApiController]
     [Route("api/users")]
-    [TypeFilter(typeof(UserActivityCheckerAttribute))] // TODO:
     public sealed partial class UsersController : ControllerBase
     {
         private readonly IRootService _rootService;
@@ -22,21 +19,21 @@ namespace FNS.Presentation.Controllers.Identity
 
         public IRootService RootService => _rootService;
 
-        [Authorize(Roles = AppRoleNames.Admin)]
         [HttpGet("for-admins")]
+        [Authorize(Roles = AppRoleNames.Admin)]
         public partial async Task<IActionResult> GetAll()
         {
             var result = RootService.UserService.GetAllUsers();
             return Ok(result.SucceedResult);
         }
 
-        [Authorize(Roles = AppRoleNames.Admin)]
         [HttpGet("for-admins/{id}")]
-        public partial async Task<IActionResult> GetByIdForAdminsAsync(string id)
+        [Authorize(Roles = AppRoleNames.Admin)]
+        public partial async Task<IActionResult> GetByIdForAdminsAsync([Bind("id")] string id)
         {
             var result = await RootService.UserService.GetUserByIdAsync(id);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -45,7 +42,8 @@ namespace FNS.Presentation.Controllers.Identity
         }
 
         [HttpGet("{id}")]
-        public partial async Task<IActionResult> GetBySelfAsync(string id)
+        [Authorize]
+        public partial async Task<IActionResult> GetBySelfAsync([Bind("id")] string id)
         {
             string? currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -56,7 +54,7 @@ namespace FNS.Presentation.Controllers.Identity
 
             var result = await RootService.UserService.GetUserByIdAsync(currentUserId);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }

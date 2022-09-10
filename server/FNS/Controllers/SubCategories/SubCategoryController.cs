@@ -25,7 +25,7 @@ namespace FNS.Presentation.Controllers.SubCategories
         {
             var result = RootService.ProductsService.GetAllSubCategories();
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -38,7 +38,7 @@ namespace FNS.Presentation.Controllers.SubCategories
         {
             var result = await RootService.ProductsService.CreateSubCategoryAsync(dto);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -51,7 +51,7 @@ namespace FNS.Presentation.Controllers.SubCategories
         {
             var result = await RootService.ProductsService.UpdateSubCategoryAsync(dto);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
@@ -64,7 +64,7 @@ namespace FNS.Presentation.Controllers.SubCategories
         {
             var result = await RootService.ProductsService.DeleteSubCategoryAsync(id);
 
-            if(result.Failed)
+            if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }

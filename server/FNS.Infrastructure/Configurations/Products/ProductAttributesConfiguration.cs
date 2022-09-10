@@ -1,9 +1,9 @@
-﻿using FNS.Domain.Enums.Measures;
-using FNS.Domain.Models.Products;
+﻿using FNS.Domain.Models.Products;
 using FNS.ContextsInfrastructure.Initializers.Products;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using FNS.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FNS.ContextsInfrastructure.Configurations.Products
 {
@@ -25,6 +25,14 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
 
             builder.Property(p => p.ClrType)
                 .IsRequired();
+
+            builder.Property(p => p.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            builder.Property(p => p.CreatedAt)
+                .Metadata
+                .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
             builder.HasData(new ProductAttributesInitializer().Entities);
         }

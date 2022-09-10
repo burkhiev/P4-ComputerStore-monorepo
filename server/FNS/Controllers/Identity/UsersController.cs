@@ -29,7 +29,7 @@ namespace FNS.Presentation.Controllers.Identity
 
         [HttpGet("for-admins/{id}")]
         [Authorize(Roles = AppRoleNames.Admin)]
-        public partial async Task<IActionResult> GetByIdForAdminsAsync([Bind("id")] string id)
+        public partial async Task<IActionResult> GetByIdForAdminsAsync([FromRoute] string id)
         {
             var result = await RootService.UserService.GetUserByIdAsync(id);
 
@@ -43,11 +43,11 @@ namespace FNS.Presentation.Controllers.Identity
 
         [HttpGet("{id}")]
         [Authorize]
-        public partial async Task<IActionResult> GetBySelfAsync([Bind("id")] string id)
+        public partial async Task<IActionResult> GetBySelfAsync([FromRoute] string id)
         {
             string? currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if(currentUserId is null || currentUserId != id)
+            if(string.IsNullOrEmpty(currentUserId) || currentUserId != id)
             {
                 return BadRequest();
             }

@@ -1,4 +1,5 @@
-﻿using FNS.Services.Abstractions;
+﻿using System.Security.Claims;
+using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Purchases;
 using FNS.Services.Utils.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,7 @@ namespace FNS.Presentation.Controllers.Purchases
         }
 
         [HttpGet("{invoiceId}/items")]
-        public partial async Task<IActionResult> GetPurchaseInvoiceWithItemsAsync([FromRoute, Bind("invoiceId")] string invoiceId)
+        public partial async Task<IActionResult> GetPurchaseInvoiceWithItemsAsync([FromRoute] string invoiceId)
         {
             var result = await RootService.PurchasesService.GetInvoiceItemsByInvoiceId(invoiceId);
             
@@ -41,9 +42,13 @@ namespace FNS.Presentation.Controllers.Purchases
         }
 
         [HttpPost("users/{userId}")]
-        public partial async Task<IActionResult> MakePurchaseAsync([FromRoute, Bind("userId")] string userId, PurchaseInvoiceForCreateDto dto)
+        public partial async Task<IActionResult> MakePurchaseAsync(
+            [FromRoute] string userId, 
+            [FromBody] PurchaseInvoiceForCreateDto dto)
         {
-            if(userId != dto.UserId)
+            string? identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(userId != dto.UserId || userId != identityId)
             {
                 return BadRequest();
             }

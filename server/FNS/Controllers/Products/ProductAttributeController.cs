@@ -36,7 +36,7 @@ namespace FNS.Presentation.Controllers.Products
         }
 
         [HttpPost]
-        public partial async Task<IActionResult> CreateAsync(ProductAttributeForCreateDto dto)
+        public partial async Task<IActionResult> CreateAsync([FromBody] ProductAttributeForCreateDto dto)
         {
             var result = await RootService.ProductsService.CreateProductAttributeAsync(dto);
 
@@ -49,7 +49,7 @@ namespace FNS.Presentation.Controllers.Products
         }
 
         [HttpPut]
-        public partial async Task<IActionResult> UpdateAsync(ProductAttributeDto dto)
+        public partial async Task<IActionResult> UpdateAsync([FromBody] ProductAttributeDto dto)
         {
             var result = await RootService.ProductsService.UpdateProductAttribute(dto);
 
@@ -62,7 +62,7 @@ namespace FNS.Presentation.Controllers.Products
         }
 
         [HttpDelete("{id}")]
-        public partial async Task<IActionResult> DeleteAsync([Bind("id")] string id)
+        public partial async Task<IActionResult> DeleteAsync([FromRoute] string id)
         {
             var result = await RootService.ProductsService.DeleteProductAttributeAsync(id);
 

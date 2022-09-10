@@ -110,9 +110,11 @@ namespace FNS.Presentation.Controllers.Identity
 
         [HttpDelete("{userId}")]
         [Authorize]
-        public partial async Task<IActionResult> Delete([FromRoute, Bind("userId")] string userId, UserDeletingDto dto)
+        public partial async Task<IActionResult> Delete([FromRoute] string userId, [FromBody] UserDeletingDto dto)
         {
-            if(string.IsNullOrWhiteSpace(userId) || userId != dto.Id)
+            string? identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(string.IsNullOrWhiteSpace(userId) || userId != dto.Id || userId != identityId)
             {
                 return BadRequest();
             }

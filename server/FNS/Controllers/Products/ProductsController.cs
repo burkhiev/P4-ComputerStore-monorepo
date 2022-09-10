@@ -33,7 +33,7 @@ namespace FNS.Presentation.Controllers.Products
         }
 
         [HttpGet("sub-category/{subCategoryId}")]
-        public partial IActionResult GetProductsByCategoryId([Bind("subCategoryId")] string subCategoryId)
+        public partial IActionResult GetProductsByCategoryId([FromRoute] string subCategoryId)
         {
             var result = RootService.ProductsService.GetProductsBySubCategoryId(subCategoryId);
 
@@ -46,7 +46,7 @@ namespace FNS.Presentation.Controllers.Products
         }
 
         [HttpGet("{id}")]
-        public partial async Task<IActionResult> GetWithAdditionalInfoAsync([Bind("id")] string id)
+        public partial async Task<IActionResult> GetWithAdditionalInfoAsync([FromRoute] string id)
         {
             var result = await RootService.ProductsService.GetProductWithAdditionalInfoByIdAsync(id);
 
@@ -60,7 +60,7 @@ namespace FNS.Presentation.Controllers.Products
 
         [Authorize(Roles = AppRoleNames.Admin)]
         [HttpPost]
-        public partial async Task<IActionResult> CreateAsync(ProductForCreateDto dto)
+        public partial async Task<IActionResult> CreateAsync([FromBody] ProductForCreateDto dto)
         {
             var result = await RootService.ProductsService.CreateProduct(dto);
 
@@ -74,7 +74,7 @@ namespace FNS.Presentation.Controllers.Products
 
         [Authorize(Roles = AppRoleNames.Admin)]
         [HttpPut]
-        public partial async Task<IActionResult> UpdateAsync(ProductWithAdditionalInfoDto dto)
+        public partial async Task<IActionResult> UpdateAsync([FromBody] ProductWithAdditionalInfoDto dto)
         {
             var result = await RootService.ProductsService.UpdateProduct(dto);
 
@@ -88,7 +88,7 @@ namespace FNS.Presentation.Controllers.Products
 
         [Authorize(Roles = AppRoleNames.Admin)]
         [HttpDelete("{id}")]
-        public partial async Task<IActionResult> DeleteAsync([Bind("id")] string id)
+        public partial async Task<IActionResult> DeleteAsync([FromRoute] string id)
         {
             var result = await RootService.ProductsService.DeleteProductAsync(id);
 

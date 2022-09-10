@@ -1,5 +1,5 @@
-﻿using FNS.Services.Abstractions;
-using FNS.Services.Dtos.SalesReceipts;
+﻿using System.Security.Claims;
+using FNS.Services.Abstractions;
 using FNS.Services.Utils.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,7 @@ namespace FNS.Presentation.Controllers.Sales
 
         [Authorize(Roles = AppRoleNames.Admin)]
         [HttpGet("{id}")]
-        public partial async Task<IActionResult> GetByIdAsync([Bind("id")] string id)
+        public partial async Task<IActionResult> GetByIdAsync([FromRoute] string id)
         {
             var result = await RootService.SalesReceiptService.GetWithAdditionalInfoAsync(id);
 
@@ -49,8 +49,16 @@ namespace FNS.Presentation.Controllers.Sales
         }
 
         [HttpGet("users/{userId}")]
-        public partial async Task<IActionResult> GetByUserIdAsync([Bind("userId")] string userId)
+        public partial async Task<IActionResult> GetByUserIdAsync([FromRoute] string userId)
         {
+            string? identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(identityId != userId)
+            {
+                return BadRequest();
+            }
+
+
             var result = await RootService.SalesReceiptService.GetByUserIdAsync(userId);
 
             if(result.IsFailed)
@@ -62,8 +70,16 @@ namespace FNS.Presentation.Controllers.Sales
         }
 
         [HttpPost("users/{userId}")]
-        public partial async Task<IActionResult> SaleAsync([Bind("userId")] string userId)
+        public partial async Task<IActionResult> SaleAsync([FromRoute] string userId)
         {
+            string? identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(identityId != userId)
+            {
+                return BadRequest();
+            }
+
+
             var result = await RootService.SalesReceiptService.MakeSaleAsync(userId);
 
             if(result.IsFailed)

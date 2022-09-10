@@ -1,4 +1,5 @@
-﻿using FNS.Domain.Utilities.OperationResults;
+﻿using System.Security.Claims;
+using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions;
 using FNS.Services.Dtos.ShoppingCarts;
 using FNS.Services.Utils.Constants;
@@ -30,8 +31,16 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         }
 
         [HttpGet("users/{userId}")]
-        public partial async Task<IActionResult> GetByUserIdWithAdditionalInfoAsync([Bind("userId")] string userId)
+        public partial async Task<IActionResult> GetByUserIdWithAdditionalInfoAsync([FromRoute] string userId)
         {
+            string? identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(identityId != userId)
+            {
+                return BadRequest();
+            }
+
+
             var result = await RootService.ShoppingCartService.GetByUserIdWithAdditionalInfoAsync(userId);
 
             if(result.IsFailed)
@@ -43,8 +52,18 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         }
 
         [HttpPost("users/{userId}")]
-        public partial async Task<IActionResult> AddCartItemAsync([Bind("userId")] string userId, ShoppingCartItemForCreateDto dto)
+        public partial async Task<IActionResult> AddCartItemAsync(
+            [FromRoute] string userId, 
+            [FromBody] ShoppingCartItemForCreateDto dto)
         {
+            string? identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(identityId != userId)
+            {
+                return BadRequest();
+            }
+
+
             if(userId != dto.UserId)
             {
                 var badResult = new ProblemResultInfo
@@ -69,11 +88,13 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
 
         [HttpPut("users/{userId}/cart-items/{itemId}")]
         public partial async Task<IActionResult> UpdateCartItemAmountAsync(
-            [Bind("userId")] string userId,
-            [Bind("itemId")] string itemId,
+            [FromRoute, Bind("userId")] string userId,
+            [FromRoute, Bind("itemId")] string itemId,
             ShoppingCartForChangeItemAmountDto dto)
-{
-            if(userId != dto.UserId || itemId != dto.ItemId)
+        {
+            string? identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(userId != identityId || userId != dto.UserId || itemId != dto.ItemId)
             {
                 return BadRequest();
             }
@@ -89,8 +110,18 @@ namespace FNS.Presentation.Controllers.ShoppingCarts
         }
 
         [HttpDelete("users/{userId}/cart-items/{itemId}")]
-        public partial async Task<IActionResult> DeleteCartItemAsync([Bind("userId")] string userId, [Bind("itemId")] string itemId)
+        public partial async Task<IActionResult> DeleteCartItemAsync(
+            [FromRoute, Bind("userId")] string userId, 
+            [FromRoute, Bind("itemId")] string itemId)
         {
+            string? identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(identityId != userId)
+            {
+                return BadRequest();
+            }
+
+
             var result = await RootService.ShoppingCartService.DeleteItemAsync(userId, itemId);
 
             if(result.IsFailed)

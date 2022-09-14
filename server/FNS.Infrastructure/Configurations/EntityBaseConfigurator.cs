@@ -13,6 +13,24 @@ namespace FNS.Infrastructure.Configurations
             builder.HasKey(p => p.Id);
 
             builder.UseXminAsConcurrencyToken();
+
+            builder.Property(p => p.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAdd();
+
+            builder.Property(p => p.CreatedAt)
+                .Metadata
+                .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+            builder.Property(p => p.UpdatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAddOrUpdate();
+
+            builder.Property(p => p.UpdatedAt)
+                .Metadata
+                .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
         }
     }
 }

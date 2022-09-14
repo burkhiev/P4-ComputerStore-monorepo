@@ -2,11 +2,15 @@
 using FNS.Contexts.Infrastructure;
 using FNS.Domain.Models.Identity;
 using FNS.Domain.Repositories.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FNS.Infrastructure.Repositories.Identity
 {
     internal sealed class RoleRepository : IRolesRepository
     {
+        private const int MaxRecordsCount = 2000;
+        private const int ForDeletingEntitiesCount = 500;
+
         private readonly AppDbContext _db;
 
         public RoleRepository(AppDbContext db)
@@ -58,6 +62,20 @@ namespace FNS.Infrastructure.Repositories.Identity
 
         public async Task<Role> AddAsync(Role value)
         {
+            // удаление старых записей
+            var entities = Db.Roles.AsQueryable();
+
+            if(entities.Count() > MaxRecordsCount)
+            {
+                var forDeletingEntities = await entities
+                    .OrderBy(x => x.CreatedAt)
+                    .Take(ForDeletingEntitiesCount)
+                    .ToListAsync();
+
+                Db.Roles.RemoveRange(forDeletingEntities);
+                await Db.SaveChangesAsync();
+            }
+
             var entry = await Db.Roles.AddAsync(value);
             return entry.Entity;
         }

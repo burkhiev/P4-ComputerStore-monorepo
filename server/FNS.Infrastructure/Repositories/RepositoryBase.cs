@@ -1,11 +1,15 @@
 ﻿using FNS.Contexts.Infrastructure;
+using FNS.Domain.Models;
 using FNS.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace FNS.ContextsInfrastructure.Repositories.Products
 {
-    internal abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, new()
+    internal abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IEntityBase, new()
     {
+        protected const int MaxRecordsCount = 2000;
+        protected const int ForDeletingEntitiesCount = 500;
         protected readonly AppDbContext _db;
 
         public RepositoryBase(AppDbContext db)
@@ -17,6 +21,20 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
 
         public async Task<T> AddAsync(T entity)
         {
+            // удаление старых записей
+            var entities = Db.Set<T>().AsQueryable();
+
+            if(entities.Count() > MaxRecordsCount)
+            {
+                var forDeletingEntities = await entities
+                    .OrderBy(x => x.CreatedAt)
+                    .Take(ForDeletingEntitiesCount)
+                    .ToListAsync();
+
+                Db.Set<T>().RemoveRange(forDeletingEntities);
+                await Db.SaveChangesAsync();
+            }
+
             var result = await Db.Set<T>().AddAsync(entity);
             return result.Entity;
         }

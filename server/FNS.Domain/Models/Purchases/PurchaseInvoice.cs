@@ -7,7 +7,6 @@ namespace FNS.Domain.Models.Purchases
     {
         public string UserId { get; set; }
         public virtual User User { get; set; }
-        public Instant CreatedAt { get; set; }
         public virtual List<PurchaseInvoiceItem>? PurchaseInvoiceItems { get; set; }
     }
 }

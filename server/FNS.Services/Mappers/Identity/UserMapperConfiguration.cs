@@ -19,7 +19,6 @@ namespace FNS.Services.Mappers.Identity
         {
             config.CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
         }

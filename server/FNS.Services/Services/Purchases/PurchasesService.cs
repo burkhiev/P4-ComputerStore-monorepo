@@ -18,15 +18,6 @@ namespace FNS.Services.Services.Purchases
     /// </summary>
     internal sealed class PurchasesService : IPurchasesService
     {
-        // Макс. кол-во позиций в приходной накладной
-        public const int MaxInPurchaseItemsCount = 20;
-
-        // Макс. кол-во всех закупок
-        public const int PurchaseItemsTotalLimit = 500;
-
-        // Кол-во удаляемых закупок. Для предотвращения переполнения БД.
-        public const int CountOfDeletingPurchases = 100;
-
         private readonly IRootRepository _rootRepository;
         private readonly IMapper _mapper;
 
@@ -75,31 +66,6 @@ namespace FNS.Services.Services.Purchases
             {
                 var notFound = new NotFoundResult<PurchaseInvoiceDto, User>();
                 return notFound;
-            }
-
-
-            // не слишком ли много позиций в приходной накладной?
-            if(dto.Items.Count > MaxInPurchaseItemsCount)
-            {
-                var tooMany = new TooManyRecordsReceivedResult<PurchaseInvoiceDto>(MaxInPurchaseItemsCount);
-                return tooMany;
-            }
-
-
-            // Удаляем старые записи для предотвращения переполнения БД
-            // Тут мы смотрим за количеством совершенных покупок,
-            // а не за количеством купленных товаров.
-            var invoiceItems = RootRepository.PurchaseInvoiceItems.GetAll();
-
-            if(invoiceItems.Count() > PurchaseItemsTotalLimit)
-            {
-                var invoicesForDelete = await RootRepository.PurchaseInvoices.GetAll()
-                    .OrderBy(x => x.CreatedAt)
-                    .Take(CountOfDeletingPurchases)
-                    .ToListAsync();
-
-                RootRepository.PurchaseInvoices.RemoveMany(invoicesForDelete);
-                await RootRepository.SaveChangesAsync();
             }
 
 

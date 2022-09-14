@@ -17,6 +17,9 @@ namespace FNS.ContextsInfrastructure.Configurations.Products
         {
             EntityBaseConfigurator.ConfigureDefault(builder);
 
+            builder.HasIndex(p => p.Name)
+                .IsUnique();
+
             builder.Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(MaxNameLength);

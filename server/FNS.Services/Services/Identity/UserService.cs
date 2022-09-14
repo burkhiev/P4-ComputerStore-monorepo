@@ -19,8 +19,6 @@ namespace FNS.Services.Services.Identity
 {
     internal sealed class UserService : IUsersService
     {
-        public const int MaxUsersCount = 50;
-
         private readonly IRootRepository _rootRepository;
         private readonly IMapper _mapper;
 
@@ -89,21 +87,6 @@ namespace FNS.Services.Services.Identity
                 string detail = $"User with specified {nameof(dto.UserName)} already exists.";
                 var notCreated = new InvalidRegisterResult<UserDto>(detail);
                 return notCreated;
-            }
-
-
-            // Ограничение на создания пользователей
-            //
-            // TODO:
-            //   Написать создание отметки времени последнего
-            // действия пользователя, отправленного на сервер.
-            //   В этом месте, на основе указанных отметок, написать
-            // удаление пользователей, с наиболее старым последним действием.
-            var usersCount = RootRepo.Users.GetAll().Count();
-
-            if(usersCount > MaxUsersCount)
-            {
-                var tooMany = new InvalidRegisterResult<UserDto>("Registered users count has reached max value.");
             }
 
 

@@ -19,7 +19,6 @@ namespace FNS.Services.Mappers.Products
         {
             config.CreateMap<SubCategory, SubCategoryDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ReverseMap();
         }

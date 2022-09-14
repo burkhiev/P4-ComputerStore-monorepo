@@ -23,15 +23,6 @@ namespace FNS.Services.Services.ShoppingCarts
     /// </summary>
     internal sealed class ShoppingCartService : IShoppingCartsService
     {
-        // Макс. кол-во позиций в корзине
-        public const int MaxInCartItemsCount = 20;
-
-        // Макс. кол-во позиций в корзине во всех корзинах вместе
-        public const int CartItemsTotalLimit = 1000;
-
-        // Удаляемое кол-во позиций в корзине
-        public const int CountOfDeletingCarts = 200;
-
         private readonly IRootRepository _rootRepository;
         private readonly ShoppingCartMapperConfiguration _mapperConfig;
 
@@ -97,28 +88,6 @@ namespace FNS.Services.Services.ShoppingCarts
             var allCartItems = RootRepo.ShoppingCartItems.GetAll();
             var cartItems = allCartItems.Where(x => x.ShoppingCartId == cart.Id);
 
-            // есть ли место приходной накладной?
-            if(cartItems.Count() >= MaxInCartItemsCount)
-            {
-                var tooMany = new TooManyRecordsReceivedResult<ShoppingCartItemDto>(MaxInCartItemsCount);
-                return tooMany;
-            }
-
-
-            // удаляем старые записи для предотвращения переполнения БД
-            // Здесь мы смотрим за количеством товара во всех корзинах,
-            // т.к. корзин ровно столько сколько и пользователей
-            if(allCartItems.Count() > CartItemsTotalLimit)
-            {
-                var deletingCarts = RootRepo.ShoppingCartItems.GetAll()
-                    .OrderByDescending(x => x.CreatedAt)
-                    .Take(CountOfDeletingCarts)
-                    .ToList();
-
-                RootRepo.ShoppingCartItems.RemoveMany(deletingCarts);
-                await RootRepo.SaveChangesAsync();
-            }
-
 
             var newCartItem = new ShoppingCartItem
             {
@@ -169,7 +138,7 @@ namespace FNS.Services.Services.ShoppingCarts
 
             // проверка Id позиции в корзине
             var cartItem = await RootRepo.ShoppingCartItems
-                .FindByCondition(x => x.Id == dto.ItemId && x.xmin == dto.ConcurrencyToken)
+                .FindByCondition(x => x.Id == dto.ItemId)
                 .FirstOrDefaultAsync();
 
             if(cartItem is null)
@@ -211,7 +180,6 @@ namespace FNS.Services.Services.ShoppingCarts
             var amountDto = new ShoppingCartForChangeItemAmountDto
             { 
                 ItemId = cartItem.Id,
-                ConcurrencyToken = cartItem.xmin,
                 Amount = cartItem.Amount 
             };
 

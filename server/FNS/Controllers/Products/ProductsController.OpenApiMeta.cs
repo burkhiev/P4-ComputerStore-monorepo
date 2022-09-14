@@ -35,5 +35,10 @@ namespace FNS.Presentation.Controllers.Products
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status403Forbidden, MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public partial Task<IActionResult> DeleteAsync(string id);
+
+        [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status401Unauthorized, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status403Forbidden, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public partial Task<IActionResult> LoadProductsFromJson(IFormFile file);
     }
 }

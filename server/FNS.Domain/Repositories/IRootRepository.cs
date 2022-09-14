@@ -23,5 +23,6 @@ namespace FNS.Domain.Repositories
         IPurchaseInvoiceItemsRepository PurchaseInvoiceItems { get; }
         IRolesRepository Roles { get; }
         IUserRolesRepository UserRoles { get; }
+        IProductAttributeGroupRepository ProductAttributeGroups { get; }
     }
 }

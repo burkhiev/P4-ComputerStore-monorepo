@@ -17,6 +17,7 @@ namespace FNS.ContextsInfrastructure.Repositories.Products
             await Db.ProductAttributeValues
                 .Where(p => p.ProductId == product.Id)
                 .Include(p => p.ProductAttribute)
+                .ThenInclude(p => p.Group)
                 .LoadAsync();
 
             return product;

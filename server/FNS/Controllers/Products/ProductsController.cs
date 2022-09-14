@@ -99,5 +99,19 @@ namespace FNS.Presentation.Controllers.Products
 
             return NoContent();
         }
+
+        [Authorize(Roles = AppRoleNames.Admin)]
+        [HttpPost("upload")]
+        public partial async Task<IActionResult> LoadProductsFromJson(IFormFile file)
+        {
+            var result = await RootService.ProductsService.LoadProductsFromJson(file);
+
+            if(result.IsFailed)
+            {
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
+            }
+
+            return NoContent();
+        }
     }
 }

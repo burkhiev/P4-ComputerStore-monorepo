@@ -33,9 +33,19 @@ namespace FNS.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(0);
 
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("ProductId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -53,28 +63,36 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             Amount = 4,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             Amount = 10,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             Amount = 3,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000003",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
                             Amount = 5,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000004",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         });
                 });
@@ -88,6 +106,11 @@ namespace FNS.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -96,7 +119,20 @@ namespace FNS.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -108,16 +144,22 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
-                            ConcurrencyStamp = "c58b0c08-01a8-4e8c-80dd-3269922e1567",
+                            ConcurrencyStamp = "eaf44339-7526-461d-909a-d909f6ebfdf6",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Name = "admin",
-                            NormalizedName = "ADMIN"
+                            NormalizedName = "ADMIN",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
-                            ConcurrencyStamp = "140c8e7f-7e3a-49c6-97ad-461481c46942",
+                            ConcurrencyStamp = "3328c008-8b8c-40c3-be86-4787b3f8d3f3",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Name = "user",
-                            NormalizedName = "USER"
+                            NormalizedName = "USER",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            xmin = 0u
                         });
                 });
 
@@ -174,6 +216,11 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -199,17 +246,18 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5493f229-a4c0-4ea1-882f-70d686c56df5",
+                            ConcurrencyStamp = "b6891078-0eb8-4586-89a3-4dd4fbf18913",
                             CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16626570600000000L),
                             Email = "user1@gmail.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1@GMAIL.RU",
                             NormalizedUserName = "USER1",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIn8AcPOUrsFQ2vew+/kzT6P8vEnOODQBNoDj8DmVOoqMeBefURSUaINCDD0K4sLyg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJ9WTlKMiX0Gf73CCUD0+8nTgWrGA/thnXVHJUD4XW4dWi7I2ULXm67oBQewMTkkQA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "89fc0fe1-5c21-4f62-b8b1-ffd3c5bc3d86",
+                            SecurityStamp = "e0d81d84-c467-433e-bfa8-9a181a464e1e",
                             TwoFactorEnabled = false,
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserName = "user1",
                             xmin = 0u
                         },
@@ -217,17 +265,18 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6be0d8b4-d51f-43cd-ac92-d89b17cc69c1",
+                            ConcurrencyStamp = "8a64999b-3fa3-4db8-84b8-47b3cde4d962",
                             CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16626570600000000L),
                             Email = "user2@gmail.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2@GMAIL.RU",
                             NormalizedUserName = "USER2",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOgqVgvzAuqGjXcGt+0PQD3XCry8QSRTcAp9mIq5YqvtFU9JeVwsCEDkp7cu38b5OQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECF5MYhD7goDfuvfDOoXqt1RPnyW08b4Y6lvq9y//dfxe0Rg41U1gWi0fEJPl7znGQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "93234f2e-0b76-43bf-b156-800aa5a17748",
+                            SecurityStamp = "872a4f85-1984-452c-aadd-ae1a519f66c6",
                             TwoFactorEnabled = false,
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserName = "user2",
                             xmin = 0u
                         },
@@ -235,17 +284,18 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "823906f1-1634-4797-9545-54245ff178df",
+                            ConcurrencyStamp = "68e4c0cc-7d94-479b-abe1-2f53f3e9db0d",
                             CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16626570600000000L),
                             Email = "admin@yandex.ru",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@YANDEX.RU",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAaOqURuBYud1qP6+2TZCBO+K1qw9XMNgUojqXnooIWc7Q1NEnxe2LkirSI+tNIn4Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHoy2SekRNEvVWx5Rpf+8Ftr9i9MIeq6TH8naEl8X3Ev6oq/EFJ64uBuCGH4MIkUGQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "78097463-28c8-417f-b324-f6dd7eb2df2a",
+                            SecurityStamp = "d7ecb5c5-765e-4b5b-be4b-943fb12cfed3",
                             TwoFactorEnabled = false,
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserName = "admin",
                             xmin = 0u
                         });
@@ -255,6 +305,11 @@ namespace FNS.Infrastructure.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
+
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -279,12 +334,20 @@ namespace FNS.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("xid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("SubCategoryId");
 
@@ -294,41 +357,49 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
-                            Description = "Quo veniam cumque quod error. Dolores consequatur id quidem sit. Laborum ad impedit eligendi et vel totam tenetur. Sint dignissimos dolores reprehenderit.\n\nCorporis iure quidem occaecati sunt vitae doloribus. Voluptatibus sint occaecati consequatur earum quis. Voluptas officia non voluptatem ratione explicabo eum assumenda aut nesciunt. Sunt sed veritatis sint.\n\nDoloremque est ut. Nulla necessitatibus ducimus repudiandae occaecati soluta mollitia accusantium. Voluptate dolor aperiam ab vel quo et reiciendis non.\n\nPorro suscipit ipsa reprehenderit provident. Temporibus blanditiis vel non libero. Maxime aut nostrum quia consequatur ut fuga nisi et. Voluptas ipsam et quidem in sed rerum. Nobis similique tempora molestiae et aperiam.\n\nVoluptas sequi id. Enim impedit nobis optio quasi. Quia minus et inventore dolores aut iusto.",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            Description = "Facere reprehenderit consequatur quia vel recusandae quos. Exercitationem sint commodi ad ut et. Nam non voluptate et et sint et hic qui. Quia natus inventore adipisci dolorem dolorem ut quod deleniti.\n\nCorporis in beatae sed ea non non quae maiores. Et officiis molestias quis dignissimos. Blanditiis dolores officia et amet quidem odit est illo.\n\nOmnis illum voluptatem. Repudiandae dignissimos eligendi harum minima ducimus exercitationem enim. Voluptatem quos id voluptatibus.\n\nNon ut ut. Molestiae porro eum. Dolor consequatur dolorum blanditiis.\n\nDistinctio odit fugiat maiores rerum. Sunt ea aspernatur dolores minima consequatur dignissimos dolorem et velit. Incidunt ad vero id enim. Est sunt molestiae qui hic. Sit asperiores numquam saepe quia dolores neque et. Qui ut sunt blanditiis quae quo qui dolore sed.",
                             Name = "AMD Ryzen 5 3600 OEM",
                             Price = 12599m,
                             ProductCode = "1372637",
                             SubCategoryId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
-                            Description = "Velit et amet autem non qui voluptatem pariatur dolores quis. Iste nemo eos id ut sed odit tempora aut totam. Suscipit tempore omnis necessitatibus sint dicta reprehenderit harum. Qui harum et dolores praesentium inventore.\n\nQuae possimus tempora odit. Soluta quia ipsa. Similique sit velit omnis dolorem labore esse vero non dolores. Dolorum velit quibusdam debitis ut qui. Nam blanditiis nihil sed velit vero qui aliquid voluptate adipisci.\n\nEt cumque et ut nihil omnis voluptatem eius tempore qui. Voluptatem veniam distinctio optio id assumenda amet sit qui quos. Cum dolorum non nihil pariatur omnis ipsam corrupti ducimus.\n\nNatus architecto doloribus quasi ut in ut autem a. Fuga sit qui in aspernatur et rerum. At qui expedita veniam modi omnis vero eveniet aut explicabo.\n\nNulla id omnis. Soluta temporibus nam quis rerum. Et et voluptatem quia pariatur. Iusto sed eos.",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            Description = "Nostrum quod dolor porro quas sit porro consequuntur veritatis voluptatem. Voluptas dolore architecto enim qui. Doloremque accusantium debitis soluta explicabo architecto ad natus. Aliquid ea corrupti quia et.\n\nHic blanditiis molestias tenetur dolores laudantium numquam odio dolorem ut. Numquam earum ea. Voluptatum odit magni minus qui corrupti ducimus.\n\nVoluptatem quam possimus accusamus maiores. Quibusdam dolorem dolorum distinctio. Ipsum aliquid quam quisquam. Iure doloremque labore rerum qui quae. Incidunt quos sequi modi.\n\nRerum omnis laboriosam omnis maxime quisquam. Dolorum beatae possimus. Ducimus modi aut quia sunt non. Cum ut iure aut ut sit et. Voluptas tenetur impedit. Velit numquam officiis et harum.\n\nInventore dolorem consequuntur ut et debitis quasi. Repudiandae assumenda a. Doloremque et reiciendis reiciendis sed id asperiores impedit voluptatem voluptatem.",
                             Name = "AMD Ryzen 5 3600 BOX",
                             Price = 12899m,
                             ProductCode = "5059834",
                             SubCategoryId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
-                            Description = "Fugiat natus eius architecto asperiores voluptas ad laudantium. Voluptatum nostrum ut ducimus quis dolorum. Fugiat dolorem sit accusantium perspiciatis possimus harum quia et. Numquam ullam quis blanditiis a voluptas doloribus consequatur blanditiis.\n\nQuo libero adipisci aliquid est. Optio eos corporis voluptatum. Tempore in pariatur rerum dolorem provident officiis.\n\nAut ex ullam sint reiciendis nam. Sunt dolorem amet eos optio qui ut aperiam a. Similique possimus id nisi facilis dolor. Facilis eaque ullam.\n\nAd qui id. Nostrum quod molestiae asperiores sunt tenetur quibusdam. Quisquam amet vero veniam non sit pariatur architecto facere. Dolores voluptate quia qui est. Asperiores modi aut et explicabo. Consectetur occaecati harum.\n\nDolorem ut qui dolor. A omnis cumque et consequatur iusto tenetur a odio repellendus. Voluptas laboriosam provident quis amet. Unde voluptas vel enim enim aliquam sunt et. Reiciendis inventore et dolorum nihil assumenda. Eos veniam sit molestias.",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            Description = "Id doloribus ea. Facilis expedita eligendi et sint sit voluptas corrupti autem placeat. Suscipit similique non. Quia aspernatur voluptatum.\n\nPlaceat eaque aliquam distinctio assumenda. Rerum voluptates voluptatem architecto voluptatem atque. Quos non quis. Sit impedit magnam amet facere sit ut dolore aut.\n\nEligendi architecto non repellat eum. Voluptas delectus nemo quidem provident voluptatem. Suscipit repellendus consequatur magni quia maiores voluptatem.\n\nQuia in fuga officia. Rem itaque aliquam. Eos totam aut laudantium voluptatem ut numquam molestiae ut. Adipisci aperiam qui voluptatum quam eos enim consectetur.\n\nOccaecati ut perferendis. Incidunt excepturi id ipsam doloribus cupiditate. Quis autem laboriosam dolores sequi aut quis in. Qui consequuntur hic.",
                             Name = "AMD Ryzen 5 PRO 4650G OEM",
                             Price = 12599m,
                             ProductCode = "1689358",
                             SubCategoryId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
-                            Description = "Qui quas culpa necessitatibus ducimus cum laborum. Ut vel aut omnis corrupti incidunt totam ducimus officiis repudiandae. Repellat quo aut non laboriosam rerum asperiores.\n\nAliquid et inventore quaerat asperiores blanditiis. Alias et sit aut. Et reiciendis voluptatem est neque praesentium voluptas. Sint qui saepe repellat qui.\n\nRerum in eveniet. Incidunt et consequatur. Qui et non laboriosam sit. Et ea iste doloremque. Qui et unde sed. Accusamus numquam possimus.\n\nDicta aut ut optio. Accusamus quia numquam voluptas accusamus est. Corporis ut eos dolor quas eos et tempora possimus dolore. Voluptates natus sint eaque est. Temporibus voluptatum tempora officia sit rem sunt ut error. Nulla natus nisi.\n\nPorro asperiores id. Vel dignissimos corrupti quod. Non non rerum optio et repudiandae alias.",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            Description = "Est eius recusandae autem deserunt laboriosam sapiente. Nostrum adipisci sequi sed et illum. Enim corporis aut laboriosam voluptas. Itaque aut dolorem temporibus assumenda quasi eaque et. Omnis reprehenderit perspiciatis.\n\nItaque et sint. Dolorem dolorem nostrum. Aut perferendis iure.\n\nA eligendi et. Dolorem et aspernatur accusamus occaecati fugit nisi. Harum a totam sapiente. Voluptatem facilis consectetur distinctio eaque labore et quis.\n\nSed vel quia facere. Cum beatae autem at adipisci cupiditate asperiores. Nisi aliquid autem sequi earum itaque eligendi velit consequatur nisi. Necessitatibus quaerat illo pariatur.\n\nSaepe officia velit et. Qui ut delectus et ad. Aut est quos rerum et quibusdam consequatur officia. Et aut eos magnam et impedit porro. Delectus cupiditate voluptatum. Sunt ut et molestiae saepe ut et recusandae.",
                             Name = "AMD Ryzen 5 5600X OEM",
                             Price = 16199m,
                             ProductCode = "4721161",
                             SubCategoryId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         });
                 });
@@ -342,14 +413,24 @@ namespace FNS.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Measure")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("GroupId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -358,6 +439,11 @@ namespace FNS.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("ProductAttributes");
 
                     b.HasData(
@@ -365,35 +451,101 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             ClrType = "String",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            GroupId = "00000000-0000-0000-0000-000000000001",
                             Name = "Model",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             ClrType = "String",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            GroupId = "00000000-0000-0000-0000-000000000002",
                             Name = "Socket",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             ClrType = "Int32",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            GroupId = "00000000-0000-0000-0000-000000000001",
                             Name = "Release year",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
                             ClrType = "Int32",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            GroupId = "00000000-0000-0000-0000-000000000002",
                             Name = "Total number of cores",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000005",
                             ClrType = "String",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            GroupId = "00000000-0000-0000-0000-000000000002",
                             Name = "Maximum threads",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            xmin = 0u
+                        });
+                });
+
+            modelBuilder.Entity("FNS.Domain.Models.Products.ProductAttributeGroup", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("ProductAttributeGroup");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "00000000-0000-0000-0000-000000000001",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            Name = "Общие параметры",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            xmin = 0u
+                        },
+                        new
+                        {
+                            Id = "00000000-0000-0000-0000-000000000002",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            Name = "Параметры процессора",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         });
                 });
@@ -403,6 +555,11 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("ProductAttributeId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -410,6 +567,11 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<string>("ProductId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Value")
                         .HasMaxLength(300)
@@ -432,160 +594,200 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000001",
                             ProductId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "AMD Ryzen 5 3600 OEM",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000002",
                             ProductId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "AM4",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000003",
                             ProductId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "2019",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000004",
                             ProductId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "6",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000005",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000005",
                             ProductId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "12",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000006",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000001",
                             ProductId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "AMD Ryzen 5 3600 BOX",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000007",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000002",
                             ProductId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "AM4",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000008",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000003",
                             ProductId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "2019",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000009",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000004",
                             ProductId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "6",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000010",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000005",
                             ProductId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "12",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000011",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000001",
                             ProductId = "00000000-0000-0000-0000-000000000003",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "AMD Ryzen 5 4650G OEM",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000012",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000002",
                             ProductId = "00000000-0000-0000-0000-000000000003",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "AM4",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000013",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000003",
                             ProductId = "00000000-0000-0000-0000-000000000003",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "2020",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000014",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000004",
                             ProductId = "00000000-0000-0000-0000-000000000003",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "6",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000015",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000005",
                             ProductId = "00000000-0000-0000-0000-000000000003",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "12",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000016",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000001",
                             ProductId = "00000000-0000-0000-0000-000000000004",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "AMD Ryzen 5 5600X OEM",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000017",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000002",
                             ProductId = "00000000-0000-0000-0000-000000000004",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "AM4",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000018",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000003",
                             ProductId = "00000000-0000-0000-0000-000000000004",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "2020",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000019",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000004",
                             ProductId = "00000000-0000-0000-0000-000000000004",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "6",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000020",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductAttributeId = "00000000-0000-0000-0000-000000000005",
                             ProductId = "00000000-0000-0000-0000-000000000004",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Value = "12",
                             xmin = 0u
                         });
@@ -596,10 +798,20 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -608,25 +820,34 @@ namespace FNS.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("SubCategories");
 
                     b.HasData(
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Name = "Процессоры",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Name = "Материские платы",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             Name = "Видеокарты",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         });
                 });
@@ -638,6 +859,11 @@ namespace FNS.Infrastructure.Migrations
 
                     b.Property<Instant>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -661,6 +887,7 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserId = "00000000-0000-0000-0000-000000000003",
                             xmin = 0u
                         });
@@ -676,6 +903,11 @@ namespace FNS.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(0);
 
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("ProductId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -683,6 +915,11 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<string>("PurchaseInvoiceId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -702,32 +939,40 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             Amount = 2,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000001",
                             PurchaseInvoiceId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             Amount = 3,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000002",
                             PurchaseInvoiceId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             Amount = 7,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000003",
                             PurchaseInvoiceId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
                             Amount = 5,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000004",
                             PurchaseInvoiceId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         });
                 });
@@ -739,6 +984,11 @@ namespace FNS.Infrastructure.Migrations
 
                     b.Property<Instant>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -761,21 +1011,24 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16609151994002877L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16534685963348209L),
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserId = "00000000-0000-0000-0000-000000000001",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16596398220169783L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16425828711395056L),
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserId = "00000000-0000-0000-0000-000000000002",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
-                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16330842986236876L),
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(16492493310662871L),
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserId = "00000000-0000-0000-0000-000000000003",
                             xmin = 0u
                         });
@@ -789,6 +1042,11 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("ProductId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -796,6 +1054,11 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<string>("SalesReceiptId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -815,32 +1078,40 @@ namespace FNS.Infrastructure.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             Amount = 1,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000004",
                             SalesReceiptId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
                             Amount = 1,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000002",
                             SalesReceiptId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
                             Amount = 1,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000001",
                             SalesReceiptId = "00000000-0000-0000-0000-000000000003",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000004",
                             Amount = 1,
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000004",
                             SalesReceiptId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         });
                 });
@@ -849,6 +1120,16 @@ namespace FNS.Infrastructure.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
+
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -870,18 +1151,24 @@ namespace FNS.Infrastructure.Migrations
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserId = "00000000-0000-0000-0000-000000000001",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000002",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserId = "00000000-0000-0000-0000-000000000002",
                             xmin = 0u
                         },
                         new
                         {
                             Id = "00000000-0000-0000-0000-000000000003",
+                            CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             UserId = "00000000-0000-0000-0000-000000000003",
                             xmin = 0u
                         });
@@ -896,7 +1183,9 @@ namespace FNS.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<Instant>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("ProductId")
                         .IsRequired()
@@ -905,6 +1194,11 @@ namespace FNS.Infrastructure.Migrations
                     b.Property<string>("ShoppingCartId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Instant>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -927,6 +1221,7 @@ namespace FNS.Infrastructure.Migrations
                             CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000001",
                             ShoppingCartId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
@@ -936,6 +1231,7 @@ namespace FNS.Infrastructure.Migrations
                             CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000002",
                             ShoppingCartId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
@@ -945,6 +1241,7 @@ namespace FNS.Infrastructure.Migrations
                             CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000004",
                             ShoppingCartId = "00000000-0000-0000-0000-000000000002",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         },
                         new
@@ -954,6 +1251,7 @@ namespace FNS.Infrastructure.Migrations
                             CreatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             ProductId = "00000000-0000-0000-0000-000000000003",
                             ShoppingCartId = "00000000-0000-0000-0000-000000000001",
+                            UpdatedAt = NodaTime.Instant.FromUnixTimeTicks(0L),
                             xmin = 0u
                         });
                 });
@@ -1101,6 +1399,17 @@ namespace FNS.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("SubCategory");
+                });
+
+            modelBuilder.Entity("FNS.Domain.Models.Products.ProductAttribute", b =>
+                {
+                    b.HasOne("FNS.Domain.Models.Products.ProductAttributeGroup", "Group")
+                        .WithMany("ProductAttributes")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("FNS.Domain.Models.Products.ProductAttributeValue", b =>
@@ -1296,6 +1605,11 @@ namespace FNS.Infrastructure.Migrations
             modelBuilder.Entity("FNS.Domain.Models.Products.ProductAttribute", b =>
                 {
                     b.Navigation("ProductAttributeValues");
+                });
+
+            modelBuilder.Entity("FNS.Domain.Models.Products.ProductAttributeGroup", b =>
+                {
+                    b.Navigation("ProductAttributes");
                 });
 
             modelBuilder.Entity("FNS.Domain.Models.Products.SubCategory", b =>

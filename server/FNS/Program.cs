@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using FNS.Presentation.Utilities.ExtensionMethods;
 using System.Text.Json;
 using FNS.Contexts.Infrastructure;
-using Microsoft.AspNetCore.Identity;
 using FNS.Domain.Models.Identity;
 using FNS.Presentation.Utilities.Converters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using FNS.Presentation.Utilities.Auth;
 using Microsoft.OpenApi.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

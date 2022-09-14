@@ -10,6 +10,7 @@ namespace FNS.Domain.Models.Identity
     {
         public uint xmin { get; set; }
         public Instant CreatedAt { get; set; }
+        public Instant UpdatedAt { get; set; }
         public virtual ShoppingCart ShoppingCart { get; set; }
         public virtual List<SalesReceipt>? SalesReceipts { get; set; }
         public virtual List<PurchaseInvoice>? PurchaseInvoices { get; set; }

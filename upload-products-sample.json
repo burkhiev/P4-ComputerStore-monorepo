@@ -1,0 +1,28 @@
+{
+    "products": [
+        {
+            "name": "Processor",
+            "description": "Description",
+            "productCode": "ProductCode",
+            "price": 1000,
+            "subCategoryName": "Processors",
+            "ownAttributes": [
+                {
+                    "groupTitle": "Common",
+                    "name": "Guarantee",
+                    "value": "12 month"
+                },
+                {
+                    "groupTitle": "Common",
+                    "name": "Model",
+                    "value": "AMD"
+                },
+                {
+                    "groupTitle": "Common",
+                    "name": "Socket",
+                    "value": "AM4"
+                }
+            ]
+        }
+    ]
+}

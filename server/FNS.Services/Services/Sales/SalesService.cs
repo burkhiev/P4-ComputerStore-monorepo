@@ -17,15 +17,6 @@ namespace FNS.Services.Services.Sales
 {
     internal sealed class SalesService : ISalesService
     {
-        // Макс. кол-во продаж
-        public const int MaxSalesTotalLimit = 1000;
-
-        // Макс. кол-во товаров в чеке продаж
-        public const int MaxItemsInSaleReceipt = 20;
-
-        // Кол-во удаляемых чеков
-        public const int ForDeletingSalesCount = 200;
-
         private readonly IRootRepository _rootRepository;
         private readonly IMapper _mapper;
 
@@ -104,32 +95,6 @@ namespace FNS.Services.Services.Sales
             {
                 var notFoundResult = new NotFoundResult<SaleSuccessResultDto, ShoppingCart>();
                 return notFoundResult;
-            }
-
-
-            // проверяем, что в ней корректное кол-во товаров
-            await RootRepository.ShoppingCarts.LoadCollectionsAsync(cart, c => c.ShoppingCartItems);
-
-            if((cart.ShoppingCartItems?.Count ?? 0) > MaxItemsInSaleReceipt)
-            {
-                var tooMany = new TooManyRecordsReceivedResult<SaleSuccessResultDto>(MaxItemsInSaleReceipt);
-                return tooMany;
-            }
-
-
-            // Удаляем старые записи для предотвращения переполнения
-            // Тут мы смотрим только за количеством совершенных продаж,
-            // а не за количеством проданных товаров
-            var sales = RootRepository.SalesReceipts.GetAll();
-
-            if(sales.Count() > MaxSalesTotalLimit)
-            {
-                var forDeletingSales = await sales.OrderBy(x => x.CreatedAt)
-                    .Take(ForDeletingSalesCount)
-                    .ToListAsync();
-
-                RootRepository.SalesReceipts.RemoveMany(forDeletingSales);
-                await RootRepository.SaveChangesAsync();
             }
 
 

@@ -9,6 +9,5 @@ namespace FNS.Domain.Models.Products
         public string ProductAttributeId { get; set; }
         public virtual ProductAttribute ProductAttribute { get; set; }
         public string? Value { get; set; }
-        public Instant CreatedAt { get; set; }
     }
 }

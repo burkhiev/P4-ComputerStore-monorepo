@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FNS.Domain.Models.Products;
 using FNS.Services.Dtos.Products;
+using FNS.Services.Utils;
 
 namespace FNS.Services.Mappers.Products
 {
@@ -26,7 +27,6 @@ namespace FNS.Services.Mappers.Products
 
             config.CreateMap<Product, ProductWithAdditionalInfoDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
@@ -34,7 +34,7 @@ namespace FNS.Services.Mappers.Products
                 .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId))
                 .ForMember(dest => dest.AdditionalAttributes, opt => opt.MapFrom((src, dest) =>
                 {
-                    var attrs = new Dictionary<string, dynamic?>();
+                    var attrs = new List<ProductAttributeWithValueDto>(src.ProductAttributeValues?.Count ?? 0);
                     var attrValues = src.ProductAttributeValues;
 
                     if(attrValues is null)
@@ -46,34 +46,42 @@ namespace FNS.Services.Mappers.Products
                     {
                         var attr = attrValue.ProductAttribute;
 
-                        if(attrValue.Value is null)
+                        var attrWithValueDto = new ProductAttributeWithValueDto
                         {
-                            attrs[attr.Name] = null;
-                        }
-                        else if(attr.ClrType.Equals(typeof(string).Name, StringComparison.OrdinalIgnoreCase))
+                            Id = attr.Id,
+                            Name = attr.Name,
+                            GroupName = attr.Group.Name,
+                            Type = ClrToTypescriptTypeNameConverter.GetTypescriptTypeName(attr.ClrType),
+                        };
+
+
+                        if(attr.ClrType.Equals(typeof(string).Name, StringComparison.OrdinalIgnoreCase))
                         {
-                            attrs[attr.Name] = attrValue.Value;
+                            attrWithValueDto.Value = attrValue.Value;
                         }
                         else if(attr.ClrType.Equals(typeof(int).Name, StringComparison.OrdinalIgnoreCase))
                         {
-                            attrs[attr.Name] = int.Parse(attrValue.Value);
+                            attrWithValueDto.Value = int.Parse(attrValue.Value);
                         }
                         else if(attr.ClrType.Equals(typeof(float).Name, StringComparison.OrdinalIgnoreCase))
                         {
-                            attrs[attr.Name] = float.Parse(attrValue.Value);
+                            attrWithValueDto.Value = float.Parse(attrValue.Value);
                         }
                         else if(attr.ClrType.Equals(typeof(double).Name, StringComparison.OrdinalIgnoreCase))
                         {
-                            attrs[attr.Name] = double.Parse(attrValue.Value);
+                            attrWithValueDto.Value = double.Parse(attrValue.Value);
                         }
                         else if(attr.ClrType.Equals(typeof(decimal).Name, StringComparison.OrdinalIgnoreCase))
                         {
-                            attrs[attr.Name] = decimal.Parse(attrValue.Value);
+                            attrWithValueDto.Value = decimal.Parse(attrValue.Value);
                         }
                         else
                         {
                             throw new NotImplementedException("Not implemented CLR type converting.");
                         }
+
+
+                        attrs.Add(attrWithValueDto);
                     }
 
                     return attrs;
@@ -81,7 +89,6 @@ namespace FNS.Services.Mappers.Products
 
             config.CreateMap<ProductWithAdditionalInfoDto, Product>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.xmin, opt => opt.MapFrom(src => src.ConcurrencyToken))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
@@ -95,6 +102,12 @@ namespace FNS.Services.Mappers.Products
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
                 .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId));
+
+            config.CreateMap<FromFileProductDto, Product>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
         }
     }
 }

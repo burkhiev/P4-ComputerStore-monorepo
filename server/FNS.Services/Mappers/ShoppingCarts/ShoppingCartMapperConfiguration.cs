@@ -30,7 +30,6 @@ namespace FNS.Services.Mappers.ShoppingCarts
 
             config.CreateMap<ShoppingCart, ShoppingCartWithAdditionalInfoDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.ShoppingCartItems, opt => opt.MapFrom((src, dest) =>
                 {
@@ -49,7 +48,6 @@ namespace FNS.Services.Mappers.ShoppingCarts
                         var shoppingCartItemDto = new ShoppingCartItemWithProductDto
                         {
                             Id = item.Id,
-                            ConcurrencyToken = item.xmin,
                             ShoppingCartId = src.Id,
                             Amount = item.Amount,
                             Product = productDto,
@@ -63,7 +61,6 @@ namespace FNS.Services.Mappers.ShoppingCarts
 
             config.CreateMap<ShoppingCartItem, ShoppingCartItemDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ConcurrencyToken, opt => opt.MapFrom(src => src.xmin))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
         }

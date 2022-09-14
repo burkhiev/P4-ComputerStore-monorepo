@@ -12,6 +12,7 @@ using FNS.Domain.Repositories.Balances;
 using FNS.Infrastructure.Repositories.Balances;
 using FNS.Infrastructure.Repositories.Purchases;
 using FNS.Domain.Repositories.Purchases;
+using FNS.Infrastructure.Repositories.Products;
 
 namespace FNS.ContextsInfrastructure.Repositories
 {
@@ -32,6 +33,7 @@ namespace FNS.ContextsInfrastructure.Repositories
         private readonly Lazy<IPurchaseInvoiceItemsRepository> _purchaseInvoiceItems;
         private readonly Lazy<IRolesRepository> _identityRoleRepository;
         private readonly Lazy<IUserRolesRepository> _userRolesRepository;
+        private readonly Lazy<IProductAttributeGroupRepository> _productAttributeGroupRepository;
 
         public RootRepository(AppDbContext db)
         {
@@ -50,6 +52,7 @@ namespace FNS.ContextsInfrastructure.Repositories
             _purchaseInvoiceItems = new Lazy<IPurchaseInvoiceItemsRepository>(() => new PurchaseInvoiceItemsRepository(_db));
             _identityRoleRepository = new Lazy<IRolesRepository>(() => new RoleRepository(_db));
             _userRolesRepository = new Lazy<IUserRolesRepository>(() => new UserRolesRepository(_db));
+            _productAttributeGroupRepository = new Lazy<IProductAttributeGroupRepository>(() => new ProductAttributeGroupRepository(_db));
         }
 
         public AppDbContext Db => _db;
@@ -81,6 +84,8 @@ namespace FNS.ContextsInfrastructure.Repositories
         public IRolesRepository Roles => _identityRoleRepository.Value;
 
         public IUserRolesRepository UserRoles => _userRolesRepository.Value;
+
+        public IProductAttributeGroupRepository ProductAttributeGroups => _productAttributeGroupRepository.Value;
 
         public async Task<int> SaveChangesAsync(CancellationToken ct = default)
         {

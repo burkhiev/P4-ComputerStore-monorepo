@@ -1,4 +1,5 @@
 ﻿using FNS.Domain.Models.Products;
+using FNS.Infrastructure.Initializers.Products;
 
 namespace FNS.ContextsInfrastructure.Initializers.Products
 {
@@ -15,17 +16,17 @@ namespace FNS.ContextsInfrastructure.Initializers.Products
                     new SubCategory
                     {
                         Id = Guid.Parse(guidBasis + "1").ToString(),
-                        Name = "Процессоры"
+                        Name = "Процессоры",
                     },
                     new SubCategory
                     {
                         Id = Guid.Parse(guidBasis + "2").ToString(),
-                        Name = "Материские платы"
+                        Name = "Материские платы",
                     },
                     new SubCategory
                     {
                         Id = Guid.Parse(guidBasis + "3").ToString(),
-                        Name = "Видеокарты"
+                        Name = "Видеокарты",
                     },
                 };
 

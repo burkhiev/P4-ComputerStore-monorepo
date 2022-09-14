@@ -12,7 +12,6 @@ namespace FNS.Domain.Models.Products
         public string? Description { get; set; }
         public string ProductCode { get; set; }
         public decimal Price { get; set; }
-        public Instant CreatedAt { get; set; }
         public string SubCategoryId { get; set; }
         public virtual SubCategory SubCategory { get; set; }
         public virtual List<ProductAttributeValue>? ProductAttributeValues { get; set; }

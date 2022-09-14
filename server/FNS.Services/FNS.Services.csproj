@@ -17,4 +17,10 @@
     <ProjectReference Include="..\FNS.Infrastructure\FNS.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="DnsParser">
+      <HintPath>..\..\parser\DnsParser\DnsParser\bin\Debug\net6.0\DnsParser.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

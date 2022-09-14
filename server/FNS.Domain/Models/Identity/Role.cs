@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using NodaTime;
 
 namespace FNS.Domain.Models.Identity
 {
-    public class Role : IdentityRole
+    public class Role : IdentityRole, IEntityBase
     {
         public Role() : base()
         {
@@ -13,6 +14,12 @@ namespace FNS.Domain.Models.Identity
         {
             // nothing
         }
+
+        public uint xmin { get; set; }
+
+        public Instant CreatedAt { get; set; }
+
+        public Instant UpdatedAt { get; set; }
 
         public virtual List<IdentityUserRole<string>>? UserRoles { get; set; }
     }

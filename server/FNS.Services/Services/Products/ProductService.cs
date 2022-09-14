@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Net.Mime;
+using System.Text.Json;
+using AutoMapper;
 using FNS.Domain.Exceptions;
-using FNS.Domain.Models;
 using FNS.Domain.Models.Balances;
 using FNS.Domain.Models.Products;
 using FNS.Domain.Repositories;
@@ -16,13 +17,6 @@ namespace FNS.Services.Services.Products
 {
     internal sealed class ProductService : IProductsService
     {
-        public const int MaxProductKindsCount = 100;
-        public const int ProductKindsDeletingCount = 20;
-        public const int MaxProductAttributesCount = 1000;
-        public const int AttributeValuesDeletingCount = 20;
-        public const int MaxSubCategoriesCount = 50;
-        public const int SubCategoriesDeletingCount = 5;
-
         private readonly IRootRepository _rootRepository;
         private readonly ProductMapperConfiguration _productMapperConfig;
         private readonly ProductAttributesMapperConfiguration _productAttributeMapperConfig;
@@ -72,7 +66,7 @@ namespace FNS.Services.Services.Products
 
             await RootRepository.Products.LoadAttributesAndTheirValuesAsync(product);
 
-            var dto = ProductMapper.Map<Product, ProductWithAdditionalInfoDto>(product);
+            var dto = ProductMapper.Map<ProductWithAdditionalInfoDto>(product);
             var result = new OpResult<ProductWithAdditionalInfoDto>(dto);
 
             return result;
@@ -80,21 +74,6 @@ namespace FNS.Services.Services.Products
 
         public async Task<OpResult<ProductWithAdditionalInfoDto>> CreateProduct(ProductForCreateDto dto)
         {
-            // удаление старых записей
-            var products = RootRepository.Products.GetAll();
-
-            if(products.Count() > MaxProductKindsCount)
-            {
-                var forDeletingProducts = await products
-                    .OrderBy(x => x.CreatedAt)
-                    .Take(ProductKindsDeletingCount)
-                    .ToListAsync();
-
-                RootRepository.Products.RemoveMany(forDeletingProducts);
-                await RootRepository.SaveChangesAsync();
-            }
-
-
             // добавление продукта
             var product = ProductMapper.Map<Product>(dto);
             product.Id = Guid.NewGuid().ToString();
@@ -138,39 +117,32 @@ namespace FNS.Services.Services.Products
 
         public async Task<OpResult<ProductWithAdditionalInfoDto>> UpdateProduct(ProductWithAdditionalInfoDto dto)
         {
-            // Проверка на конкурентность
-            // При установке Xmin Concurrency Token на уже загруженную сущность
-            // автоматический отлов конфликтов при сохранении не работает.
-            // Возможно xmin сохраняется, где-то в памяти у провайдера Npsql.
-            var product = ProductMapper.Map<Product>(dto);
-            RootRepository.Products.Update(product);
+            var product = await RootRepository.Products.FindByIdAsync(dto.Id);
 
-
-            var attrValues = RootRepository.ProductWithAttributeValues.GetAll();
-
-            if(attrValues.Count() > MaxProductAttributesCount)
+            if (product is null)
             {
-                var attrValuesForDelete = attrValues
-                    .OrderBy(x => x.CreatedAt)
-                    .Take(AttributeValuesDeletingCount);
-
-                RootRepository.ProductWithAttributeValues.RemoveMany(attrValuesForDelete);
-                await RootRepository.SaveChangesAsync();
+                var notFound = new NotFoundResult<ProductWithAdditionalInfoDto, Product>();
+                return notFound;
             }
 
 
+            ProductMapper.Map(dto, product);
+            RootRepository.Products.Update(product);
+
+
             // удаление отсутствующих значений доп. атрибутов
-            var attrIds = dto.AdditionalAttributes.Keys.Cast<string>();
+            var attrIds = dto.AdditionalAttributes.Select(x => x.Id);
             var allAttrs = RootRepository.ProductAttributes.GetAll().ToList();
 
             var curAttrValues = RootRepository.ProductWithAttributeValues
                 .FindByCondition(x => x.ProductId == product.Id)
                 .ToList();
 
-            // сравнение: что было, что стало
-            var attrsForDelete = curAttrValues.ExceptBy(attrIds, x => x.Id);
 
-            foreach(var attr in attrsForDelete)
+            // сравнение: что было, что стало
+            var attrsForDeleting = curAttrValues.ExceptBy(attrIds, x => x.Id);
+
+            foreach(var attr in attrsForDeleting)
             {
                 RootRepository.ProductWithAttributeValues.Remove(attr);
             }
@@ -181,7 +153,7 @@ namespace FNS.Services.Services.Products
 
             foreach(var receivedAttr in dto.AdditionalAttributes)
             {
-                var attrsValues = curAttrValues.Where(x => x.ProductAttributeId == receivedAttr.Key).ToList();
+                var attrsValues = curAttrValues.Where(x => x.ProductAttributeId == receivedAttr.Id).ToList();
 
                 if(attrsValues.Count() == 0)
                 {
@@ -189,7 +161,7 @@ namespace FNS.Services.Services.Products
                     {
                         Id = Guid.NewGuid().ToString(),
                         ProductId = product.Id,
-                        ProductAttributeId = receivedAttr.Key,
+                        ProductAttributeId = receivedAttr.Id,
                         Value = receivedAttr.Value?.ToString(),
                     };
 
@@ -263,19 +235,6 @@ namespace FNS.Services.Services.Products
 
         public async Task<OpResult<ProductAttributeDto>> CreateProductAttributeAsync(ProductAttributeForCreateDto attrDto)
         {
-            var attrs = RootRepository.ProductAttributes.GetAll();
-
-            if(attrs.Count() > MaxProductKindsCount)
-            {
-                var forDeleteAttrs = await attrs
-                    .OrderBy(x => x.CreatedAt)
-                    .Take(ProductKindsDeletingCount)
-                    .ToListAsync();
-
-                RootRepository.ProductAttributes.RemoveMany(forDeleteAttrs);
-                await RootRepository.SaveChangesAsync();
-            }
-
             var attr = ProductAttributeMapper.Map<ProductAttribute>(attrDto);
             attr.Id = Guid.NewGuid().ToString();
 
@@ -341,19 +300,6 @@ namespace FNS.Services.Services.Products
 
         public async Task<OpResult<SubCategoryDto>> CreateSubCategoryAsync(SubCategoryForCreateDto attrDto)
         {
-            var subCategories = RootRepository.SubCategories.GetAll();
-
-            if(subCategories.Count() > MaxSubCategoriesCount)
-            {
-                var subCatForDelete = subCategories
-                    .OrderBy(x => x.CreatedAt)
-                    .Take(SubCategoriesDeletingCount);
-
-                RootRepository.SubCategories.RemoveMany(subCatForDelete);
-                await RootRepository.SaveChangesAsync();
-            }
-
-
             var subCategory = new SubCategory
             { 
                 Id = Guid.NewGuid().ToString(),
@@ -432,6 +378,181 @@ namespace FNS.Services.Services.Products
                     return fault;
                 }
             }
+
+            var result = new OpResult<EmptyDto>();
+            return result;
+        }
+
+        public async Task<OpResult<EmptyDto>> LoadProductsFromJson(IFormFile file)
+        {
+            if(file is null || file.ContentType != MediaTypeNames.Application.Json)
+            {
+                var badResult = new BadRequestResult<EmptyDto>();
+                return badResult;
+            }
+
+
+            // Десериализация полученных данных
+            FromFileProductsDto? productsDto = null;
+
+            using(var stream = file.OpenReadStream())
+            {
+                var jsonOptions = new JsonSerializerOptions
+                { 
+                    AllowTrailingCommas = true, 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                productsDto = await JsonSerializer.DeserializeAsync<FromFileProductsDto>(stream, jsonOptions);
+            }
+
+
+            if(productsDto is null)
+            {
+                var empty = new OpResult<EmptyDto>();
+                return empty;
+            }
+
+
+
+            // добавление продуктов и их подкатегорий
+            Dictionary<string, SubCategory> subCategories = new();
+            Dictionary<string, ProductAttribute> productAttributes = new();
+            Dictionary<string, ProductAttributeGroup> productAttributeGroups = new();
+
+            foreach(var productDto in productsDto.Products)
+            {
+                bool hasProductWithName = await RootRepository.Products
+                    .FindByCondition(x => x.Name.Equals(productDto.Name, StringComparison.OrdinalIgnoreCase))
+                    .AnyAsync();
+
+
+                // ***** Упрощение *****
+                //
+                // Если уже существует товар с указанным именем, то пропускаем его добавление.
+                if(hasProductWithName)
+                {
+                    continue;
+                }
+
+
+
+                // Поиск/создание подкатегории для товара
+                string subCategoryName = productDto.SubCategoryName;
+                SubCategory? subCategory = null;
+
+                // поиск
+                if(!subCategories.TryGetValue(subCategoryName, out subCategory))
+                {
+                    subCategory = await RootRepository.SubCategories
+                        .FindByCondition(x => x.Name == subCategoryName)
+                        .FirstAsync();
+
+
+                    // создание
+                    if(subCategory is null)
+                    {
+                        subCategory = new SubCategory
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = subCategoryName,
+                        };
+
+                        await RootRepository.SubCategories.AddAsync(subCategory);
+                    }
+
+                    subCategories.Add(subCategory.Name, subCategory);
+                }
+
+
+
+                // Создание товара
+                var product = ProductMapper.Map<Product>(productDto);
+                product.Id = Guid.NewGuid().ToString();
+                product.SubCategoryId = subCategory.Id;
+
+                await RootRepository.Products.AddAsync(product);
+
+
+
+                // Начало добавления атрибутов товара
+                foreach(var attrDto in productDto.OwnAttributes)
+                {
+                    // Поиск/создание группы атрибута
+                    ProductAttributeGroup? attrGroup = null;
+
+                    // поиск
+                    if(!productAttributeGroups.TryGetValue(attrDto.GroupTitle, out attrGroup))
+                    {
+                        attrGroup = RootRepository.ProductAttributeGroups
+                            .FindByCondition(x => x.Name.Equals(attrDto.GroupTitle, StringComparison.OrdinalIgnoreCase))
+                            .First();
+
+                        // создание
+                        if(attrGroup is null)
+                        {
+                            attrGroup = new ProductAttributeGroup
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                Name = attrDto.GroupTitle,
+                            };
+
+                            await RootRepository.ProductAttributeGroups.AddAsync(attrGroup);
+                        }
+
+                        productAttributeGroups.Add(attrDto.GroupTitle, attrGroup);
+                    }
+
+
+                    // Поиск/создание атрибута
+                    ProductAttribute? attr = null;
+
+                    // поиск
+                    if(!productAttributes.TryGetValue(attrDto.Name, out attr))
+                    {
+                        attr = RootRepository.ProductAttributes
+                            .FindByCondition(x => x.Name.Equals(attrDto.Name, StringComparison.OrdinalIgnoreCase))
+                            .First();
+
+                        // создание
+                        if(attr is null)
+                        {
+                            attr = new ProductAttribute
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                Name = attrDto.Name,
+                                ClrType = typeof(string).Name,
+                                GroupId = attrGroup.Id,
+                            };
+
+                            await RootRepository.ProductAttributes.AddAsync(attr);
+                        }
+
+                        productAttributes.Add(attrDto.Name, attr);
+                    }
+
+
+                    // ***** Упрощение *****
+                    //
+                    // Т.к. предполагается пропуск товара, который имеет наименование, уже добавленного товара,
+                    // то на этом шаге гарантируется уникальность комбинации [товар, атрибут, значение атрибута].
+                    ProductAttributeValue attrValue = new()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ProductId = product.Id,
+                        ProductAttributeId = attr.Id,
+                    };
+
+                    await RootRepository.ProductWithAttributeValues.AddAsync(attrValue);
+                }
+                // Конец добавления атрибутов товара
+
+            }
+
+
+            await RootRepository.SaveChangesAsync();
+            // Конец добавления товаров
+
 
             var result = new OpResult<EmptyDto>();
             return result;

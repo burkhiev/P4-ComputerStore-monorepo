@@ -438,7 +438,7 @@ namespace FNS.Services.Services.Products
 
 
                 // Поиск/создание подкатегории для товара
-                string subCategoryName = productDto.SubCategoryName;
+                string subCategoryName = string.Empty;
                 SubCategory? subCategory = null;
 
                 // поиск
@@ -482,10 +482,10 @@ namespace FNS.Services.Services.Products
                     ProductAttributeGroup? attrGroup = null;
 
                     // поиск
-                    if(!productAttributeGroups.TryGetValue(attrDto.GroupTitle, out attrGroup))
+                    if(!productAttributeGroups.TryGetValue(attrDto.Group, out attrGroup))
                     {
                         attrGroup = RootRepository.ProductAttributeGroups
-                            .FindByCondition(x => x.Name.Equals(attrDto.GroupTitle, StringComparison.OrdinalIgnoreCase))
+                            .FindByCondition(x => x.Name.Equals(attrDto.Group, StringComparison.OrdinalIgnoreCase))
                             .First();
 
                         // создание
@@ -494,13 +494,13 @@ namespace FNS.Services.Services.Products
                             attrGroup = new ProductAttributeGroup
                             {
                                 Id = Guid.NewGuid().ToString(),
-                                Name = attrDto.GroupTitle,
+                                Name = attrDto.Group,
                             };
 
                             await RootRepository.ProductAttributeGroups.AddAsync(attrGroup);
                         }
 
-                        productAttributeGroups.Add(attrDto.GroupTitle, attrGroup);
+                        productAttributeGroups.Add(attrDto.Group, attrGroup);
                     }
 
 

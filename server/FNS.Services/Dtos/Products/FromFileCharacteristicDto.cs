@@ -2,7 +2,7 @@
 {
     public sealed class FromFileCharacteristicDto
     {
-        public string GroupTitle { get; set; }
+        public string Group { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }
     }

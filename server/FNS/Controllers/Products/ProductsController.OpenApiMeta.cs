@@ -38,7 +38,12 @@ namespace FNS.Presentation.Controllers.Products
 
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status401Unauthorized, MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status403Forbidden, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public partial Task<IActionResult> LoadProductsFromJson(IFormFile file);
+        [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        public partial Task<IActionResult> LoadProductsFromJsonFile(IFormFile file);
+
+        [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status401Unauthorized, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status403Forbidden, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        public partial Task<IActionResult> LoadSubCategoriesFromJsonFile(IFormFile file);
     }
 }

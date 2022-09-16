@@ -21,6 +21,7 @@ namespace FNS.Services.Abstractions.Products
         Task<OpResult<SubCategoryDto>> CreateSubCategoryAsync(SubCategoryForCreateDto attrDto);
         Task<OpResult<SubCategoryDto>> UpdateSubCategoryAsync(SubCategoryDto attrDto);
         Task<OpResult<EmptyDto>> DeleteSubCategoryAsync(string id);
-        Task<OpResult<EmptyDto>> LoadProductsFromJson(IFormFile file);
+        Task<OpResult<List<string>>> LoadProductsFromJsonFile(IFormFile file);
+        Task<OpResult<List<string>>> LoadSubCategoriesFromJsonFile(IFormFile file);
     }
 }

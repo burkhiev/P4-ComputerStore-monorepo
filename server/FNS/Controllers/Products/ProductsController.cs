@@ -101,17 +101,31 @@ namespace FNS.Presentation.Controllers.Products
         }
 
         [Authorize(Roles = AppRoleNames.Admin)]
-        [HttpPost("upload")]
-        public partial async Task<IActionResult> LoadProductsFromJson(IFormFile file)
+        [HttpPost("upload-products")]
+        public partial async Task<IActionResult> LoadProductsFromJsonFile(IFormFile file)
         {
-            var result = await RootService.ProductsService.LoadProductsFromJson(file);
+            var result = await RootService.ProductsService.LoadProductsFromJsonFile(file);
 
             if(result.IsFailed)
             {
                 return StatusCode(result.FailResult.StatusCode, result.FailResult);
             }
 
-            return NoContent();
+            return Ok(result.SucceedResult);
+        }
+
+        [Authorize(Roles = AppRoleNames.Admin)]
+        [HttpPost("upload-subcategories")]
+        public partial async Task<IActionResult> LoadSubCategoriesFromJsonFile(IFormFile file)
+        {
+            var result = await RootService.ProductsService.LoadSubCategoriesFromJsonFile(file);
+
+            if(result.IsFailed)
+            {
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
+            }
+
+            return Ok(result.SucceedResult);
         }
     }
 }

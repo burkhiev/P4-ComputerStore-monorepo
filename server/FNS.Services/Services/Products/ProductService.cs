@@ -383,11 +383,11 @@ namespace FNS.Services.Services.Products
             return result;
         }
 
-        public async Task<OpResult<EmptyDto>> LoadProductsFromJson(IFormFile file)
+        public async Task<OpResult<List<string>>> LoadProductsFromJsonFile(IFormFile file)
         {
-            if(file is null || file.ContentType != MediaTypeNames.Application.Json)
+            if(file is null || !file.ContentType.Equals(MediaTypeNames.Application.Json, StringComparison.OrdinalIgnoreCase))
             {
-                var badResult = new BadRequestResult<EmptyDto>();
+                var badResult = new BadRequestResult<List<string>>();
                 return badResult;
             }
 
@@ -409,23 +409,27 @@ namespace FNS.Services.Services.Products
 
             if(productsDto is null)
             {
-                var empty = new OpResult<EmptyDto>();
+                var empty = new OpResult<List<string>>();
+
+                empty.FailResult = new ProblemResultInfo
+                {
+                    Title = "Bad request",
+                    Detail = "Empty object after deserialization received.",
+                    StatusCode = StatusCodes.Status400BadRequest,
+                };
+
                 return empty;
             }
 
 
-
-            // добавление продуктов и их подкатегорий
-            Dictionary<string, SubCategory> subCategories = new();
-            Dictionary<string, ProductAttribute> productAttributes = new();
-            Dictionary<string, ProductAttributeGroup> productAttributeGroups = new();
+            // добавление продуктов
+            var notCreatedProductNames = new List<string>();
 
             foreach(var productDto in productsDto.Products)
             {
                 bool hasProductWithName = await RootRepository.Products
                     .FindByCondition(x => x.Name.Equals(productDto.Name, StringComparison.OrdinalIgnoreCase))
                     .AnyAsync();
-
 
                 // ***** Упрощение *****
                 //
@@ -436,34 +440,24 @@ namespace FNS.Services.Services.Products
                 }
 
 
-
                 // Поиск/создание подкатегории для товара
-                string subCategoryName = string.Empty;
-                SubCategory? subCategory = null;
+                string subCategoryName = productDto.SubCategoryName?.Trim() ?? string.Empty;
 
-                // поиск
-                if(!subCategories.TryGetValue(subCategoryName, out subCategory))
-                {
-                    subCategory = await RootRepository.SubCategories
+                var subCategory = await RootRepository.SubCategories
                         .FindByCondition(x => x.Name == subCategoryName)
                         .FirstAsync();
 
-
-                    // создание
-                    if(subCategory is null)
-                    {
-                        subCategory = new SubCategory
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = subCategoryName,
-                        };
-
-                        await RootRepository.SubCategories.AddAsync(subCategory);
-                    }
-
-                    subCategories.Add(subCategory.Name, subCategory);
+                // Если подкатегории с указанным именем нет, то пропускаем добавление товара.
+                //
+                //   Предполагается, что подкатегории добавляются отдельно от продуктов,
+                // поэтому подкатегории, имена которых указаны в данных о новом товаре,
+                // должны существовать перед добавлением продуктов.
+                //
+                if(subCategory is null)
+                {
+                    notCreatedProductNames.Add(productDto.Name.Trim());
+                    continue;
                 }
-
 
 
                 // Создание товара
@@ -474,61 +468,42 @@ namespace FNS.Services.Services.Products
                 await RootRepository.Products.AddAsync(product);
 
 
-
                 // Начало добавления атрибутов товара
                 foreach(var attrDto in productDto.OwnAttributes)
                 {
                     // Поиск/создание группы атрибута
-                    ProductAttributeGroup? attrGroup = null;
+                    ProductAttributeGroup? attrGroup = RootRepository.ProductAttributeGroups
+                        .FindByCondition(x => x.Name.Equals(attrDto.Group, StringComparison.OrdinalIgnoreCase))
+                        .First();
 
-                    // поиск
-                    if(!productAttributeGroups.TryGetValue(attrDto.Group, out attrGroup))
+                    if(attrGroup is null)
                     {
-                        attrGroup = RootRepository.ProductAttributeGroups
-                            .FindByCondition(x => x.Name.Equals(attrDto.Group, StringComparison.OrdinalIgnoreCase))
-                            .First();
-
-                        // создание
-                        if(attrGroup is null)
+                        attrGroup = new ProductAttributeGroup
                         {
-                            attrGroup = new ProductAttributeGroup
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                Name = attrDto.Group,
-                            };
+                            Id = Guid.NewGuid().ToString(),
+                            Name = attrDto.Group.Trim(),
+                        };
 
-                            await RootRepository.ProductAttributeGroups.AddAsync(attrGroup);
-                        }
-
-                        productAttributeGroups.Add(attrDto.Group, attrGroup);
+                        await RootRepository.ProductAttributeGroups.AddAsync(attrGroup);
                     }
 
 
                     // Поиск/создание атрибута
-                    ProductAttribute? attr = null;
+                    ProductAttribute?  attr = RootRepository.ProductAttributes
+                        .FindByCondition(x => x.Name.Equals(attrDto.Name, StringComparison.OrdinalIgnoreCase))
+                        .First();
 
-                    // поиск
-                    if(!productAttributes.TryGetValue(attrDto.Name, out attr))
+                    if(attr is null)
                     {
-                        attr = RootRepository.ProductAttributes
-                            .FindByCondition(x => x.Name.Equals(attrDto.Name, StringComparison.OrdinalIgnoreCase))
-                            .First();
-
-                        // создание
-                        if(attr is null)
+                        attr = new ProductAttribute
                         {
-                            attr = new ProductAttribute
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                Name = attrDto.Name,
-                                ClrType = typeof(string).Name,
-                                GroupId = attrGroup.Id,
-                            };
+                            Id = Guid.NewGuid().ToString(),
+                            Name = attrDto.Name.Trim(),
+                            ClrType = typeof(string).Name, // определение типа значения не предусмотрено
+                            GroupId = attrGroup.Id,
+                        };
 
-                            await RootRepository.ProductAttributes.AddAsync(attr);
-                        }
-
-                        productAttributes.Add(attrDto.Name, attr);
+                        await RootRepository.ProductAttributes.AddAsync(attr);
                     }
 
 
@@ -546,7 +521,6 @@ namespace FNS.Services.Services.Products
                     await RootRepository.ProductWithAttributeValues.AddAsync(attrValue);
                 }
                 // Конец добавления атрибутов товара
-
             }
 
 
@@ -554,7 +528,107 @@ namespace FNS.Services.Services.Products
             // Конец добавления товаров
 
 
-            var result = new OpResult<EmptyDto>();
+            // не создано не одного товара
+            if(notCreatedProductNames.Count == productsDto.Products.Count)
+            {
+                var badResult = new OpResult<List<string>>();
+
+                badResult.FailResult = new ProblemResultInfo
+                {
+                    Title = "Bad request",
+                    Detail = "There is no one created product.",
+                    StatusCode = StatusCodes.Status400BadRequest,
+                };
+
+                return badResult;
+            }
+
+
+            var result = new OpResult<List<string>>(notCreatedProductNames);
+            return result;
+        }
+
+        public async Task<OpResult<List<string>>> LoadSubCategoriesFromJsonFile(IFormFile file)
+        {
+            if(file is null || !file.ContentType.Equals(MediaTypeNames.Application.Json, StringComparison.OrdinalIgnoreCase))
+            {
+                var badResult = new BadRequestResult<List<string>>();
+                return badResult;
+            }
+
+
+            // Десериализация полученных данных
+            FromFileSubCategoriesDto? subCategoriesDto = null;
+
+            using(var stream = file.OpenReadStream())
+            {
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    AllowTrailingCommas = true,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                subCategoriesDto = await JsonSerializer.DeserializeAsync<FromFileSubCategoriesDto>(stream, jsonOptions);
+            }
+
+
+            if(subCategoriesDto is null)
+            {
+                var empty = new OpResult<List<string>>();
+
+                empty.FailResult = new ProblemResultInfo
+                {
+                    Title = "Bad request",
+                    Detail = "Empty object after deserialization received.",
+                    StatusCode = StatusCodes.Status400BadRequest,
+                };
+
+                return empty;
+            }
+
+
+            // добавление подкатегорий
+            var notCreatedSubCategoriesNames = new List<string>();
+
+            foreach(var subCategoryDto in subCategoriesDto.SubCategories)
+            {
+                bool alreadyHasSubCategory = await RootRepository.SubCategories
+                    .FindByCondition(x => x.Name.Equals(subCategoryDto.Name, StringComparison.OrdinalIgnoreCase))
+                    .AnyAsync();
+
+                // Если уже существует подкатегория с указанным именем, то пропускаем его добавление.
+                if(alreadyHasSubCategory)
+                {
+                    notCreatedSubCategoriesNames.Add(subCategoryDto.Name.Trim());
+                    continue;
+                }
+
+                // Создание под категории
+                var subCategory = ProductMapper.Map<SubCategory>(subCategoryDto);
+                subCategory.Id = Guid.NewGuid().ToString();
+
+                await RootRepository.SubCategories.AddAsync(subCategory);
+            }
+
+
+            // ничего не создано
+            if(notCreatedSubCategoriesNames.Count == subCategoriesDto.SubCategories.Count)
+            {
+                var badResult = new OpResult<List<string>>();
+
+                badResult.FailResult = new ProblemResultInfo
+                {
+                    Title = "Bad request",
+                    Detail = "There are no added subcategories.",
+                    StatusCode = StatusCodes.Status400BadRequest,
+                };
+
+                return badResult;
+            }
+
+
+            // ok
+            var result = new OpResult<List<string>>(notCreatedSubCategoriesNames);
             return result;
         }
     }

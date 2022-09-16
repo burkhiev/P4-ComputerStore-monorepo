@@ -104,9 +104,10 @@ namespace FNS.Services.Mappers.Products
                 .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId));
 
             config.CreateMap<FromFileProductDto, Product>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Trim()))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => 
+                    (string.IsNullOrWhiteSpace(src.Description)) ? null : src.Description.Trim()))
+                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.ProductCode.Trim()))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
         }
     }

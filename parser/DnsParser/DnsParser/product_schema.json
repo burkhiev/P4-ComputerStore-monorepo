@@ -1,0 +1,13 @@
+{
+  "Name": "string",
+  "Description": "string",
+  "ProductCode": "string",
+  "SubCategory": "string",
+  "OwnAttributes": [
+    {
+      "GroupName": "string",
+      "Name": "string",
+      "Value": "string"
+    }
+  ]
+}

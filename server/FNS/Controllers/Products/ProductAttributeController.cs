@@ -1,10 +1,8 @@
-﻿using FNS.Domain.Utilities.OperationResults;
-using FNS.Services.Abstractions;
+﻿using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Products;
-using FNS.Services.Utils.Constants;
+using FNS.Services.Utilities.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 
 namespace FNS.Presentation.Controllers.Products
 {

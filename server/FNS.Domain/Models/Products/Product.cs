@@ -14,6 +14,7 @@ namespace FNS.Domain.Models.Products
         public decimal Price { get; set; }
         public string SubCategoryId { get; set; }
         public virtual SubCategory SubCategory { get; set; }
+        public string? ImgPath { get; set; }
         public virtual List<ProductAttributeValue>? ProductAttributeValues { get; set; }
         public virtual List<ShoppingCartItem>? ShoppingCartItems { get; set; }
         public virtual List<SalesReceiptWithProduct>? SalesReceiptsWithProducts { get; set; }

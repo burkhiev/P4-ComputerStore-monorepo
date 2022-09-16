@@ -2,7 +2,7 @@
 using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions;
 using FNS.Services.Dtos.ShoppingCarts;
-using FNS.Services.Utils.Constants;
+using FNS.Services.Utilities.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

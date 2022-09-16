@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Purchases;
-using FNS.Services.Utils.Constants;
+using FNS.Services.Utilities.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

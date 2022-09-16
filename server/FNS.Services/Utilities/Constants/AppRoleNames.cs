@@ -1,4 +1,4 @@
-﻿namespace FNS.Services.Utils.Constants
+﻿namespace FNS.Services.Utilities.Constants
 {
     public static class AppRoleNames
     {

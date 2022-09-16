@@ -8,12 +8,10 @@ using FNS.Services.Abstractions.Indentity;
 using FNS.Services.Dtos;
 using FNS.Services.Dtos.Identity;
 using FNS.Services.Mappers.Identity;
-using FNS.Services.Utils.Constants;
+using FNS.Services.Utilities.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NodaTime;
 
 namespace FNS.Services.Services.Identity
 {

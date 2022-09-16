@@ -72,13 +72,7 @@ namespace FNS.ContextsInfrastructure.Initializers.Products
         private string GetDescription()
         {
             var faker = new Faker();
-            string? description = null;
-
-            while(description is null || description.Length > ProductsConfiguration.MaxDescriptionLength)
-            {
-                description = faker.Lorem.Paragraphs(5);
-            }
-
+            string? description = faker.Lorem.Paragraphs(5);
             return description;
         }
 

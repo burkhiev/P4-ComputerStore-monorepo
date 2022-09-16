@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FNS.Domain.Exceptions;
 using FNS.Domain.Models.Identity;
 using FNS.Domain.Models.Purchases;
 using FNS.Domain.Repositories;
@@ -7,8 +6,6 @@ using FNS.Domain.Utilities.OperationResults;
 using FNS.Services.Abstractions.Purchases;
 using FNS.Services.Dtos.Purchases;
 using FNS.Services.Mappers.Purchases;
-using FNS.Services.Utils.Constants;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FNS.Services.Services.Purchases

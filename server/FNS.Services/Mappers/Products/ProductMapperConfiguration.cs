@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FNS.Domain.Models.Products;
 using FNS.Services.Dtos.Products;
-using FNS.Services.Utils;
+using FNS.Services.Utilities;
 
 namespace FNS.Services.Mappers.Products
 {

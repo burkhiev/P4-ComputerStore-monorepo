@@ -1,4 +1,4 @@
-﻿namespace FNS.Services.Utils
+﻿namespace FNS.Services.Utilities
 {
     /// <summary>
     /// Класс используемый для быстрого получения имен базовых 

@@ -1,6 +1,6 @@
 ﻿using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Products;
-using FNS.Services.Utils.Constants;
+using FNS.Services.Utilities.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +8,7 @@ namespace FNS.Presentation.Controllers.SubCategories
 {
     [Authorize(Roles = AppRoleNames.Admin)]
     [ApiController]
-    [Route("api/sub-cat")]
+    [Route("api/subcategories")]
     public sealed partial class SubCategoryController : ControllerBase
     {
         private readonly IRootService _rootService;
@@ -63,6 +63,20 @@ namespace FNS.Presentation.Controllers.SubCategories
         public partial async Task<IActionResult> DeleteAsync(string id)
         {
             var result = await RootService.ProductsService.DeleteSubCategoryAsync(id);
+
+            if(result.IsFailed)
+            {
+                return StatusCode(result.FailResult.StatusCode, result.FailResult);
+            }
+
+            return Ok(result.SucceedResult);
+        }
+
+        [Authorize(Roles = AppRoleNames.Admin)]
+        [HttpPost("upload")]
+        public partial async Task<IActionResult> LoadSubCategoriesFromJsonFile(IFormFile file, [FromServices] IWebHostEnvironment env)
+        {
+            var result = await RootService.ProductsService.LoadSubCategoriesFromJsonFile(file, env.WebRootPath);
 
             if(result.IsFailed)
             {

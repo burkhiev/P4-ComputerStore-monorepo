@@ -1,5 +1,4 @@
 ﻿using FNS.Domain.Utilities.OperationResults;
-using FNS.Services.Dtos;
 using FNS.Services.Dtos.Products;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -26,5 +25,10 @@ namespace FNS.Presentation.Controllers.SubCategories
         [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(ProblemResultInfo), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
         public partial Task<IActionResult> DeleteAsync(string id);
+
+        [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status401Unauthorized, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status403Forbidden, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(UnsavedFilesInfoDto), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        public partial Task<IActionResult> LoadSubCategoriesFromJsonFile(IFormFile file, IWebHostEnvironment env);
     }
 }

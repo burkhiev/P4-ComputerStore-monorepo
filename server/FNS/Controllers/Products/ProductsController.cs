@@ -1,6 +1,6 @@
 ﻿using FNS.Services.Abstractions;
 using FNS.Services.Dtos.Products;
-using FNS.Services.Utils.Constants;
+using FNS.Services.Utilities.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -100,25 +100,12 @@ namespace FNS.Presentation.Controllers.Products
             return NoContent();
         }
 
-        [Authorize(Roles = AppRoleNames.Admin)]
-        [HttpPost("upload-products")]
-        public partial async Task<IActionResult> LoadProductsFromJsonFile(IFormFile file)
+        //[Authorize(Roles = AppRoleNames.Admin)]
+        [AllowAnonymous]
+        [HttpPost("upload")]
+        public partial async Task<IActionResult> LoadProductsFromJsonFile(IFormFile file, [FromServices] IWebHostEnvironment env)
         {
-            var result = await RootService.ProductsService.LoadProductsFromJsonFile(file);
-
-            if(result.IsFailed)
-            {
-                return StatusCode(result.FailResult.StatusCode, result.FailResult);
-            }
-
-            return Ok(result.SucceedResult);
-        }
-
-        [Authorize(Roles = AppRoleNames.Admin)]
-        [HttpPost("upload-subcategories")]
-        public partial async Task<IActionResult> LoadSubCategoriesFromJsonFile(IFormFile file)
-        {
-            var result = await RootService.ProductsService.LoadSubCategoriesFromJsonFile(file);
+            var result = await RootService.ProductsService.LoadProductsFromJsonFile(file, env.WebRootPath);
 
             if(result.IsFailed)
             {

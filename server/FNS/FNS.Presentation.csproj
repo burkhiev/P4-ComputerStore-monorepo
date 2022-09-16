@@ -28,5 +28,10 @@
     <ProjectReference Include="..\FNS.Infrastructure\FNS.Infrastructure.csproj" />
     <ProjectReference Include="..\FNS.Services\FNS.Services.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\subcategories\" />
+    <Folder Include="wwwroot\products\" />
+  </ItemGroup>
   
 </Project>

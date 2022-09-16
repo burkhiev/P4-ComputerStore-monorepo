@@ -12,6 +12,8 @@ using FNS.Services.Dtos.Products;
 using FNS.Services.Mappers.Products;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using FNS.Services.Utilities.ExtensionMethods;
+using FNS.Services.Utilities.Constants;
 
 namespace FNS.Services.Services.Products
 {
@@ -383,11 +385,11 @@ namespace FNS.Services.Services.Products
             return result;
         }
 
-        public async Task<OpResult<List<string>>> LoadProductsFromJsonFile(IFormFile file)
+        public async Task<OpResult<UnsavedFilesInfoDto>> LoadProductsFromJsonFile(IFormFile file, string? pathForImage)
         {
             if(file is null || !file.ContentType.Equals(MediaTypeNames.Application.Json, StringComparison.OrdinalIgnoreCase))
             {
-                var badResult = new BadRequestResult<List<string>>();
+                var badResult = new BadRequestResult<UnsavedFilesInfoDto>();
                 return badResult;
             }
 
@@ -398,23 +400,29 @@ namespace FNS.Services.Services.Products
             using(var stream = file.OpenReadStream())
             {
                 var jsonOptions = new JsonSerializerOptions
-                { 
-                    AllowTrailingCommas = true, 
+                {
+                    AllowTrailingCommas = true,
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 };
 
-                productsDto = await JsonSerializer.DeserializeAsync<FromFileProductsDto>(stream, jsonOptions);
+                try
+                {
+                    productsDto = await JsonSerializer.DeserializeAsync<FromFileProductsDto>(stream, jsonOptions);
+                }
+                catch(Exception)
+                {
+                    // nothing
+                }
             }
-
 
             if(productsDto is null)
             {
-                var empty = new OpResult<List<string>>();
+                var empty = new OpResult<UnsavedFilesInfoDto>();
 
                 empty.FailResult = new ProblemResultInfo
                 {
                     Title = "Bad request",
-                    Detail = "Empty object after deserialization received.",
+                    Detail = "Error while deserialization or empty object after deserialization received.",
                     StatusCode = StatusCodes.Status400BadRequest,
                 };
 
@@ -423,12 +431,17 @@ namespace FNS.Services.Services.Products
 
 
             // добавление продуктов
+            var addedAttrGroups = new List<ProductAttributeGroup>();
+            var addedAttrs = new List<ProductAttribute>();
+
+            var deletingImagePaths = new List<string>();
             var notCreatedProductNames = new List<string>();
+
 
             foreach(var productDto in productsDto.Products)
             {
                 bool hasProductWithName = await RootRepository.Products
-                    .FindByCondition(x => x.Name.Equals(productDto.Name, StringComparison.OrdinalIgnoreCase))
+                    .FindByCondition(x => x.Name == productDto.Name)
                     .AnyAsync();
 
                 // ***** Упрощение *****
@@ -436,11 +449,20 @@ namespace FNS.Services.Services.Products
                 // Если уже существует товар с указанным именем, то пропускаем его добавление.
                 if(hasProductWithName)
                 {
+                    notCreatedProductNames.Add(productDto.Name.Trim());
                     continue;
                 }
 
 
-                // Поиск/создание подкатегории для товара
+                // Если данные изображения есть, а путь не указан, то пропускаем
+                if(!string.IsNullOrWhiteSpace(productDto.Img) && string.IsNullOrWhiteSpace(pathForImage))
+                {
+                    notCreatedProductNames.Add(productDto.Name.Trim());
+                    continue;
+                }
+
+
+                // Поиск подкатегории для товара
                 string subCategoryName = productDto.SubCategoryName?.Trim() ?? string.Empty;
 
                 var subCategory = await RootRepository.SubCategories
@@ -460,10 +482,48 @@ namespace FNS.Services.Services.Products
                 }
 
 
+                // Сохранение изображения
+                string? imgPath = null;
+
+                try
+                {
+                    byte[] imgData = Convert.FromBase64String(productDto.Img);
+
+                    string subCategoryFileName = productDto.Name.Trim().GetUniqueFileName();
+                    imgPath = subCategoryFileName + productDto.ImgExtension.Trim();
+
+
+                    string directoryName = Path.Combine(
+                        pathForImage, 
+                        ImagePaths.ProductImagesFolderName,
+                        productDto.SubCategoryName.GetTransliterationFromRussianToEnglish());
+
+                    Directory.CreateDirectory(directoryName);
+
+
+                    string fullFilePath = Path.Combine(directoryName, imgPath);
+
+                    using(var fs = new FileStream(fullFilePath, FileMode.OpenOrCreate, FileAccess.Write))
+                    {
+                        await fs.WriteAsync(imgData);
+                    }
+
+                    deletingImagePaths.Add(fullFilePath);
+                }
+                catch(Exception)
+                {
+                    // ошибка при сохранении изображения - пропуск
+                    notCreatedProductNames.Add(productDto.Name.Trim());
+                    continue;
+                }
+
+
                 // Создание товара
                 var product = ProductMapper.Map<Product>(productDto);
+
                 product.Id = Guid.NewGuid().ToString();
                 product.SubCategoryId = subCategory.Id;
+                product.ImgPath = imgPath;
 
                 await RootRepository.Products.AddAsync(product);
 
@@ -471,42 +531,67 @@ namespace FNS.Services.Services.Products
                 // Начало добавления атрибутов товара
                 foreach(var attrDto in productDto.OwnAttributes)
                 {
+                    attrDto.Name = attrDto.Name.Trim();
+                    attrDto.Group = attrDto.Group.Trim();
+                    attrDto.Value = attrDto.Value?.Trim();
+
+                    if((attrDto.Value is not null)
+                        && attrDto.Value.Equals("нет", StringComparison.OrdinalIgnoreCase))
+                    {
+                        attrDto.Value = null;
+                    }
+
+
                     // Поиск/создание группы атрибута
-                    ProductAttributeGroup? attrGroup = RootRepository.ProductAttributeGroups
-                        .FindByCondition(x => x.Name.Equals(attrDto.Group, StringComparison.OrdinalIgnoreCase))
-                        .First();
+                    ProductAttributeGroup? attrGroup = await RootRepository.ProductAttributeGroups
+                        .FindByCondition(x => x.Name == attrDto.Group)
+                        .FirstOrDefaultAsync();
 
                     if(attrGroup is null)
                     {
-                        attrGroup = new ProductAttributeGroup
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = attrDto.Group.Trim(),
-                        };
+                        attrGroup = addedAttrGroups.FirstOrDefault(x => x.Name == attrDto.Group);
 
-                        await RootRepository.ProductAttributeGroups.AddAsync(attrGroup);
+                        if(attrGroup is null)
+                        {
+                            attrGroup = new ProductAttributeGroup
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                Name = attrDto.Group,
+                            };
+
+                            await RootRepository.ProductAttributeGroups.AddAsync(attrGroup);
+                            addedAttrGroups.Add(attrGroup);
+                        }
                     }
 
 
                     // Поиск/создание атрибута
-                    ProductAttribute?  attr = RootRepository.ProductAttributes
-                        .FindByCondition(x => x.Name.Equals(attrDto.Name, StringComparison.OrdinalIgnoreCase))
-                        .First();
+                    ProductAttribute? attr = await RootRepository.ProductAttributes
+                        .FindByCondition(x => x.Name == attrDto.Name)
+                        .FirstOrDefaultAsync();
 
                     if(attr is null)
                     {
-                        attr = new ProductAttribute
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = attrDto.Name.Trim(),
-                            ClrType = typeof(string).Name, // определение типа значения не предусмотрено
-                            GroupId = attrGroup.Id,
-                        };
+                        attr = addedAttrs.FirstOrDefault(x => x.Name == attrDto.Name);
 
-                        await RootRepository.ProductAttributes.AddAsync(attr);
+                        if(attr is null)
+                        {
+                            attr = new ProductAttribute
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                Name = attrDto.Name,
+                                ClrType = typeof(string).Name, // определение типа значения не предусмотрено
+                                GroupId = attrGroup.Id,
+                            };
+
+                            await RootRepository.ProductAttributes.AddAsync(attr);
+                            addedAttrs.Add(attr);
+                        }
                     }
 
 
+                    // Создание значения атрибута для соответствующего товара
+                    //
                     // ***** Упрощение *****
                     //
                     // Т.к. предполагается пропуск товара, который имеет наименование, уже добавленного товара,
@@ -516,6 +601,7 @@ namespace FNS.Services.Services.Products
                         Id = Guid.NewGuid().ToString(),
                         ProductId = product.Id,
                         ProductAttributeId = attr.Id,
+                        Value = attrDto.Value 
                     };
 
                     await RootRepository.ProductWithAttributeValues.AddAsync(attrValue);
@@ -524,19 +610,15 @@ namespace FNS.Services.Services.Products
             }
 
 
-            await RootRepository.SaveChangesAsync();
-            // Конец добавления товаров
-
-
             // не создано не одного товара
             if(notCreatedProductNames.Count == productsDto.Products.Count)
             {
-                var badResult = new OpResult<List<string>>();
+                var badResult = new OpResult<UnsavedFilesInfoDto>();
 
                 badResult.FailResult = new ProblemResultInfo
                 {
                     Title = "Bad request",
-                    Detail = "There is no one created product.",
+                    Detail = "There are no any added/updated product.",
                     StatusCode = StatusCodes.Status400BadRequest,
                 };
 
@@ -544,15 +626,56 @@ namespace FNS.Services.Services.Products
             }
 
 
-            var result = new OpResult<List<string>>(notCreatedProductNames);
+            // Сохранение
+            try
+            {
+                await RootRepository.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                DeleteSavedImages();
+
+                var error = new InvalidDbConcurrencyUpdateResult<UnsavedFilesInfoDto>();
+                return error;
+            }
+            catch(DbUpdateException)
+            {
+                DeleteSavedImages();
+
+                var error = new InvalidDbUpdateResult<UnsavedFilesInfoDto>();
+                return error;
+            }
+
+            void DeleteSavedImages()
+            {
+                foreach(var path in deletingImagePaths)
+                {
+                    try
+                    {
+                        File.Delete(path);
+                    }
+                    catch(Exception)
+                    {
+                        // nothing
+                    }
+                }
+            }
+
+
+            var unsavedFilesInfo = new UnsavedFilesInfoDto()
+            {
+                UnsavedFileNames = notCreatedProductNames
+            };
+
+            var result = new OpResult<UnsavedFilesInfoDto>(unsavedFilesInfo);
             return result;
         }
 
-        public async Task<OpResult<List<string>>> LoadSubCategoriesFromJsonFile(IFormFile file)
+        public async Task<OpResult<UnsavedFilesInfoDto>> LoadSubCategoriesFromJsonFile(IFormFile file, string? pathForImage)
         {
             if(file is null || !file.ContentType.Equals(MediaTypeNames.Application.Json, StringComparison.OrdinalIgnoreCase))
             {
-                var badResult = new BadRequestResult<List<string>>();
+                var badResult = new BadRequestResult<UnsavedFilesInfoDto>();
                 return badResult;
             }
 
@@ -568,18 +691,24 @@ namespace FNS.Services.Services.Products
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 };
 
-                subCategoriesDto = await JsonSerializer.DeserializeAsync<FromFileSubCategoriesDto>(stream, jsonOptions);
+                try
+                {
+                    subCategoriesDto = await JsonSerializer.DeserializeAsync<FromFileSubCategoriesDto>(stream, jsonOptions);
+                }
+                catch(Exception)
+                {
+                    // nothing
+                }
             }
-
 
             if(subCategoriesDto is null)
             {
-                var empty = new OpResult<List<string>>();
+                var empty = new OpResult<UnsavedFilesInfoDto>();
 
                 empty.FailResult = new ProblemResultInfo
                 {
                     Title = "Bad request",
-                    Detail = "Empty object after deserialization received.",
+                    Detail = "Error while deserialization or empty object after deserialization received.",
                     StatusCode = StatusCodes.Status400BadRequest,
                 };
 
@@ -592,34 +721,77 @@ namespace FNS.Services.Services.Products
 
             foreach(var subCategoryDto in subCategoriesDto.SubCategories)
             {
-                bool alreadyHasSubCategory = await RootRepository.SubCategories
-                    .FindByCondition(x => x.Name.Equals(subCategoryDto.Name, StringComparison.OrdinalIgnoreCase))
-                    .AnyAsync();
-
-                // Если уже существует подкатегория с указанным именем, то пропускаем его добавление.
-                if(alreadyHasSubCategory)
+                // если есть изображение, но нет пути для его сохранения, то пропускаем
+                if(!string.IsNullOrWhiteSpace(subCategoryDto.Img) && string.IsNullOrWhiteSpace(pathForImage))
                 {
                     notCreatedSubCategoriesNames.Add(subCategoryDto.Name.Trim());
                     continue;
                 }
 
-                // Создание под категории
-                var subCategory = ProductMapper.Map<SubCategory>(subCategoryDto);
-                subCategory.Id = Guid.NewGuid().ToString();
 
-                await RootRepository.SubCategories.AddAsync(subCategory);
+                var subCategory = await RootRepository.SubCategories
+                    .FindByCondition(x => x.Name == subCategoryDto.Name)
+                    .FirstOrDefaultAsync();
+
+                bool isCreating = false;
+
+                if(subCategory is null)
+                {
+                    isCreating = true;
+                    subCategory = new SubCategory();
+                    subCategory.Id = Guid.NewGuid().ToString();
+                }
+
+
+                // Сохранение изображения
+                string? imgPath = null;
+
+                try
+                {
+                    byte[] imgData = Convert.FromBase64String(subCategoryDto.Img);
+
+                    string subCategoryFileName = subCategoryDto.Name.Trim().GetUniqueFileName();
+                    string filename = subCategoryFileName + subCategoryDto.ImgExtension.Trim();
+
+                    imgPath = Path.Combine(ImagePaths.SubCategoryImagesFolderName, filename);
+
+                    using(var fs = new FileStream(Path.Combine(pathForImage, imgPath), FileMode.OpenOrCreate, FileAccess.Write))
+                    {
+                        await fs.WriteAsync(imgData);
+                    }
+                }
+                catch(Exception)
+                {
+                    // если что-то пошло не так - пропуск
+                    notCreatedSubCategoriesNames.Add(subCategoryDto.Name.Trim());
+                    continue;
+                }
+
+
+                SubCategoryMapper.Map(subCategoryDto, subCategory);
+                subCategory.ImgPath = imgPath;
+
+
+                if(isCreating)
+                {
+                    await RootRepository.SubCategories.AddAsync(subCategory);
+                }
+                else
+                {
+                    RootRepository.SubCategories.Update(subCategory);
+                }
             }
 
 
             // ничего не создано
             if(notCreatedSubCategoriesNames.Count == subCategoriesDto.SubCategories.Count)
             {
-                var badResult = new OpResult<List<string>>();
+                var badResult = new OpResult<UnsavedFilesInfoDto>();
 
                 badResult.FailResult = new ProblemResultInfo
                 {
                     Title = "Bad request",
-                    Detail = "There are no added subcategories.",
+                    Detail = "There are no added/updated subcategories.",
                     StatusCode = StatusCodes.Status400BadRequest,
                 };
 
@@ -627,8 +799,29 @@ namespace FNS.Services.Services.Products
             }
 
 
-            // ok
-            var result = new OpResult<List<string>>(notCreatedSubCategoriesNames);
+            // Сохранение
+            try
+            {
+                await RootRepository.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException ex)
+            {
+                var error = new InvalidDbConcurrencyUpdateResult<UnsavedFilesInfoDto>();
+                return error;
+            }
+            catch(DbUpdateException ex)
+            {
+                var error = new InvalidDbUpdateResult<UnsavedFilesInfoDto>();
+                return error;
+            }
+
+
+            var unsavedFilesInfo = new UnsavedFilesInfoDto
+            {
+                UnsavedFileNames = notCreatedSubCategoriesNames
+            };
+
+            var result = new OpResult<UnsavedFilesInfoDto>(unsavedFilesInfo);
             return result;
         }
     }

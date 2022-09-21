@@ -52,62 +52,93 @@ watcher.Start();
 
 string dirPath = @"C:\Users\burhi\OneDrive\Рабочий стол\Projects\P4-ComputerStore-monorepo\";
 
-if(key.StartsWith('s') || key.StartsWith('S'))
-{
-    var subCategories = new FromFileSubCategoriesDto();
+bool success = false;
 
-    using(var parser = new DnsProductParser())
+
+try
+{
+    if(key.StartsWith('s') || key.StartsWith('S'))
     {
-        startingUrl = startingUrl ?? "https://www.dns-shop.ru/catalog/17aa522a16404e77/komplektuyushhie-dlya-pk/";
+        var subCategories = new FromFileSubCategoriesDto();
 
-        subCategories.SubCategories = await parser.ParseSubCategoriesAsync(startingUrl, maxSubCategoriesCount: 13);
+        using(var parser = new DnsProductParser())
+        {
+            startingUrl = startingUrl ?? "https://www.dns-shop.ru/catalog/17aa522a16404e77/komplektuyushhie-dlya-pk/";
+
+            subCategories.SubCategories = await parser.ParseSubCategoriesAsync(startingUrl, maxSubCategoriesCount: 13);
+        }
+
+        var fileWriter = new CustomFileWriter();
+        await fileWriter.WriteToFileAsync(dirPath, "sub-categories", subCategories);
+
+        success = true;
     }
-
-    var fileWriter = new CustomFileWriter();
-    await fileWriter.WriteToFileAsync(dirPath, "sub-categories", subCategories);
-}
-else if(key.StartsWith('p') || key.StartsWith('P'))
-{
-    var products = new FromFileProductsDto();
-
-    using(var parser = new DnsProductParser())
+    else if(key.StartsWith('p') || key.StartsWith('P'))
     {
-        startingUrl = startingUrl ?? "https://www.dns-shop.ru/catalog/17a899cd16404e77/processory/";
+        var products = new FromFileProductsDto();
 
-        products.Products = await parser.ParseProductsListAsync(startingUrl, maxProductsCount: 10);
+        using(var parser = new DnsProductParser())
+        {
+            startingUrl = startingUrl ?? "https://www.dns-shop.ru/catalog/17a899cd16404e77/processory/";
+
+            products.Products = await parser.ParseProductsListAsync(startingUrl, maxProductsCount: 10);
+        }
+
+        var fileWriter = new CustomFileWriter();
+        await fileWriter.WriteToFileAsync(dirPath, "products", products);
+
+        success = true;
     }
-
-    var fileWriter = new CustomFileWriter();
-    await fileWriter.WriteToFileAsync(dirPath, "products", products);
-}
-else if(key.StartsWith('a') || key.StartsWith('A'))
-{
-    var products = new FromFileProductsDto();
-
-    using(var parser = new DnsProductParser())
+    else if(key.StartsWith('a') || key.StartsWith('A'))
     {
-        startingUrl = startingUrl ?? "https://www.dns-shop.ru/catalog/17aa522a16404e77/komplektuyushhie-dlya-pk/";
+        var products = new FromFileProductsDto();
 
-        products.Products = await parser.ParseProductsBySubCategoriesAsync(
-            subCategoriesUrl: startingUrl, 
-            maxSubCategoriesCount: 3,
-            maxProductsInListCount: 5);
+        using(var parser = new DnsProductParser())
+        {
+            startingUrl = startingUrl ?? "https://www.dns-shop.ru/catalog/17aa522a16404e77/komplektuyushhie-dlya-pk/";
+
+            products.Products = await parser.ParseProductsBySubCategoriesAsync(
+                subCategoriesUrl: startingUrl,
+                maxSubCategoriesCount: 3,
+                maxProductsInListCount: 5);
+        }
+
+        var fileWriter = new CustomFileWriter();
+        await fileWriter.WriteToFileAsync(dirPath, "products-with-subcategories", products);
+
+        success = true;
     }
-
-    var fileWriter = new CustomFileWriter();
-    await fileWriter.WriteToFileAsync(dirPath, "products-with-subcategories", products);
+    else
+    {
+        throw new NotImplementedException();
+    }
 }
-else
+catch(Exception)
 {
-    throw new NotImplementedException();
+    // nothing
 }
 
 
 watcher.Stop();
-Console.WriteLine();
-Console.WriteLine("  [ *** ] Parsing completed");
-Console.WriteLine($"  [ *** ] Time elapsed: {watcher.Elapsed}");
-Console.WriteLine();
+
+if(success)
+{
+    Console.WriteLine();
+    Console.WriteLine("  [ ********************************************************** ] ");
+    Console.WriteLine("  [ *** ] Parsing completed");
+    Console.WriteLine($"  [ *** ] Time elapsed: {watcher.Elapsed}");
+    Console.WriteLine("  [ ********************************************************** ] ");
+    Console.WriteLine();
+}
+else
+{
+    Console.WriteLine();
+    Console.WriteLine("  [ ********************************************************** ] ");
+    Console.WriteLine("  [ *** ] Error while parsing occured");
+    Console.WriteLine($"  [ *** ] Time elapsed: {watcher.Elapsed}");
+    Console.WriteLine("  [ ********************************************************** ] ");
+    Console.WriteLine();
+}
 
 Console.WriteLine("  [ ... ] Press any key to exit...\n\n\n\n\n\n\n");
 Console.ReadKey();

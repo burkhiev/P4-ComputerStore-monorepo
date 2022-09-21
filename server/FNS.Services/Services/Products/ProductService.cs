@@ -646,6 +646,8 @@ namespace FNS.Services.Services.Products
                 return error;
             }
 
+            // при возникновении ошибки при совершении транзакции,
+            // удаляем все сохраненные изображения
             void DeleteSavedImages()
             {
                 foreach(var path in deletingImagePaths)
@@ -717,7 +719,9 @@ namespace FNS.Services.Services.Products
 
 
             // добавление подкатегорий
+            var savedImagePaths = new List<string>();
             var notCreatedSubCategoriesNames = new List<string>();
+
 
             foreach(var subCategoryDto in subCategoriesDto.SubCategories)
             {
@@ -754,11 +758,14 @@ namespace FNS.Services.Services.Products
                     string filename = subCategoryFileName + subCategoryDto.ImgExtension.Trim();
 
                     imgPath = Path.Combine(ImagePaths.SubCategoryImagesFolderName, filename);
+                    string fullPath = Path.Combine(pathForImage, imgPath);
 
-                    using(var fs = new FileStream(Path.Combine(pathForImage, imgPath), FileMode.OpenOrCreate, FileAccess.Write))
+                    using(var fs = new FileStream(fullPath, FileMode.OpenOrCreate, FileAccess.Write))
                     {
                         await fs.WriteAsync(imgData);
                     }
+
+                    savedImagePaths.Add(fullPath);
                 }
                 catch(Exception)
                 {
@@ -806,13 +813,34 @@ namespace FNS.Services.Services.Products
             }
             catch(DbUpdateConcurrencyException ex)
             {
+                DeleteSavedImages();
+
                 var error = new InvalidDbConcurrencyUpdateResult<UnsavedFilesInfoDto>();
                 return error;
             }
             catch(DbUpdateException ex)
             {
+                DeleteSavedImages();
+
                 var error = new InvalidDbUpdateResult<UnsavedFilesInfoDto>();
                 return error;
+            }
+
+            // при возникновении ошибки при совершении транзакции,
+            // удаляем все сохраненные изображения
+            void DeleteSavedImages()
+            {
+                foreach(var path in savedImagePaths)
+                {
+                    try
+                    {
+                        File.Delete(path);
+                    }
+                    catch(Exception)
+                    {
+                        // nothing
+                    }
+                }
             }
 
 

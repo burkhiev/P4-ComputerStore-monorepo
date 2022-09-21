@@ -7,8 +7,8 @@ namespace DnsParser.Parser
 {
     internal sealed class DnsProductParser : IProductParser, IDisposable
     {
-        private const int MaxSubCategoriesProcessCount = 13;
-        private const int MaxInListProductsProcessCount = 10;
+        //private const int MaxSubCategoriesProcessCount = 13;
+        //private const int MaxInListProductsProcessCount = 10;
         private const int MaxInProductCardAttributesProcessCount = 20;
 
         private const int NavigateForwardDelayMilliseconds = 500;
@@ -98,6 +98,14 @@ namespace DnsParser.Parser
             int maxSubCategoriesCount, 
             int maxProductsInListCount)
         {
+            var options = new UriCreationOptions();
+
+            if(!Uri.TryCreate(subCategoriesUrl, options, out Uri? uri))
+            {
+                throw new ArgumentException("Invalid uri received.");
+            }
+
+
             Console.WriteLine($"  [ ... ] Navigating to {subCategoriesUrl}");
 
             Driver.Navigate().GoToUrl(subCategoriesUrl);
@@ -170,7 +178,7 @@ namespace DnsParser.Parser
             }
             catch(Exception)
             {
-                Console.WriteLine("  [ FAIL ] Error while switching between subcategories.");
+                Console.WriteLine("  [ FAIL ] Error while switching to subcategory.");
             }
 
 
@@ -207,6 +215,14 @@ namespace DnsParser.Parser
             int maxProductsCount, 
             string? subCategoryName = null)
         {
+            var options = new UriCreationOptions();
+
+            if(!Uri.TryCreate(productListUrl, options, out Uri? uri))
+            {
+                throw new ArgumentException("Invalid uri received.");
+            }
+
+
             if(!Driver.Url.Equals(productListUrl, StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine($"  [ ... ]: Navigating to {productListUrl}");
@@ -624,7 +640,7 @@ namespace DnsParser.Parser
                 var groupElem = attrGroupElems[i];
 
                 var groupTitleElem = groupElem.FindElement(By.ClassName("product-characteristics__group-title"));
-                var groupTitle = groupTitleElem.Text.Trim();
+                var groupTitle = groupTitleElem.Text;
 
                 var groupItemsElems = groupElem.FindElements(By.ClassName("product-characteristics__spec"));
 
@@ -635,15 +651,27 @@ namespace DnsParser.Parser
                     attr.Group = groupTitle;
 
                     var itemNameElem = groupItemElem.FindElement(By.ClassName("product-characteristics__spec-title"));
-                    attr.Name = itemNameElem.Text.Trim();
+                    attr.Name = itemNameElem.Text;
 
                     var itemValueElem = groupItemElem.FindElement(By.ClassName("product-characteristics__spec-value"));
-                    attr.Value = itemValueElem.Text.Trim();
+                    attr.Value = itemValueElem.Text;
 
 
                     if(string.IsNullOrWhiteSpace(attr.Group) || string.IsNullOrWhiteSpace(attr.Name))
                     {
                         return null;
+                    }
+
+
+                    attr.Group = attr.Group.Trim();
+                    attr.Name = attr.Name.Trim();
+                    attr.Value = attr.Value.Trim();
+
+
+                    if(attr.Value.Equals("нет", StringComparison.OrdinalIgnoreCase)
+                        || attr.Value.Equals("-", StringComparison.OrdinalIgnoreCase))
+                    {
+                        attr.Value = null;
                     }
 
 
